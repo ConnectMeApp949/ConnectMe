@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, LogBox } from 'react-native';
+import { StripeProvider } from '@stripe/stripe-react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -446,11 +447,13 @@ export default function App() {
         <RecentlyViewedContext.Provider value={recentlyViewed}>
         <SavedSearchesContext.Provider value={savedSearches}>
         <QueryClientProvider client={queryClient}>
+          <StripeProvider publishableKey="pk_live_51TG1VgECfXBYZgZGMbENz8uj7BlJF3FLpi9GhCqQb5BYQn4yc9dW3XHbYnnKIZ7dFDmutG5IKe8BpO75oYfHrG6E005gIGjxDk">
           <ThemeProvider>
             <LanguageProvider>
               <AppContent />
             </LanguageProvider>
           </ThemeProvider>
+          </StripeProvider>
         </QueryClientProvider>
         </SavedSearchesContext.Provider>
         </RecentlyViewedContext.Provider>

@@ -33,9 +33,9 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "APPLE_ID_HERE",
-        "ascAppId": "ASC_APP_ID_HERE",
-        "appleTeamId": "TEAM_ID_HERE"
+        "appleId": "haggard.jake@yahoo.com",
+        "ascAppId": "6761667880",
+        "appleTeamId": "Q79GHXZKMC"
       },
       "android": {
         "serviceAccountKeyPath": "./google-services.json",

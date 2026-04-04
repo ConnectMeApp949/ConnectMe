@@ -76,7 +76,7 @@ export default function WelcomeScreen({ navigation }: Props) {
       // Facebook OAuth via web browser
       // TODO: Replace with your Facebook App ID from developers.facebook.com
       const redirectUri = 'https://auth.expo.io/@connectme/connectme';
-      const fbAppId = 'YOUR_FACEBOOK_APP_ID';
+      const fbAppId = '951097110641665';
       const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${fbAppId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=email,public_profile&response_type=token`;
 
       const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
@@ -100,7 +100,7 @@ export default function WelcomeScreen({ navigation }: Props) {
       // Google OAuth via web browser
       // TODO: Replace with your Google OAuth Client ID from console.cloud.google.com
       const redirectUri = 'https://auth.expo.io/@connectme/connectme';
-      const clientId = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+      const clientId = '528402499661-nktq259d8g6h6trep8nkj37ii6046681.apps.googleusercontent.com';
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=email%20profile&response_type=token`;
 
       const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
