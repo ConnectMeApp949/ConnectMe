@@ -1,0 +1,153 @@
+import React, { useEffect } from 'react';
+import { View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import * as SplashScreen from 'expo-splash-screen';
+
+import { OnboardingStackParamList } from './src/navigation/types';
+import { VendorSetupParamList } from './src/screens/vendor-setup/types';
+import { BookingFlowParamList } from './src/screens/booking/types';
+
+import ClientTabs from './src/navigation/ClientTabs';
+import VendorTabs from './src/navigation/VendorTabs';
+
+import {
+  WelcomeScreen, SignUpScreen, SignInScreen, VendorTypeScreen,
+} from './src/screens/onboarding';
+import {
+  BusinessNameScreen, CategoryScreen, BioScreen, PricingScreen,
+  LocationScreen, PhotosScreen, PreviewScreen,
+} from './src/screens/vendor-setup';
+import {
+  EventDetailsScreen as BookingEventDetails,
+  LocationScreen as BookingLocation,
+  SpecialRequestsScreen as BookingSpecialRequests,
+  PricingReviewScreen as BookingPricingReview,
+  PaymentScreen as BookingPayment,
+  ConfirmationScreen as BookingConfirmation,
+} from './src/screens/booking';
+import { VendorDetailScreen } from './src/screens/vendor-detail';
+import { ChatScreen } from './src/screens/messages';
+import { LeaveReviewScreen, ReviewsScreen } from './src/screens/reviews';
+import { SubscriptionScreen } from './src/screens/subscription';
+import { EarningsScreen, AvailabilityScreen } from './src/screens/vendor-dashboard';
+
+import ErrorBoundary from './src/components/ErrorBoundary';
+import NetworkToast from './src/components/NetworkToast';
+import {
+  UploadIdScreen, BusinessDetailsScreen, ReviewSubmitScreen,
+} from './src/screens/verification';
+import { VerificationFlowParamList } from './src/screens/verification/types';
+import { useNotifications } from './src/hooks/useNotifications';
+
+SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 1000 * 60 * 5 } },
+});
+
+const OnboardingStack = createNativeStackNavigator<OnboardingStackParamList>();
+const VendorSetupStack = createNativeStackNavigator<VendorSetupParamList>();
+const BookingStack = createNativeStackNavigator<BookingFlowParamList>();
+const VerificationStack = createNativeStackNavigator<VerificationFlowParamList>();
+const RootStack = createNativeStackNavigator();
+
+const slideRight = { headerShown: false as const, animation: 'slide_from_right' as const };
+const noHeader = { headerShown: false as const };
+
+function OnboardingNavigator() {
+  return (
+    <OnboardingStack.Navigator screenOptions={slideRight}>
+      <OnboardingStack.Screen name="Welcome" component={WelcomeScreen} />
+      <OnboardingStack.Screen name="SignUp" component={SignUpScreen} />
+      <OnboardingStack.Screen name="SignIn" component={SignInScreen} />
+      <OnboardingStack.Screen name="VendorType" component={VendorTypeScreen} />
+    </OnboardingStack.Navigator>
+  );
+}
+
+function VendorSetupNavigator() {
+  return (
+    <VendorSetupStack.Navigator screenOptions={slideRight}>
+      <VendorSetupStack.Screen name="BusinessName" component={BusinessNameScreen} />
+      <VendorSetupStack.Screen name="Category" component={CategoryScreen} />
+      <VendorSetupStack.Screen name="Bio" component={BioScreen} />
+      <VendorSetupStack.Screen name="Pricing" component={PricingScreen} />
+      <VendorSetupStack.Screen name="Location" component={LocationScreen} />
+      <VendorSetupStack.Screen name="Photos" component={PhotosScreen} />
+      <VendorSetupStack.Screen name="Preview" component={PreviewScreen} />
+    </VendorSetupStack.Navigator>
+  );
+}
+
+function BookingFlowNavigator() {
+  return (
+    <BookingStack.Navigator screenOptions={slideRight}>
+      <BookingStack.Screen name="EventDetails" component={BookingEventDetails} />
+      <BookingStack.Screen name="Location" component={BookingLocation} />
+      <BookingStack.Screen name="SpecialRequests" component={BookingSpecialRequests} />
+      <BookingStack.Screen name="PricingReview" component={BookingPricingReview} />
+      <BookingStack.Screen name="Payment" component={BookingPayment} />
+      <BookingStack.Screen name="Confirmation" component={BookingConfirmation} />
+    </BookingStack.Navigator>
+  );
+}
+
+function VerificationFlowNavigator() {
+  return (
+    <VerificationStack.Navigator screenOptions={slideRight}>
+      <VerificationStack.Screen name="UploadId" component={UploadIdScreen} />
+      <VerificationStack.Screen name="BusinessDetails" component={BusinessDetailsScreen} />
+      <VerificationStack.Screen name="ReviewSubmit" component={ReviewSubmitScreen} />
+    </VerificationStack.Navigator>
+  );
+}
+
+function AppShell() {
+  useNotifications();
+
+  return (
+    <RootStack.Navigator screenOptions={noHeader}>
+      <RootStack.Screen name="Onboarding" component={OnboardingNavigator} />
+      <RootStack.Screen name="VendorSetup" component={VendorSetupNavigator} />
+      <RootStack.Screen name="ClientMain" component={ClientTabs} />
+      <RootStack.Screen name="VendorMain" component={VendorTabs} />
+      <RootStack.Group screenOptions={{ presentation: 'modal', headerShown: false }}>
+        <RootStack.Screen name="VendorDetail" component={VendorDetailScreen} />
+        <RootStack.Screen name="BookingFlow" component={BookingFlowNavigator} />
+        <RootStack.Screen name="Chat" component={ChatScreen} />
+        <RootStack.Screen name="LeaveReview" component={LeaveReviewScreen} />
+        <RootStack.Screen name="Reviews" component={ReviewsScreen} />
+        <RootStack.Screen name="Subscription" component={SubscriptionScreen} />
+        <RootStack.Screen name="Earnings" component={EarningsScreen} />
+        <RootStack.Screen name="Availability" component={AvailabilityScreen} />
+        <RootStack.Screen name="Verification" component={VerificationFlowNavigator} />
+      </RootStack.Group>
+    </RootStack.Navigator>
+  );
+}
+
+export default function App() {
+  useEffect(() => {
+    SplashScreen.hideAsync();
+  }, []);
+
+  return (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <View style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <NavigationContainer>
+              <AppShell />
+            </NavigationContainer>
+            <NetworkToast />
+            <StatusBar style="dark" />
+          </SafeAreaProvider>
+        </View>
+      </QueryClientProvider>
+    </ErrorBoundary>
+  );
+}

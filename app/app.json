@@ -1,0 +1,64 @@
+{
+  "expo": {
+    "name": "ConnectMe",
+    "slug": "connectme",
+    "owner": "connectmeapp",
+    "description": "ConnectMe is the premier marketplace for booking event vendors — DJs, caterers, photographers, food trucks, and more — in San Antonio and beyond.",
+    "privacy": "public",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "buildNumber": "1",
+      "bundleIdentifier": "com.connectme.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "ConnectMe uses your location to find vendors near you.",
+        "NSPhotoLibraryUsageDescription": "ConnectMe needs access to your photos to upload profile and portfolio images.",
+        "NSCameraUsageDescription": "ConnectMe needs camera access to take photos for your profile.",
+        "NSPhotoLibraryAddUsageDescription": "ConnectMe needs access to save photos to your library"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.connectme.app",
+      "versionCode": 1,
+      "permissions": ["INTERNET", "ACCESS_NETWORK_STATE", "CAMERA", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "ACCESS_FINE_LOCATION", "VIBRATE"]
+    },
+    "scheme": "connectme",
+    "plugins": [
+      "expo-location",
+      "expo-image-picker",
+      "expo-notifications",
+      ["expo-build-properties", {
+        "ios": {
+          "privacyManifests": {
+            "NSPrivacyAccessedAPITypes": [
+              {
+                "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+                "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+              },
+              {
+                "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime",
+                "NSPrivacyAccessedAPITypeReasons": ["35F9.1"]
+              },
+              {
+                "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace",
+                "NSPrivacyAccessedAPITypeReasons": ["E174.1"]
+              }
+            ]
+          }
+        }
+      }]
+    ]
+  }
+}

@@ -1,0 +1,262 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────
+
+enum UserType {
+  VENDOR
+  CLIENT
+}
+
+enum VendorCategory {
+  FOOD_TRUCK
+  DJ
+  CATERING
+  WEDDING_SERVICES
+  PHOTOGRAPHY
+  ENTERTAINMENT
+  OTHER
+}
+
+enum PriceUnit {
+  PER_HOUR
+  PER_EVENT
+  CUSTOM
+}
+
+enum SubscriptionTier {
+  SPARK
+  IGNITE
+  AMPLIFY
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ─── Models ──────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  phone        String?
+  profilePhoto String?
+  pushToken    String?
+  userType     UserType
+  isVerified   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  vendorProfile       VendorProfile?
+  bookingsAsClient    Booking[]           @relation("ClientBookings")
+  sentMessages        Message[]           @relation("SentMessages")
+  receivedMessages    Message[]           @relation("ReceivedMessages")
+  reviewsWritten      Review[]            @relation("ClientReviews")
+  reviewsReceived     Review[]            @relation("VendorReviews")
+  refreshTokens       RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+
+  @@index([userType])
+  @@index([email])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  tokenHash String
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+}
+
+model VendorProfile {
+  id               String           @id @default(cuid())
+  userId           String           @unique
+  businessName     String
+  category         VendorCategory
+  bio              String?
+  coverPhoto       String?
+  portfolioPhotos  String[]
+  basePrice        Decimal          @db.Decimal(10, 2)
+  priceUnit        PriceUnit
+  city             String
+  state            String
+  serviceRadius    Int
+  isActive         Boolean          @default(true)
+  subscriptionTier SubscriptionTier @default(SPARK)
+  averageRating    Decimal          @default(0) @db.Decimal(3, 2)
+  totalReviews     Int              @default(0)
+  totalBookings    Int              @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  user          User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookings      Booking[]
+  subscriptions Subscription[]
+  verifications VendorVerification[]
+
+  @@index([category])
+  @@index([city, state])
+  @@index([isActive])
+  @@index([averageRating])
+}
+
+model VendorVerification {
+  id                   String             @id @default(cuid())
+  vendorId             String
+  governmentIdUrl      String
+  businessName         String
+  businessLicenseNumber String?
+  status               VerificationStatus @default(PENDING)
+  rejectionReason      String?
+  reviewedAt           DateTime?
+  createdAt            DateTime           @default(now())
+
+  vendor VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId])
+  @@index([status])
+}
+
+model Booking {
+  id                  String        @id @default(cuid())
+  clientId            String
+  vendorId            String
+  eventDate           DateTime
+  eventStartTime      DateTime
+  eventEndTime        DateTime
+  eventLocation       String
+  eventType           String
+  guestCount          Int?
+  specialRequirements String?
+  status              BookingStatus @default(PENDING)
+  totalAmount         Decimal       @db.Decimal(10, 2)
+  vendorFee           Decimal       @db.Decimal(10, 2)
+  clientFee           Decimal       @db.Decimal(10, 2)
+  platformRevenue     Decimal       @db.Decimal(10, 2)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  client  User          @relation("ClientBookings", fields: [clientId], references: [id], onDelete: Cascade)
+  vendor  VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  messages Message[]
+  review   Review?
+  payment  Payment?
+
+  @@index([clientId])
+  @@index([vendorId])
+  @@index([status])
+  @@index([eventDate])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  bookingId  String
+  senderId   String
+  receiverId String
+  content    String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  booking  Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  sender   User    @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User    @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId])
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([isRead])
+}
+
+model Review {
+  id             String   @id @default(cuid())
+  bookingId      String   @unique
+  clientId       String
+  vendorId       String
+  rating         Int
+  comment        String?
+  vendorResponse String?
+  createdAt      DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  client  User    @relation("ClientReviews", fields: [clientId], references: [id], onDelete: Cascade)
+  vendor  User    @relation("VendorReviews", fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([vendorId])
+  @@index([rating])
+}
+
+model Payment {
+  id                    String        @id @default(cuid())
+  bookingId             String        @unique
+  stripePaymentIntentId String        @unique
+  amount                Decimal       @db.Decimal(10, 2)
+  vendorPayout          Decimal       @db.Decimal(10, 2)
+  platformFee           Decimal       @db.Decimal(10, 2)
+  status                PaymentStatus @default(PENDING)
+  createdAt             DateTime      @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([stripePaymentIntentId])
+}
+
+model Subscription {
+  id                  String           @id @default(cuid())
+  vendorId            String
+  tier                SubscriptionTier
+  stripeSubscriptionId String          @unique
+  currentPeriodStart  DateTime
+  currentPeriodEnd    DateTime
+  isActive            Boolean          @default(true)
+
+  vendor VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId])
+  @@index([isActive])
+  @@index([stripeSubscriptionId])
+}

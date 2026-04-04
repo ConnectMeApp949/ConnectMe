@@ -1,0 +1,23 @@
+{
+  "name": "connectme",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "app",
+    "api",
+    "admin",
+    "shared"
+  ],
+  "scripts": {
+    "api:dev": "npm run dev --workspace=api",
+    "api:build": "npm run build --workspace=api",
+    "api:start": "npm run start --workspace=api",
+    "app:start": "npm run start --workspace=app",
+    "app:ios": "npm run ios --workspace=app",
+    "app:android": "npm run android --workspace=app",
+    "shared:build": "npm run build --workspace=shared",
+    "db:migrate": "npm run db:migrate --workspace=api",
+    "db:generate": "npm run db:generate --workspace=api",
+    "db:studio": "npm run db:studio --workspace=api"
+  }
+}
