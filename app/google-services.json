@@ -43,6 +43,42 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:528402499661:android:75dfd7c0d05753a70b3404",
+        "android_client_info": {
+          "package_name": "com.connectmeapp.services"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "528402499661-83pmspjo9ljuaus6d8t54hmrcpch2jeo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxLP-M3TdHiddw_i-AYnOMcA4JP6NtaB8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "528402499661-82m32ad1njuble288rln64o7vlv4emgr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "528402499661-dugq5o9n77jui2o4magm64p6vm3viglg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.connectmeApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:528402499661:android:81c12bbcac6fbf100b3404",
         "android_client_info": {
           "package_name": "com.example.connectmeApp"
