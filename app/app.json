@@ -80,7 +80,13 @@
         }
       ],
       "@react-native-community/datetimepicker",
-      "@stripe/stripe-react-native",
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.connectmeapp.services",
+          "enableGooglePay": true
+        }
+      ],
       "expo-secure-store"
     ],
     "extra": {
