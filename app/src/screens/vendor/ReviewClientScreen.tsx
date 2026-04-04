@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api-production-dda7.up.railway.app';
 const MAX_COMMENT_LENGTH = 300;
 
 const RATING_LABELS: Record<number, string> = {

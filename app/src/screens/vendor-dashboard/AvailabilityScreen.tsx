@@ -8,7 +8,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon } from '../../components/Icons';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api-production-dda7.up.railway.app';
 
 type DateMarker = 'blocked' | 'confirmed' | 'pending';
 

@@ -8,7 +8,7 @@ import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, AlertCircleIcon, FileTextIcon } from '../../components/Icons';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api-production-dda7.up.railway.app';
 
 interface TierInfo {
   id: string;

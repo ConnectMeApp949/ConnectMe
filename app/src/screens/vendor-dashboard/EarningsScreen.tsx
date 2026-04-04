@@ -9,7 +9,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon } from '../../components/Icons';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api-production-dda7.up.railway.app';
 
 type Props = NativeStackScreenProps<any, 'Earnings'>;
 

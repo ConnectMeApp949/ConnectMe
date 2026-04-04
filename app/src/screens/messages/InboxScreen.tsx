@@ -7,7 +7,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MessageIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api-production-dda7.up.railway.app';
 
 type Props = NativeStackScreenProps<any, 'Inbox'>;
 
