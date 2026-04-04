@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "d9312f5e-3b79-4266-950d-d9de8e507ed9"
+      }
+    },
+    "android": {
+      "package": "com.connectmeapp.services"
+    }
+  }
+}
