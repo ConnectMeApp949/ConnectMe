@@ -29,10 +29,12 @@ export default function PhotoGalleryModal({ visible, photos, initialIndex, onClo
     <Modal visible={visible} animationType="fade" statusBarTranslucent>
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.counter}>{currentIndex + 1} / {photos.length}</Text>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <XIcon size={18} color={colors.white} strokeWidth={2} />
+          <TouchableOpacity onPress={onClose} style={styles.closeButton} accessibilityLabel="Close gallery" accessibilityRole="button" hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}>
+            <XIcon size={22} color={colors.white} strokeWidth={2.5} />
+            <Text style={styles.closeLabel}>Close</Text>
           </TouchableOpacity>
+          <Text style={styles.counter}>{currentIndex + 1} / {photos.length}</Text>
+          <View style={{ width: 70 }} />
         </View>
 
         <FlatList
@@ -80,17 +82,18 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   closeButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    gap: 6,
   },
-  closeText: {
-    fontSize: 18,
+  closeLabel: {
+    fontFamily: fonts.semiBold,
+    fontSize: 15,
     color: colors.white,
-    fontWeight: '600',
   },
   image: {
     width: SCREEN_WIDTH,
