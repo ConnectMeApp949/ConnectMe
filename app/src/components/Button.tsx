@@ -17,6 +17,10 @@ interface ButtonProps {
   disabled?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  accessibilityLabel?: string;
+  accessibilityRole?: string;
+  accessibilityHint?: string;
+  accessibilityState?: any;
 }
 
 export default function Button({
@@ -27,6 +31,10 @@ export default function Button({
   disabled = false,
   style,
   textStyle,
+  accessibilityLabel,
+  accessibilityRole,
+  accessibilityHint,
+  accessibilityState,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
 
@@ -43,6 +51,10 @@ export default function Button({
       onPress={onPress}
       disabled={isDisabled}
       activeOpacity={0.8}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole={accessibilityRole as any}
+      accessibilityHint={accessibilityHint}
+      accessibilityState={accessibilityState}
     >
       {loading ? (
         <ActivityIndicator

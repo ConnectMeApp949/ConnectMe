@@ -251,7 +251,7 @@ export default function HomeScreen({ navigation }: Props) {
                   accessibilityRole="list"
                 >
                   {recentlyViewed.map((v) => (
-                    <View key={v.id} style={styles.featuredCardWrap} accessibilityRole="listitem">
+                    <View key={v.id} style={styles.featuredCardWrap} accessibilityRole="none">
                       <VendorCard vendor={v} onPress={() => navigateToVendor(v)} variant="featured" />
                     </View>
                   ))}

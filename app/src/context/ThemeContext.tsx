@@ -53,7 +53,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     () => ({
       isDark,
       toggleTheme,
-      colors: isDark ? darkColors : lightColors,
+      colors: isDark ? (darkColors as ThemeColors) : lightColors,
     }),
     [isDark],
   );

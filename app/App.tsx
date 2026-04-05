@@ -342,6 +342,7 @@ function AppContent() {
       <SafeAreaProvider>
         <NavigationContainer
           theme={navTheme}
+          // @ts-ignore – deep linking config types are overly strict for dynamic navigators
           linking={{
             prefixes: ['connectme://', 'https://connectmeapp.com'],
             config: {
