@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download ConnectMe - Event Marketplace App</title>
+  <meta name="description" content="Download the ConnectMe app to discover and book event vendors for DJs, caterers, photographers, and more.">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #AA8330;
+      --gold-light: #c9a355;
+      --cream: #FEF2E4;
+      --dark: #151515;
+      --grey: #555;
+      --light-grey: #f8f8f8;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--dark);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== NAVBAR ===== */
+    .cm-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 0 24px;
+    }
+
+    .cm-nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .cm-nav-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .cm-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .cm-nav-links a {
+      text-decoration: none;
+      color: var(--dark);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .cm-nav-links a:hover {
+      color: var(--gold);
+    }
+
+    .cm-nav-cta {
+      background: var(--gold);
+      color: #fff !important;
+      padding: 8px 20px;
+      border-radius: 8px;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+
+    .cm-nav-cta:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    /* ===== HERO / DOWNLOAD SECTION ===== */
+    .cm-hero {
+      background: linear-gradient(160deg, var(--cream) 0%, #fff8f0 40%, #ffffff 70%, var(--cream) 100%);
+      padding: 140px 24px 80px;
+    }
+
+    .cm-hero-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 60px;
+    }
+
+    .cm-hero-content {
+      flex: 1;
+    }
+
+    .cm-hero-content .cm-label {
+      display: inline-block;
+      background: rgba(170, 131, 48, 0.12);
+      color: var(--gold);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .cm-hero-content h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+
+    .cm-hero-content h1 span {
+      color: var(--gold);
+    }
+
+    .cm-hero-content p {
+      font-size: 1.15rem;
+      color: var(--grey);
+      margin-bottom: 36px;
+      max-width: 480px;
+      line-height: 1.7;
+    }
+
+    .cm-badge-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .cm-badge-row a {
+      display: inline-block;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .cm-badge-row a:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+
+    .cm-badge-row a img {
+      height: 54px;
+      width: auto;
+      display: block;
+    }
+
+    .cm-hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .cm-stat strong {
+      display: block;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .cm-stat span {
+      font-size: 0.8rem;
+      color: var(--grey);
+      font-weight: 400;
+    }
+
+    /* Phone Mockup */
+    .cm-phone-mockup {
+      flex-shrink: 0;
+      width: 280px;
+      height: 560px;
+      border-radius: 40px;
+      border: 6px solid #222;
+      background: var(--dark);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15), 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .cm-phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 28px;
+      background: #222;
+      border-radius: 0 0 18px 18px;
+      z-index: 2;
+    }
+
+    .cm-phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 34px;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--cream) 0%, #fff 40%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px 20px;
+      text-align: center;
+    }
+
+    .cm-phone-screen .cm-screen-logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .cm-phone-screen .cm-screen-tagline {
+      font-size: 0.7rem;
+      color: #888;
+      margin-bottom: 28px;
+    }
+
+    .cm-screen-cards {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .cm-screen-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .cm-screen-card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .cm-screen-card-text {
+      font-size: 0.65rem;
+      color: #333;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    .cm-screen-card-text small {
+      font-weight: 400;
+      color: #999;
+      font-size: 0.55rem;
+    }
+
+    /* ===== FEATURES SECTION ===== */
+    .cm-features {
+      padding: 80px 24px;
+      background: #fff;
+    }
+
+    .cm-features-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .cm-features-inner h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .cm-features-inner h2 span {
+      color: var(--gold);
+    }
+
+    .cm-features-inner > p {
+      color: var(--grey);
+      font-size: 1.05rem;
+      margin-bottom: 48px;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cm-features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    .cm-feature-card {
+      background: var(--light-grey);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .cm-feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .cm-feature-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: rgba(170, 131, 48, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 1.5rem;
+    }
+
+    .cm-feature-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .cm-feature-card p {
+      font-size: 0.85rem;
+      color: var(--grey);
+      line-height: 1.5;
+    }
+
+    /* ===== CTA BANNER ===== */
+    .cm-cta-banner {
+      background: var(--dark);
+      padding: 64px 24px;
+      text-align: center;
+    }
+
+    .cm-cta-banner-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .cm-cta-banner h2 {
+      color: #fff;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .cm-cta-banner p {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 1rem;
+      margin-bottom: 32px;
+    }
+
+    .cm-cta-banner .cm-badge-row {
+      justify-content: center;
+    }
+
+    /* ===== FOOTER ===== */
+    .cm-footer {
+      background: var(--dark);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 48px 24px 32px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .cm-footer-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 32px;
+    }
+
+    .cm-footer-brand {
+      max-width: 280px;
+    }
+
+    .cm-footer-brand .cm-footer-logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .cm-footer-brand p {
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .cm-footer-col h4 {
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .cm-footer-col ul {
+      list-style: none;
+    }
+
+    .cm-footer-col ul li {
+      margin-bottom: 10px;
+    }
+
+    .cm-footer-col ul a {
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+
+    .cm-footer-col ul a:hover {
+      color: var(--gold);
+    }
+
+    .cm-footer-bottom {
+      max-width: 1000px;
+      margin: 32px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+      font-size: 0.8rem;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .cm-features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .cm-hero-inner {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+      }
+
+      .cm-hero-content p {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .cm-badge-row {
+        justify-content: center;
+      }
+
+      .cm-hero-stats {
+        justify-content: center;
+      }
+
+      .cm-hero-content h1 {
+        font-size: 2rem;
+      }
+
+      .cm-phone-mockup {
+        width: 240px;
+        height: 480px;
+      }
+
+      .cm-nav-links .cm-nav-hide-mobile {
+        display: none;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .cm-features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cm-footer-inner {
+        flex-direction: column;
+      }
+
+      .cm-hero-stats {
+        gap: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="cm-nav">
+    <div class="cm-nav-inner">
+      <a href="https://connectmeapp.services" class="cm-nav-logo">ConnectMe</a>
+      <ul class="cm-nav-links">
+        <li class="cm-nav-hide-mobile"><a href="#features">Features</a></li>
+        <li class="cm-nav-hide-mobile"><a href="https://connectmeapp.services">Home</a></li>
+        <li><a href="#download" class="cm-nav-cta">Download</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO / DOWNLOAD SECTION -->
+  <section class="cm-hero" id="download">
+    <div class="cm-hero-inner">
+      <div class="cm-hero-content">
+        <div class="cm-label">Available on iOS &amp; Android</div>
+        <h1>Get <span>ConnectMe</span> on Your Phone</h1>
+        <p>Download the app and start booking amazing event vendors today. Find DJs, caterers, photographers, and more — all in one place.</p>
+        <div class="cm-badge-row">
+          <a href="https://apps.apple.com/app/connectme-event-marketplace/id6761668389" target="_blank" rel="noopener noreferrer" aria-label="Download on the App Store">
+            <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" alt="Download on the App Store">
+          </a>
+          <a href="https://play.google.com/store/apps/details?id=com.connectmeapp.services" target="_blank" rel="noopener noreferrer" aria-label="Get it on Google Play">
+            <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play">
+          </a>
+        </div>
+        <div class="cm-hero-stats">
+          <div class="cm-stat">
+            <strong>100+</strong>
+            <span>Vendors</span>
+          </div>
+          <div class="cm-stat">
+            <strong>4.9</strong>
+            <span>App Rating</span>
+          </div>
+          <div class="cm-stat">
+            <strong>Free</strong>
+            <span>To Download</span>
+          </div>
+        </div>
+      </div>
+      <div class="cm-phone-mockup">
+        <div class="cm-phone-notch"></div>
+        <div class="cm-phone-screen">
+          <div class="cm-screen-logo">ConnectMe</div>
+          <div class="cm-screen-tagline">Event Marketplace</div>
+          <div class="cm-screen-cards">
+            <div class="cm-screen-card">
+              <div class="cm-screen-card-icon">&#x1F50D;</div>
+              <div class="cm-screen-card-text">Find Vendors<br><small>DJs, Caterers, Photographers...</small></div>
+            </div>
+            <div class="cm-screen-card">
+              <div class="cm-screen-card-icon">&#x1F4C5;</div>
+              <div class="cm-screen-card-text">Book Instantly<br><small>Secure your date in seconds</small></div>
+            </div>
+            <div class="cm-screen-card">
+              <div class="cm-screen-card-icon">&#x1F4AC;</div>
+              <div class="cm-screen-card-text">Chat &amp; Plan<br><small>Message vendors directly</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="cm-features" id="features">
+    <div class="cm-features-inner">
+      <h2>Everything You Need to <span>Plan Your Event</span></h2>
+      <p>ConnectMe brings together the best local vendors and makes booking seamless from start to finish.</p>
+      <div class="cm-features-grid">
+        <div class="cm-feature-card">
+          <div class="cm-feature-icon">&#x1F50D;</div>
+          <h3>Find Vendors</h3>
+          <p>Browse a curated marketplace of DJs, caterers, photographers, florists, and more in your area.</p>
+        </div>
+        <div class="cm-feature-card">
+          <div class="cm-feature-icon">&#x2705;</div>
+          <h3>Book with Confidence</h3>
+          <p>Secure bookings with transparent pricing, verified reviews, and safe in-app payments.</p>
+        </div>
+        <div class="cm-feature-card">
+          <div class="cm-feature-icon">&#x1F4AC;</div>
+          <h3>Stay Connected</h3>
+          <p>Chat directly with vendors, share details, and get real-time updates on your bookings.</p>
+        </div>
+        <div class="cm-feature-card">
+          <div class="cm-feature-icon">&#x1F389;</div>
+          <h3>Plan Events</h3>
+          <p>Coordinate multiple vendors for one event. Keep everything organized in a single dashboard.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="cm-cta-banner">
+    <div class="cm-cta-banner-inner">
+      <h2>Ready to Make Your Event Unforgettable?</h2>
+      <p>Join thousands of hosts and vendors already using ConnectMe.</p>
+      <div class="cm-badge-row">
+        <a href="https://apps.apple.com/app/connectme-event-marketplace/id6761668389" target="_blank" rel="noopener noreferrer" aria-label="Download on the App Store">
+          <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" alt="Download on the App Store">
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.connectmeapp.services" target="_blank" rel="noopener noreferrer" aria-label="Get it on Google Play">
+          <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play">
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="cm-footer">
+    <div class="cm-footer-inner">
+      <div class="cm-footer-brand">
+        <div class="cm-footer-logo">ConnectMe</div>
+        <p>The event marketplace that connects you with the best local vendors for any occasion.</p>
+      </div>
+      <div class="cm-footer-col">
+        <h4>App</h4>
+        <ul>
+          <li><a href="https://apps.apple.com/app/connectme-event-marketplace/id6761668389">Download for iOS</a></li>
+          <li><a href="https://play.google.com/store/apps/details?id=com.connectmeapp.services">Download for Android</a></li>
+        </ul>
+      </div>
+      <div class="cm-footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="https://connectmeapp.services">Home</a></li>
+          <li><a href="https://connectmeapp.services/privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="mailto:contact@connectmeapp.services">Contact</a></li>
+        </ul>
+      </div>
+      <div class="cm-footer-col">
+        <h4>Vendors</h4>
+        <ul>
+          <li><a href="https://connectmeapp.services">Become a Vendor</a></li>
+          <li><a href="https://connectmeapp.services">Vendor Resources</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="cm-footer-bottom">
+      &copy; 2026 ConnectMe App, LLC. All rights reserved.
+    </div>
+  </footer>
+
+</body>
+</html>
