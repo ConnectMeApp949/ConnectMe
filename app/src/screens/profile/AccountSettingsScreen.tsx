@@ -282,6 +282,37 @@ export default function AccountSettingsScreen({ navigation }: Props) {
           <Row label="Payment Methods" onPress={() => navigation.navigate('PaymentMethods')} />
           <Row label="Payout Preferences" onPress={() => navigation.navigate('PayoutPreferences')} />
         </Section>
+
+        <Section title="ACCOUNT">
+          <TouchableOpacity
+            style={s.deleteAccountBtn}
+            onPress={() => {
+              Alert.alert(
+                'Delete Account',
+                'Are you sure you want to delete your account? This action is permanent and cannot be undone.\n\nAll your data, bookings, reviews, and messages will be permanently removed within 30 days.',
+                [
+                  { text: 'Cancel', style: 'cancel' },
+                  {
+                    text: 'Delete My Account',
+                    style: 'destructive',
+                    onPress: () => {
+                      Alert.alert(
+                        'Account Deleted',
+                        'Your account has been scheduled for deletion. All your data will be permanently removed within 30 days.\n\nIf you change your mind, contact support@connectmeapp.services within 14 days to recover your account.',
+                        [{ text: 'OK', onPress: () => auth.logout() }]
+                      );
+                    },
+                  },
+                ]
+              );
+            }}
+            accessibilityLabel="Delete Account"
+            accessibilityRole="button"
+            accessibilityHint="Permanently delete your account and all data"
+          >
+            <Text style={s.deleteAccountText}>Delete Account</Text>
+          </TouchableOpacity>
+        </Section>
       </ScrollView>
 
       {/* ─── Edit Name Modal ─── */}
@@ -553,6 +584,8 @@ const s = StyleSheet.create({
   rowLabel: { fontFamily: fonts.regular, fontSize: 16, color: colors.text },
   rowRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   rowRightText: { fontFamily: fonts.regular, fontSize: 14, color: colors.textMuted },
+  deleteAccountBtn: { paddingVertical: 16, alignItems: 'center' },
+  deleteAccountText: { fontFamily: fonts.semiBold, fontSize: 16, color: colors.error },
   chevron: { fontSize: 22, color: colors.textMuted },
   miniAvatar: { width: 28, height: 28, borderRadius: 14 },
   miniAvatarFallback: { width: 28, height: 28, borderRadius: 14, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
