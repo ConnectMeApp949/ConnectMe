@@ -21,7 +21,7 @@ export const BADGES: Record<BadgeType, BadgeDefinition> = {
   SUPER_VENDOR: {
     type: 'SUPER_VENDOR',
     label: 'Super Vendor',
-    icon: 'trophy',
+    icon: '🏆',
     backgroundColor: colors.primary,
     textColor: colors.white,
   },

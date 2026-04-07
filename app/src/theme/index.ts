@@ -1,41 +1,41 @@
 export const colors = {
-  primary: '#AA8330',        // warm gold (from website)
-  accent: '#C9A55C',         // lighter gold
-  secondary: '#E31C5F',      // keep the pink action color (for CTAs like Book Now)
+  primary: '#2A8B8B',        // dark teal (main brand color)
+  accent: '#4DB8A4',         // medium teal
+  secondary: '#E31C5F',      // keep pink for CTAs
   background: '#FFFFFF',
-  backgroundWarm: '#FEF2E4', // cream from website
-  cardBackground: '#FBF7F2', // warm off-white (warmer than current gray)
-  text: '#151515',           // near black (from website)
-  textSecondary: '#575757',  // medium gray (from website)
-  textMuted: '#9CA3AF',
-  border: '#E8E2D9',         // warm border (not cold gray)
+  backgroundWarm: '#E8F6F3', // very light teal tint
+  cardBackground: '#F2FAF8', // subtle teal-tinted white
+  text: '#1A2B2B',           // dark teal-black
+  textSecondary: '#4A6B6B',  // medium teal-gray
+  textMuted: '#8BA5A5',      // muted teal-gray
+  border: '#D0E4E0',         // light teal border
   error: '#DC2626',
   success: '#16A34A',
   warning: '#F59E0B',
   star: '#F59E0B',
   white: '#FFFFFF',
-  lightBlue: '#FEF2E4',      // replace cold blue with warm cream
+  lightBlue: '#E8F6F3',      // light teal background
 } as const;
 
 export const lightColors = { ...colors } as const;
 
 export const darkColors = {
-  primary: '#C9A55C',        // lighter gold for dark backgrounds
-  accent: '#D4B877',
+  primary: '#4DB8A4',        // lighter teal for dark backgrounds
+  accent: '#7DD4C4',
   secondary: '#FF4081',
-  background: '#1A1714',     // warm dark (not cold #121212)
-  backgroundWarm: '#2A2520',
-  cardBackground: '#252018', // warm dark card
-  text: '#F5F0EB',          // warm white
-  textSecondary: '#B8AFA3',  // warm gray
-  textMuted: '#7A7268',
-  border: '#3D3630',         // warm dark border
+  background: '#0F1A1A',     // dark teal-black
+  backgroundWarm: '#152222',
+  cardBackground: '#1A2D2D', // dark teal card
+  text: '#E8F6F3',          // light teal white
+  textSecondary: '#A3C4BE',  // light teal gray
+  textMuted: '#6B8E87',
+  border: '#2D4A45',         // dark teal border
   error: '#EF5350',
   success: '#66BB6A',
   warning: '#FFA726',
   star: '#FFA726',
   white: '#FFFFFF',
-  lightBlue: '#2A2520',
+  lightBlue: '#152222',
 } as const;
 
 export const fonts = {

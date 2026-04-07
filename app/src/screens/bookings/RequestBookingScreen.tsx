@@ -1,16 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Platform,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
-import { ChevronLeftIcon, CalendarIcon, ShieldIcon, CheckIcon } from '../../components/Icons';
+import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon, ShieldIcon, CheckIcon, ClockIcon } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'RequestBooking'>;
 
 const EVENT_TYPES = ['Wedding', 'Birthday', 'Corporate', 'Quinceañera', 'Festival', 'Private Party', 'Other'];
+
+const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function generateTimeSlots(): string[] {
+  const slots: string[] = [];
+  for (let h = 6; h < 24; h++) {
+    for (let m = 0; m < 60; m += 15) {
+      const hour12 = h % 12 === 0 ? 12 : h % 12;
+      const ampm = h < 12 ? 'AM' : 'PM';
+      const min = m.toString().padStart(2, '0');
+      slots.push(`${hour12}:${min} ${ampm}`);
+    }
+  }
+  return slots;
+}
+
+const TIME_SLOTS = generateTimeSlots();
+
+function parseTimeSlot(slot: string): { hours: number; minutes: number } {
+  const [time, ampm] = slot.split(' ');
+  const [hStr, mStr] = time.split(':');
+  let hours = parseInt(hStr, 10);
+  const minutes = parseInt(mStr, 10);
+  if (ampm === 'PM' && hours !== 12) hours += 12;
+  if (ampm === 'AM' && hours === 12) hours = 0;
+  return { hours, minutes };
+}
+
+function getDaysInMonth(year: number, month: number): number {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function getFirstDayOfWeek(year: number, month: number): number {
+  return new Date(year, month, 1).getDay();
+}
+
+function isSameDay(a: Date, b: Date): boolean {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+function formatDuration(startSlot: string, endSlot: string): string {
+  const start = parseTimeSlot(startSlot);
+  const end = parseTimeSlot(endSlot);
+  let diffMin = (end.hours * 60 + end.minutes) - (start.hours * 60 + start.minutes);
+  if (diffMin <= 0) return '--';
+  const hours = Math.floor(diffMin / 60);
+  const mins = diffMin % 60;
+  if (hours === 0) return `${mins} min`;
+  if (mins === 0) return `${hours} hr`;
+  return `${hours} hr ${mins} min`;
+}
 
 const PROMO_CODES: Record<string, { type: 'percent' | 'flat'; value: number; label: string }> = {
   WELCOME10: { type: 'percent', value: 10, label: 'WELCOME10 applied — 10% off!' },
@@ -26,11 +76,28 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
 
   const [eventType, setEventType] = useState('');
   const [eventDate, setEventDate] = useState<Date | null>(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [startTime, setStartTime] = useState<string | null>(null);
+  const [endTime, setEndTime] = useState<string | null>(null);
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const d = new Date();
+    return { year: d.getFullYear(), month: d.getMonth() };
+  });
   const [guestCount, setGuestCount] = useState('50');
   const [location, setLocation] = useState('');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
+  const minDate = useMemo(() => {
+    const d = new Date(today);
+    d.setDate(d.getDate() + 14);
+    return d;
+  }, [today]);
 
   const [promoExpanded, setPromoExpanded] = useState(false);
   const [promoInput, setPromoInput] = useState('');
@@ -53,7 +120,7 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
 
   const protectionFee = protectionEnabled ? PROTECTION_FLAT_FEE : 0;
   const total = parseFloat((subtotal - discount + protectionFee).toFixed(2));
-  const isValid = eventType && eventDate && location.trim();
+  const isValid = eventType && eventDate && startTime && endTime && location.trim();
 
   function handleApplyPromo() {
     const code = promoInput.trim().toUpperCase();
@@ -130,27 +197,122 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
           ))}
         </View>
 
-        {/* Date */}
+        {/* Date — mini calendar */}
         <Text style={s.label}>Event date</Text>
-        <TouchableOpacity style={s.inputBtn} onPress={() => setShowDatePicker(true)} activeOpacity={0.6} accessibilityLabel={eventDate ? `Event date: ${formatDate(eventDate)}` : 'Select event date'} accessibilityRole="button" accessibilityHint="Opens a date picker">
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <CalendarIcon size={18} color={eventDate ? colors.text : colors.textMuted} />
-            <Text style={[s.inputBtnText, !eventDate && s.inputBtnPlaceholder]}>
-              {eventDate ? formatDate(eventDate) : 'Select a date'}
-            </Text>
+        {(() => {
+          const { year, month } = calendarMonth;
+          const daysInMonth = getDaysInMonth(year, month);
+          const firstDay = getFirstDayOfWeek(year, month);
+          const monthLabel = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+          const canGoPrev = new Date(year, month) > new Date(today.getFullYear(), today.getMonth());
+
+          const cells: (number | null)[] = [];
+          for (let i = 0; i < firstDay; i++) cells.push(null);
+          for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+          return (
+            <View style={s.calendarCard}>
+              <View style={s.calendarHeader}>
+                <TouchableOpacity onPress={() => { const prev = month === 0 ? { year: year - 1, month: 11 } : { year, month: month - 1 }; if (canGoPrev) setCalendarMonth(prev); }} disabled={!canGoPrev} activeOpacity={0.6} accessibilityLabel="Previous month" accessibilityRole="button">
+                  <ChevronLeftIcon size={20} color={canGoPrev ? colors.text : colors.border} strokeWidth={2} />
+                </TouchableOpacity>
+                <Text style={s.calendarMonthLabel}>{monthLabel}</Text>
+                <TouchableOpacity onPress={() => { const next = month === 11 ? { year: year + 1, month: 0 } : { year, month: month + 1 }; setCalendarMonth(next); }} activeOpacity={0.6} accessibilityLabel="Next month" accessibilityRole="button">
+                  <ChevronRightIcon size={20} color={colors.text} strokeWidth={2} />
+                </TouchableOpacity>
+              </View>
+              <View style={s.calendarWeekRow}>
+                {WEEKDAY_LABELS.map((w) => (
+                  <Text key={w} style={s.calendarWeekDay}>{w}</Text>
+                ))}
+              </View>
+              <View style={s.calendarGrid}>
+                {cells.map((day, idx) => {
+                  if (day === null) return <View key={`e-${idx}`} style={s.calendarCell} />;
+                  const cellDate = new Date(year, month, day);
+                  cellDate.setHours(0, 0, 0, 0);
+                  const isPast = cellDate < minDate;
+                  const isSelected = eventDate ? isSameDay(cellDate, eventDate) : false;
+                  return (
+                    <TouchableOpacity
+                      key={day}
+                      style={[s.calendarCell, isSelected && s.calendarCellSelected]}
+                      disabled={isPast}
+                      onPress={() => setEventDate(cellDate)}
+                      activeOpacity={0.6}
+                      accessibilityLabel={`${monthLabel} ${day}${isPast ? ', unavailable' : ''}${isSelected ? ', selected' : ''}`}
+                      accessibilityRole="button"
+                      accessibilityState={{ disabled: isPast, selected: isSelected }}
+                    >
+                      <Text style={[s.calendarDayText, isPast && s.calendarDayDisabled, isSelected && s.calendarDaySelected]}>{day}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          );
+        })()}
+        {eventDate && (
+          <Text style={s.selectedDateText}>
+            <CalendarIcon size={14} color={colors.text} /> {formatDate(eventDate)}
+          </Text>
+        )}
+
+        {/* Start Time */}
+        <Text style={s.label}>Start time</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.timeSlotRow}>
+          {TIME_SLOTS.map((slot) => (
+            <TouchableOpacity
+              key={`start-${slot}`}
+              style={[s.timeSlotChip, startTime === slot && s.timeSlotChipActive]}
+              onPress={() => {
+                setStartTime(slot);
+                if (endTime) {
+                  const s1 = parseTimeSlot(slot);
+                  const e1 = parseTimeSlot(endTime);
+                  if (s1.hours * 60 + s1.minutes >= e1.hours * 60 + e1.minutes) setEndTime(null);
+                }
+              }}
+              activeOpacity={0.7}
+              accessibilityLabel={`Start time ${slot}`}
+              accessibilityRole="button"
+              accessibilityState={{ selected: startTime === slot }}
+            >
+              <Text style={[s.timeSlotText, startTime === slot && s.timeSlotTextActive]}>{slot}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {/* End Time */}
+        <Text style={s.label}>End time</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.timeSlotRow}>
+          {TIME_SLOTS.filter((slot) => {
+            if (!startTime) return true;
+            const s1 = parseTimeSlot(startTime);
+            const e1 = parseTimeSlot(slot);
+            return e1.hours * 60 + e1.minutes > s1.hours * 60 + s1.minutes;
+          }).map((slot) => (
+            <TouchableOpacity
+              key={`end-${slot}`}
+              style={[s.timeSlotChip, endTime === slot && s.timeSlotChipActive]}
+              onPress={() => setEndTime(slot)}
+              activeOpacity={0.7}
+              accessibilityLabel={`End time ${slot}`}
+              accessibilityRole="button"
+              accessibilityState={{ selected: endTime === slot }}
+            >
+              <Text style={[s.timeSlotText, endTime === slot && s.timeSlotTextActive]}>{slot}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {/* Duration display */}
+        {startTime && endTime && (
+          <View style={s.durationRow}>
+            <ClockIcon size={16} color={colors.primary} strokeWidth={1.5} />
+            <Text style={s.durationText}>Duration: {formatDuration(startTime, endTime)}</Text>
           </View>
-        </TouchableOpacity>
-        {showDatePicker && (
-          <DateTimePicker
-            value={eventDate || new Date()}
-            mode="date"
-            minimumDate={new Date()}
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={(e: DateTimePickerEvent, d?: Date) => {
-              setShowDatePicker(Platform.OS === 'ios');
-              if (d) setEventDate(d);
-            }}
-          />
         )}
 
         {/* Guest count */}
@@ -390,6 +552,29 @@ const s = StyleSheet.create({
 
   input: { fontFamily: fonts.regular, fontSize: 15, color: colors.text, borderWidth: 1.5, borderColor: colors.border, borderRadius: borderRadius.md, paddingHorizontal: 16, height: 48, backgroundColor: colors.cardBackground },
   inputMulti: { height: 100, paddingVertical: 12, textAlignVertical: 'top' },
+
+  // Mini calendar
+  calendarCard: { borderWidth: 1.5, borderColor: colors.border, borderRadius: borderRadius.md, padding: 12, backgroundColor: colors.cardBackground },
+  calendarHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  calendarMonthLabel: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.text },
+  calendarWeekRow: { flexDirection: 'row', marginBottom: 4 },
+  calendarWeekDay: { flex: 1, textAlign: 'center', fontFamily: fonts.medium, fontSize: 12, color: colors.textMuted },
+  calendarGrid: { flexDirection: 'row', flexWrap: 'wrap' },
+  calendarCell: { width: '14.28%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center' },
+  calendarCellSelected: { backgroundColor: colors.text, borderRadius: 20 },
+  calendarDayText: { fontFamily: fonts.medium, fontSize: 14, color: colors.text },
+  calendarDayDisabled: { color: colors.border },
+  calendarDaySelected: { color: colors.white, fontFamily: fonts.bold },
+  selectedDateText: { fontFamily: fonts.medium, fontSize: 13, color: colors.text, marginTop: 8 },
+
+  // Time slot pickers
+  timeSlotRow: { paddingVertical: 4, gap: 8 },
+  timeSlotChip: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 10, borderWidth: 1.5, borderColor: colors.border, backgroundColor: colors.cardBackground },
+  timeSlotChipActive: { backgroundColor: colors.text, borderColor: colors.text },
+  timeSlotText: { fontFamily: fonts.medium, fontSize: 13, color: colors.text },
+  timeSlotTextActive: { color: colors.white },
+  durationRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8, paddingVertical: 8, paddingHorizontal: 12, backgroundColor: colors.backgroundWarm ?? colors.cardBackground, borderRadius: borderRadius.sm },
+  durationText: { fontFamily: fonts.semiBold, fontSize: 14, color: colors.primary },
 
   priceCard: { backgroundColor: colors.cardBackground, borderRadius: 12, padding: 16, marginTop: 24, borderWidth: 1, borderColor: colors.border },
   priceTitle: { fontFamily: fonts.bold, fontSize: 16, color: colors.text, marginBottom: 12 },

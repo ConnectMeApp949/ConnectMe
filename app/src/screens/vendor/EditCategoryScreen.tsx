@@ -11,7 +11,7 @@ type Props = NativeStackScreenProps<any, 'EditCategory'>;
 
 const CATEGORIES = [
   { id: 'FOOD_TRUCK', label: 'Food Truck', Icon: TruckIcon },
-  { id: 'DJ', label: 'DJ', Icon: MusicIcon },
+  { id: 'DJ', label: 'Event Entertainment', Icon: MusicIcon },
   { id: 'CATERING', label: 'Catering', Icon: UtensilsIcon },
   { id: 'WEDDING_SERVICES', label: 'Wedding Services', Icon: RingsIcon },
   { id: 'PHOTOGRAPHY', label: 'Photography', Icon: ApertureIcon },

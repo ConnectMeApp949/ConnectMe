@@ -93,9 +93,9 @@ export default function ProfileScreen({ navigation }: Props) {
 
         {/* ─── Vendor mode banner ─── */}
         {auth.isVendorMode ? (
-          <TouchableOpacity style={styles.vendorBanner} activeOpacity={0.8} onPress={() => auth.toggleVendorMode()} accessibilityLabel="Switch to traveling" accessibilityRole="button" accessibilityHint="Browse and book vendors for your events">
+          <TouchableOpacity style={styles.vendorBanner} activeOpacity={0.8} onPress={() => auth.toggleVendorMode()} accessibilityLabel="Switch to Booking" accessibilityRole="button" accessibilityHint="Browse and book vendors for your events">
             <View style={styles.vendorBannerLeft}>
-              <Text style={styles.vendorBannerTitle}>Switch to traveling</Text>
+              <Text style={styles.vendorBannerTitle}>Switch to Booking</Text>
               <Text style={styles.vendorBannerSub}>Browse and book vendors for your events</Text>
             </View>
             <ChevronRightIcon size={24} color={colors.primary} strokeWidth={1.5} />

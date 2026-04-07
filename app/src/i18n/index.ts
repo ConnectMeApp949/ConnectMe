@@ -2,7 +2,7 @@ const translations = {
   en: {
     // Tabs
     explore: 'Explore',
-    wishlists: 'Wishlists',
+    wishlists: 'Favorites',
     bookings: 'Bookings',
     messages: 'Messages',
     profile: 'Profile',

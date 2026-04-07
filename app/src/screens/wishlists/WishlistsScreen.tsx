@@ -13,7 +13,7 @@ import {
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 
 const CATEGORY_LABELS: Record<string, string> = {
-  FOOD_TRUCK: 'Food Trucks', DJ: 'DJs', CATERING: 'Catering',
+  FOOD_TRUCK: 'Food Trucks', DJ: 'Event Entertainment', CATERING: 'Catering',
   WEDDING_SERVICES: 'Weddings', PHOTOGRAPHY: 'Photography',
   ENTERTAINMENT: 'Entertainment', OTHER: 'Other',
 };
@@ -220,7 +220,7 @@ export default function WishlistsScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={s.container} edges={['top']}>
-      <Text style={s.header}>Wishlists</Text>
+      <Text style={s.header}>Favorites</Text>
 
       {/* Tab toggle */}
       <View style={s.tabToggle}>

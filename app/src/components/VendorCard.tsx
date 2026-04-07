@@ -15,7 +15,7 @@ const UNIT_SHORT: Record<string, string> = {
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
-  FOOD_TRUCK: 'Food Truck', DJ: 'DJ', CATERING: 'Catering',
+  FOOD_TRUCK: 'Food Truck', DJ: 'Event Entertainment', CATERING: 'Catering',
   WEDDING_SERVICES: 'Weddings', PHOTOGRAPHY: 'Photography',
   ENTERTAINMENT: 'Entertainment', OTHER: 'Other',
 };
@@ -87,7 +87,7 @@ export default function VendorCard({ vendor, onPress, variant = 'grid' }: Vendor
           onPress={(e) => { e.stopPropagation?.(); toggle(vendor); }}
           accessibilityLabel={saved ? `Remove ${vendor.businessName} from saved` : `Save ${vendor.businessName}`}
           accessibilityRole="button"
-          accessibilityHint={saved ? 'Removes this vendor from your wishlists' : 'Adds this vendor to your wishlists'}
+          accessibilityHint={saved ? 'Removes this vendor from your favorites' : 'Adds this vendor to your favorites'}
         >
           {saved ? <HeartFilledIcon size={18} color={colors.error} /> : <HeartIcon size={18} color={colors.textMuted} strokeWidth={1.5} />}
         </TouchableOpacity>

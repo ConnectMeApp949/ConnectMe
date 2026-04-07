@@ -15,7 +15,7 @@ import { useSavedSearches } from '../../hooks/useSavedSearches';
 const CATEGORIES = [
   { id: '', label: 'All' },
   { id: 'FOOD_TRUCK', label: 'Food Trucks' },
-  { id: 'DJ', label: 'DJs' },
+  { id: 'DJ', label: 'Event Entertainment' },
   { id: 'CATERING', label: 'Catering' },
   { id: 'WEDDING_SERVICES', label: 'Weddings' },
   { id: 'PHOTOGRAPHY', label: 'Photography' },

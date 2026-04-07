@@ -422,7 +422,10 @@ export const RingsIcon: React.FC<IconProps> = ({
   size = defaultProps.size, color = defaultProps.color, strokeWidth = defaultProps.strokeWidth,
 }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-    <Path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    <Circle cx="12" cy="14" r="6" />
+    <Path d="M12 8L9 4h6l-3 4z" />
+    <Line x1="9" y1="4" x2="7" y2="2" />
+    <Line x1="15" y1="4" x2="17" y2="2" />
   </Svg>
 );
 
@@ -563,6 +566,19 @@ export const BookmarkFilledIcon: React.FC<IconProps> = ({
 }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
     <Path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+  </Svg>
+);
+
+export const TrophyIcon: React.FC<IconProps> = ({
+  size = defaultProps.size, color = defaultProps.color, strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Path d="M6 9H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3" />
+    <Path d="M18 9h3a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-3" />
+    <Path d="M6 4h12v6a6 6 0 0 1-12 0V4z" />
+    <Path d="M10 16h4" />
+    <Path d="M12 16v4" />
+    <Path d="M8 20h8" />
   </Svg>
 );
 

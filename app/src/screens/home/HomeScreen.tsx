@@ -17,7 +17,7 @@ import RateAppPrompt from '../../components/RateAppPrompt';
 const CATEGORIES = [
   { id: '', label: 'All', Icon: TrendingIcon },
   { id: 'FOOD_TRUCK', label: 'Food Trucks', Icon: TruckIcon },
-  { id: 'DJ', label: 'DJs', Icon: MusicIcon },
+  { id: 'DJ', label: 'Event Entertainment', Icon: MusicIcon },
   { id: 'CATERING', label: 'Catering', Icon: UtensilsIcon },
   { id: 'WEDDING_SERVICES', label: 'Weddings', Icon: RingsIcon },
   { id: 'PHOTOGRAPHY', label: 'Photography', Icon: ApertureIcon },

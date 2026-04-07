@@ -11,7 +11,7 @@ type Props = NativeStackScreenProps<OnboardingStackParamList, 'VendorType'>;
 
 const CATEGORIES = [
   { id: 'FOOD_TRUCK', label: 'Food Truck', icon: 'truck' },
-  { id: 'DJ', label: 'DJ', icon: 'music' },
+  { id: 'DJ', label: 'Event Entertainment', icon: 'music' },
   { id: 'CATERING', label: 'Catering', icon: 'utensils' },
   { id: 'WEDDING_SERVICES', label: 'Wedding Services', icon: 'rings' },
   { id: 'PHOTOGRAPHY', label: 'Photography', icon: 'aperture' },
