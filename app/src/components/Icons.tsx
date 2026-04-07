@@ -578,13 +578,17 @@ export const CompassIcon: React.FC<IconProps> = ({
   </Svg>
 );
 
-// Wellness icon (lotus/health)
+// Wellness icon (lotus flower)
 export const WellnessIcon: React.FC<IconProps> = ({
   size = defaultProps.size, color = defaultProps.color, strokeWidth = defaultProps.strokeWidth,
 }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-    <Path d="M12 22c-4-3-8-6-8-11a8 8 0 0 1 16 0c0 5-4 8-8 11z" />
-    <Circle cx="12" cy="11" r="3" />
+    <Path d="M12 3c-3 4-5 8-5 11a5 5 0 0 0 10 0c0-3-2-7-5-11z" />
+    <Path d="M5 10c2 1 4 4 4 7" />
+    <Path d="M19 10c-2 1-4 4-4 7" />
+    <Path d="M2 14c3-1 6 0 7 3" />
+    <Path d="M22 14c-3-1-6 0-7 3" />
+    <Line x1="12" y1="14" x2="12" y2="21" />
   </Svg>
 );
 
