@@ -87,7 +87,7 @@ export default function WelcomeScreen({ navigation }: Props) {
         const accessToken = params.get('access_token');
         if (accessToken) {
           // TODO: Send token to backend to verify and create/login user
-          Alert.alert('Facebook Login', 'Successfully authenticated with Facebook. Backend integration pending.');
+          Alert.alert('Sign In', 'Social sign-in is being set up. Please use email and password to sign in for now.', [{ text: 'OK' }]);
         }
       }
     } catch (error) {
@@ -110,7 +110,7 @@ export default function WelcomeScreen({ navigation }: Props) {
         const accessToken = params.get('access_token');
         if (accessToken) {
           // TODO: Send token to backend to verify and create/login user
-          Alert.alert('Google Login', 'Successfully authenticated with Google. Backend integration pending.');
+          Alert.alert('Sign In', 'Social sign-in is being set up. Please use email and password to sign in for now.', [{ text: 'OK' }]);
         }
       }
     } catch (error) {
@@ -149,7 +149,7 @@ export default function WelcomeScreen({ navigation }: Props) {
 
       if (result.type === 'success') {
         // TODO: Send authorization code to backend to verify and create/login user
-        Alert.alert('Apple Login', 'Successfully authenticated with Apple. Backend integration pending.');
+        Alert.alert('Sign In', 'Social sign-in is being set up. Please use email and password to sign in for now.', [{ text: 'OK' }]);
       }
     } catch (error) {
       Alert.alert('Apple Login', 'Apple authentication requires a custom build with proper Apple Developer configuration.');

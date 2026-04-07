@@ -125,7 +125,7 @@ export default function LeaveReviewScreen({ navigation, route }: Props) {
               try {
                 await Share.share({
                   message: `I just reviewed ${vendorName} on ConnectMe -- ${overallRating} stars!`,
-                  url: `https://connectmeapp.com/vendor/${vendor?.id}`,
+                  url: `https://connectmeapp.services/vendor/${vendor?.id}`,
                 });
               } catch {
                 // User cancelled share

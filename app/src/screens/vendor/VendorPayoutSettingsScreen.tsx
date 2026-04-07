@@ -186,7 +186,7 @@ export default function VendorPayoutSettingsScreen({ navigation }: Props) {
         <View style={s.helpCard}>
           <Text style={s.helpTitle}>Need help with payouts?</Text>
           <Text style={s.helpText}>If you have questions about your earnings, payment methods, or tax information, our support team is here to help.</Text>
-          <TouchableOpacity style={s.helpBtn} activeOpacity={0.7} onPress={() => Alert.alert('Support', 'Contact us at support@connectmeapp.com or through Live Chat in the Get Help section.')} accessibilityLabel="Contact support" accessibilityRole="button">
+          <TouchableOpacity style={s.helpBtn} activeOpacity={0.7} onPress={() => Alert.alert('Support', 'Contact us at support@connectmeapp.services or through Live Chat in the Get Help section.')} accessibilityLabel="Contact support" accessibilityRole="button">
             <Text style={s.helpBtnText}>Contact Support</Text>
           </TouchableOpacity>
         </View>

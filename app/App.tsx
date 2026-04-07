@@ -344,7 +344,7 @@ function AppContent() {
           theme={navTheme}
           // @ts-ignore – deep linking config types are overly strict for dynamic navigators
           linking={{
-            prefixes: ['connectme://', 'https://connectmeapp.com'],
+            prefixes: ['connectme://', 'https://connectmeapp.services'],
             config: {
               screens: {
                 Main: {

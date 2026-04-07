@@ -58,7 +58,7 @@ export default function VendorEarningsScreen({ navigation }: Props) {
       'Get your earnings deposited within 30 minutes for a small fee of $1.99 per transfer.\n\nRequires a debit card on file.',
       [
         { text: 'Not Now', style: 'cancel' },
-        { text: 'Set Up Fast Pay', onPress: () => Alert.alert('Coming Soon', 'Fast Pay will be available in a future update.') },
+        { text: 'Set Up Fast Pay', onPress: () => Alert.alert('Fast Pay', 'Fast Pay allows you to receive earnings within 30 minutes for a $1.99 fee per transfer.\n\nTo enable Fast Pay, add a debit card in your Payout Settings.', [{ text: 'Go to Settings', onPress: () => navigation.navigate('VendorPayoutSettings') }, { text: 'Not Now', style: 'cancel' }]) },
       ]
     );
   };

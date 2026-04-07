@@ -61,7 +61,7 @@ export default function GetHelpScreen({ navigation }: Props) {
             <Text style={s.contactTitle}>Live Chat</Text>
             <Text style={s.contactSub}>Available 9am – 6pm</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.contactCard} activeOpacity={0.7} onPress={() => Linking.openURL('mailto:support@connectmeapp.com?subject=Help Request')} accessibilityLabel="Email Us" accessibilityRole="button" accessibilityHint="Send an email to support">
+          <TouchableOpacity style={s.contactCard} activeOpacity={0.7} onPress={() => Linking.openURL('mailto:support@connectmeapp.services?subject=Help Request')} accessibilityLabel="Email Us" accessibilityRole="button" accessibilityHint="Send an email to support">
             <View style={s.contactIconWrap}>
               <MailIcon size={24} color={colors.primary} strokeWidth={1.5} />
             </View>

@@ -288,7 +288,7 @@ export default function BookingDetailScreen({ navigation, route }: Props) {
       await Share.share({
         title: `Booking with ${vendorName}`,
         message: `I just booked ${vendorName} for my event through ConnectMe!`,
-        url: `https://connectmeapp.com/vendor/${vendor?.id}`,
+        url: `https://connectmeapp.services/vendor/${vendor?.id}`,
       });
     } catch {
       // User cancelled share

@@ -21,7 +21,7 @@ const DOCS: Record<string, { title: string; lastUpdated: string; sections: { hea
       { heading: '7. Data Security', body: 'We implement industry-standard security measures to protect your information, including encryption in transit (TLS) and at rest, secure payment processing through Stripe, and regular security audits. However, no method of transmission over the internet is 100% secure.' },
       { heading: '8. Children\'s Privacy', body: 'ConnectMe is not intended for users under 18 years of age. We do not knowingly collect personal information from children. If we learn that we have collected information from a child under 18, we will delete it promptly.' },
       { heading: '9. Changes to This Policy', body: 'We may update this Privacy Policy from time to time. We will notify you of material changes via email or in-app notification at least 30 days before they take effect.' },
-      { heading: '10. Contact Us', body: 'If you have questions about this Privacy Policy or our data practices, please contact us at:\n\nConnectMe Inc.\nSan Antonio, TX\nprivacy@connectmeapp.com' },
+      { heading: '10. Contact Us', body: 'If you have questions about this Privacy Policy or our data practices, please contact us at:\n\nConnectMe Inc.\nSan Antonio, TX\nprivacy@connectmeapp.services' },
     ],
   },
   'Terms of Service': {
@@ -39,7 +39,7 @@ const DOCS: Record<string, { title: string; lastUpdated: string; sections: { hea
       { heading: '9. Limitation of Liability', body: 'ConnectMe is a marketplace platform and is not responsible for the quality, safety, or legality of vendor services. We do not guarantee vendor availability, and we are not liable for any damages arising from interactions between clients and vendors.\n\nOur total liability to you shall not exceed the amount of fees you have paid to ConnectMe in the 12 months preceding the claim.' },
       { heading: '10. Dispute Resolution', body: 'Any disputes between you and ConnectMe will be resolved through binding arbitration in accordance with the rules of the American Arbitration Association, conducted in San Antonio, Texas. You agree to waive any right to a jury trial or to participate in a class action.' },
       { heading: '11. Termination', body: 'ConnectMe may suspend or terminate your account at any time for violation of these terms or for any conduct that we determine is harmful to the platform, other users, or our business interests. You may delete your account at any time through your Privacy settings.' },
-      { heading: '12. Contact', body: 'For questions about these Terms of Service, contact us at:\n\nConnectMe Inc.\nSan Antonio, TX\nlegal@connectmeapp.com' },
+      { heading: '12. Contact', body: 'For questions about these Terms of Service, contact us at:\n\nConnectMe Inc.\nSan Antonio, TX\nlegal@connectmeapp.services' },
     ],
   },
   'Cookie Policy': {
@@ -49,7 +49,7 @@ const DOCS: Record<string, { title: string; lastUpdated: string; sections: { hea
       { heading: '1. What Are Cookies', body: 'Cookies are small text files stored on your device when you use ConnectMe. They help us remember your preferences, keep you logged in, and understand how you interact with our platform.' },
       { heading: '2. Types of Cookies We Use', body: 'Essential Cookies: Required for the platform to function, such as authentication and security tokens.\n\nFunctional Cookies: Remember your preferences like language and location settings.\n\nAnalytics Cookies: Help us understand how users interact with ConnectMe so we can improve the experience.' },
       { heading: '3. Managing Cookies', body: 'You can manage or delete cookies through your device settings. Note that disabling essential cookies may prevent certain features from working properly.' },
-      { heading: '4. Contact', body: 'For questions about our cookie practices, contact privacy@connectmeapp.com.' },
+      { heading: '4. Contact', body: 'For questions about our cookie practices, contact privacy@connectmeapp.services.' },
     ],
   },
   'Open Source Licenses': {
@@ -70,7 +70,7 @@ const DOCS: Record<string, { title: string; lastUpdated: string; sections: { hea
       { heading: 'Our Commitment', body: 'ConnectMe is committed to ensuring digital accessibility for people with disabilities. We continually improve the user experience for everyone and apply the relevant accessibility standards.' },
       { heading: 'Standards', body: 'We aim to conform to the Web Content Accessibility Guidelines (WCAG) 2.1 at Level AA. These guidelines explain how to make digital content more accessible to people with a wide range of disabilities.' },
       { heading: 'Features', body: 'ConnectMe includes the following accessibility features:\n\n• Compatible with VoiceOver (iOS) and TalkBack (Android)\n• All interactive elements include accessibility labels\n• Support for Dynamic Type / system font scaling\n• Sufficient color contrast ratios throughout the app\n• Touch targets meet minimum size guidelines (44×44 points)' },
-      { heading: 'Feedback', body: 'We welcome your feedback on the accessibility of ConnectMe. If you encounter accessibility barriers, please contact us:\n\nEmail: accessibility@connectmeapp.com\n\nWe aim to respond to feedback within 2 business days.' },
+      { heading: 'Feedback', body: 'We welcome your feedback on the accessibility of ConnectMe. If you encounter accessibility barriers, please contact us:\n\nEmail: accessibility@connectmeapp.services\n\nWe aim to respond to feedback within 2 business days.' },
     ],
   },
 };

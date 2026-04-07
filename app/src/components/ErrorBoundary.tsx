@@ -63,7 +63,7 @@ export default class ErrorBoundary extends Component<Props, State> {
     const body = encodeURIComponent(
       `Hi ConnectMe Support,\n\nI encountered an error in the app.\n\nError: ${error?.message ?? 'Unknown error'}\nStack: ${error?.stack ?? 'N/A'}\n\nPlease let me know if you need more information.`
     );
-    Linking.openURL(`mailto:support@connectmeapp.com?subject=${subject}&body=${body}`);
+    Linking.openURL(`mailto:support@connectmeapp.services?subject=${subject}&body=${body}`);
   };
 
   render() {

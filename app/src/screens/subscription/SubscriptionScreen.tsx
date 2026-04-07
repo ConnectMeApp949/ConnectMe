@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Linking,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -245,8 +245,7 @@ export default function SubscriptionScreen({ navigation }: Props) {
           <TouchableOpacity
             style={styles.billingBtn}
             onPress={() => {
-              // TODO: Get Stripe Customer Portal URL from API and open
-              Linking.openURL('https://billing.stripe.com/p/login/placeholder');
+              Alert.alert('Manage Subscription', 'To manage your subscription, visit your account settings or contact support at support@connectmeapp.services', [{ text: 'OK' }]);
             }}
           >
             <FileTextIcon size={24} color={colors.textSecondary} />
