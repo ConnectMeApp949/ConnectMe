@@ -6,7 +6,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, HeartFilledIcon, HeartIcon, UsersIcon } from '../../components/Icons';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api-production-dda7.up.railway.app';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 type Props = NativeStackScreenProps<any, 'Connections'>;
 
 export default function ConnectionsScreen({ navigation }: Props) {

@@ -3,11 +3,15 @@ import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native'
 import { colors, fonts, spacing, borderRadius } from '../theme';
 import { AlertCircleIcon } from './Icons';
 
-// To enable Sentry crash reporting:
-// 1. Install: npx expo install @sentry/react-native
-// 2. Import: import * as Sentry from '@sentry/react-native';
-// 3. Initialize in App.tsx: Sentry.init({ dsn: 'YOUR_SENTRY_DSN' });
-// 4. Replace reportError with: Sentry.captureException(error);
+// Sentry integration: automatically reports errors when @sentry/react-native
+// is installed and initialized. Falls back to console logging otherwise.
+// See /Users/jakehaggard/Desktop/Sentry_Setup_Guide.md for setup instructions.
+let Sentry: any = null;
+try {
+  Sentry = require('@sentry/react-native');
+} catch {
+  // @sentry/react-native not installed — Sentry reporting disabled
+}
 
 interface Props {
   children: ReactNode;
@@ -20,15 +24,20 @@ interface State {
 
 /**
  * Reports an error to the appropriate destination based on environment.
- * In development, logs to the console. In production, sends to a crash
- * reporting service (replace the production branch with Sentry or similar).
+ * In development, logs to the console. In production, sends to Sentry
+ * if configured, otherwise logs to the console as a fallback.
  */
 function reportError(error: Error, info?: ErrorInfo): void {
   if (__DEV__) {
     console.error('[ErrorBoundary] Caught:', error, info);
+  } else if (Sentry) {
+    Sentry.captureException(error, {
+      extra: {
+        componentStack: info?.componentStack,
+      },
+    });
   } else {
-    // Production: send to crash reporting service.
-    // Replace this with Sentry.captureException(error) once configured.
+    // Fallback when Sentry is not configured
     console.error('[ErrorBoundary] Production error:', error.message);
   }
 }

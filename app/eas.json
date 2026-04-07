@@ -22,7 +22,7 @@
       "extends": "base",
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api-production-dda7.up.railway.app"
+        "EXPO_PUBLIC_API_URL": "https://api.connectmeapp.services"
       }
     },
     "production": {
@@ -32,7 +32,7 @@
         "image": "latest"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api-production-dda7.up.railway.app"
+        "EXPO_PUBLIC_API_URL": "https://api.connectmeapp.services"
       }
     }
   },

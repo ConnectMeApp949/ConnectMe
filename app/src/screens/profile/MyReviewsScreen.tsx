@@ -8,7 +8,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, StarIcon, StarOutlineIcon } from '../../components/Icons';
 import Skeleton from '../../components/Skeleton';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api-production-dda7.up.railway.app';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
 type Props = NativeStackScreenProps<any, 'MyReviews'>;
 

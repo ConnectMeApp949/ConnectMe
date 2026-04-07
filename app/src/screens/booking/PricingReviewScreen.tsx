@@ -32,7 +32,7 @@ export default function PricingReviewScreen({ navigation, route }: Props) {
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL || 'https://api-production-dda7.up.railway.app'}/bookings`,
+        `${process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services'}/bookings`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

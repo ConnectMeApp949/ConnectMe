@@ -9,7 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { CalendarIcon, DollarIcon, UserIcon, SparklesIcon, AlertCircleIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api-production-dda7.up.railway.app';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
 type Props = NativeStackScreenProps<any, 'Dashboard'>;
 

@@ -9,7 +9,7 @@ import { CalendarIcon, CheckIcon, XIcon, SearchIcon } from '../../components/Ico
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import Skeleton from '../../components/Skeleton';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api-production-dda7.up.railway.app';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
 type Props = NativeStackScreenProps<any, 'Bookings'>;
 
