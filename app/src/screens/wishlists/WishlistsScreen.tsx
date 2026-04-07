@@ -15,7 +15,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 const CATEGORY_LABELS: Record<string, string> = {
   FOOD_TRUCK: 'Food Trucks', DJ: 'Music', CATERING: 'Catering',
   WEDDING_SERVICES: 'Weddings', PHOTOGRAPHY: 'Photography',
-  ENTERTAINMENT: 'Entertainment', OTHER: 'Other',
+  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', OTHER: 'Other',
 };
 
 type Props = NativeStackScreenProps<any, 'Wishlists'>;

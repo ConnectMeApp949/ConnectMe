@@ -4,7 +4,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ProfileSetupLayout from '../../components/ProfileSetupLayout';
 import { VendorSetupParamList, CATEGORIES } from './types';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
-import { TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon } from '../../components/Icons';
+import { TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon, CompassIcon, WellnessIcon } from '../../components/Icons';
 
 const ICON_MAP: Record<string, React.FC<{ size?: number; color?: string; strokeWidth?: number }>> = {
   truck: TruckIcon,
@@ -13,6 +13,8 @@ const ICON_MAP: Record<string, React.FC<{ size?: number; color?: string; strokeW
   rings: RingsIcon,
   aperture: CameraIcon,
   sparkles: SparklesIcon,
+  compass: CompassIcon,
+  wellness: WellnessIcon,
 };
 
 type Props = NativeStackScreenProps<VendorSetupParamList, 'Category'>;

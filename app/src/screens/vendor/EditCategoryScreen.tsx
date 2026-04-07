@@ -5,6 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, borderRadius } from '../../theme';
 import {
   ChevronLeftIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon,
+  CompassIcon, WellnessIcon,
 } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'EditCategory'>;
@@ -16,6 +17,8 @@ const CATEGORIES = [
   { id: 'WEDDING_SERVICES', label: 'Wedding Services', Icon: RingsIcon },
   { id: 'PHOTOGRAPHY', label: 'Photography', Icon: CameraIcon },
   { id: 'ENTERTAINMENT', label: 'Entertainment', Icon: SparklesIcon },
+  { id: 'EXPERIENCES', label: 'Experiences', Icon: CompassIcon },
+  { id: 'WELLNESS', label: 'Wellness', Icon: WellnessIcon },
   { id: 'OTHER', label: 'Other', Icon: SparklesIcon },
 ];
 

@@ -30,6 +30,8 @@ import {
   XIcon,
   ChevronRightIcon,
   TruckIcon,
+  CompassIcon,
+  WellnessIcon,
 } from '../../components/Icons';
 
 // ─── Types ───────────────────────────────────────────────
@@ -39,7 +41,7 @@ type VendorStatus = 'Needed' | 'Booked' | 'Confirmed';
 interface ChecklistItem {
   id: string;
   category: string;
-  icon: 'music' | 'catering' | 'photography' | 'decorations' | 'entertainment' | 'transportation';
+  icon: 'music' | 'catering' | 'photography' | 'decorations' | 'entertainment' | 'transportation' | 'experiences' | 'wellness';
   vendorName: string | null;
   budget: number;
   status: VendorStatus;
@@ -87,6 +89,8 @@ const DEFAULT_CHECKLIST: () => ChecklistItem[] = () => [
   { id: generateId(), category: 'Photography', icon: 'photography', vendorName: null, budget: 0, status: 'Needed', completed: false },
   { id: generateId(), category: 'Decorations', icon: 'decorations', vendorName: null, budget: 0, status: 'Needed', completed: false },
   { id: generateId(), category: 'Entertainment', icon: 'entertainment', vendorName: null, budget: 0, status: 'Needed', completed: false },
+  { id: generateId(), category: 'Experiences', icon: 'experiences', vendorName: null, budget: 0, status: 'Needed', completed: false },
+  { id: generateId(), category: 'Wellness', icon: 'wellness', vendorName: null, budget: 0, status: 'Needed', completed: false },
   { id: generateId(), category: 'Transportation', icon: 'transportation', vendorName: null, budget: 0, status: 'Needed', completed: false },
 ];
 
@@ -139,6 +143,10 @@ function CategoryIcon({ icon, size = 20, color }: { icon: string; size?: number;
       return <SparklesIcon size={size} color={c} />;
     case 'entertainment':
       return <SparklesIcon size={size} color={c} />;
+    case 'experiences':
+      return <CompassIcon size={size} color={c} />;
+    case 'wellness':
+      return <WellnessIcon size={size} color={c} />;
     case 'transportation':
       return <TruckIcon size={size} color={c} />;
     default:
@@ -165,6 +173,8 @@ function searchCategoryFor(icon: string): string {
     case 'catering': return 'CATERING';
     case 'photography': return 'PHOTOGRAPHY';
     case 'entertainment': return 'ENTERTAINMENT';
+    case 'experiences': return 'EXPERIENCES';
+    case 'wellness': return 'WELLNESS';
     case 'transportation': return 'FOOD_TRUCK'; // closest available
     case 'decorations': return 'WEDDING_SERVICES'; // closest available
     default: return '';

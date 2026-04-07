@@ -17,7 +17,7 @@ const UNIT_SHORT: Record<string, string> = {
 const CATEGORY_LABELS: Record<string, string> = {
   FOOD_TRUCK: 'Food Truck', DJ: 'Music', CATERING: 'Catering',
   WEDDING_SERVICES: 'Weddings', PHOTOGRAPHY: 'Photography',
-  ENTERTAINMENT: 'Entertainment', OTHER: 'Other',
+  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', OTHER: 'Other',
 };
 
 function VendorBadgesInline({ vendor }: { vendor: any }) {

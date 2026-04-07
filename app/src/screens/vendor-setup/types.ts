@@ -32,5 +32,7 @@ export const CATEGORIES = [
   { id: 'WEDDING_SERVICES', label: 'Wedding Services', icon: 'rings' },
   { id: 'PHOTOGRAPHY', label: 'Photography', icon: 'aperture' },
   { id: 'ENTERTAINMENT', label: 'Entertainment', icon: 'sparkles' },
+  { id: 'EXPERIENCES', label: 'Experiences', icon: 'compass' },
+  { id: 'WELLNESS', label: 'Wellness', icon: 'wellness' },
   { id: 'OTHER', label: 'Other', icon: 'sparkles' },
 ] as const;

@@ -568,6 +568,26 @@ export const TrophyIcon: React.FC<IconProps> = ({
   </Svg>
 );
 
+// Experiences icon (compass/adventure)
+export const CompassIcon: React.FC<IconProps> = ({
+  size = defaultProps.size, color = defaultProps.color, strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Circle cx="12" cy="12" r="10" />
+    <Path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z" />
+  </Svg>
+);
+
+// Wellness icon (lotus/health)
+export const WellnessIcon: React.FC<IconProps> = ({
+  size = defaultProps.size, color = defaultProps.color, strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Path d="M12 22c-4-3-8-6-8-11a8 8 0 0 1 16 0c0 5-4 8-8 11z" />
+    <Circle cx="12" cy="11" r="3" />
+  </Svg>
+);
+
 // Dashboard icon for vendor tab (bar chart style)
 export const DashboardIcon: React.FC<IconProps> = ({
   size = defaultProps.size,

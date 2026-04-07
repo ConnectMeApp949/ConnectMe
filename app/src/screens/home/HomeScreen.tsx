@@ -9,7 +9,7 @@ import { useVendorSearch } from '../../hooks/useVendors';
 import { useAuth } from '../../context/AuthContext';
 import { useRecentlyViewed } from '../../hooks/useRecentlyViewed';
 import { useLanguage } from '../../context/LanguageContext';
-import { TrendingIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon, BellIcon, MapIcon, SearchIcon, CalendarIcon, ChevronRightIcon } from '../../components/Icons';
+import { TrendingIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon, CompassIcon, WellnessIcon, BellIcon, MapIcon, SearchIcon, CalendarIcon, ChevronRightIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import NotificationPrompt from '../../components/NotificationPrompt';
 import RateAppPrompt from '../../components/RateAppPrompt';
@@ -22,6 +22,8 @@ const CATEGORIES = [
   { id: 'WEDDING_SERVICES', label: 'Weddings', Icon: RingsIcon },
   { id: 'PHOTOGRAPHY', label: 'Photography', Icon: CameraIcon },
   { id: 'ENTERTAINMENT', label: 'Entertainment', Icon: SparklesIcon },
+  { id: 'EXPERIENCES', label: 'Experiences', Icon: CompassIcon },
+  { id: 'WELLNESS', label: 'Wellness', Icon: WellnessIcon },
 ];
 
 type Props = NativeStackScreenProps<any, 'Home'>;

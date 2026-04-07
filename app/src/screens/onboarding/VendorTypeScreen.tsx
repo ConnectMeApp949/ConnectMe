@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
-import { CheckIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon } from '../../components/Icons';
+import { CheckIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon, CompassIcon, WellnessIcon } from '../../components/Icons';
 import { OnboardingStackParamList } from '../../navigation/types';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'VendorType'>;
@@ -16,6 +16,8 @@ const CATEGORIES = [
   { id: 'WEDDING_SERVICES', label: 'Wedding Services', icon: 'rings' },
   { id: 'PHOTOGRAPHY', label: 'Photography', icon: 'aperture' },
   { id: 'ENTERTAINMENT', label: 'Entertainment', icon: 'sparkles' },
+  { id: 'EXPERIENCES', label: 'Experiences', icon: 'compass' },
+  { id: 'WELLNESS', label: 'Wellness', icon: 'wellness' },
   { id: 'OTHER', label: 'Other', icon: 'sparkles' },
 ] as const;
 
@@ -26,6 +28,8 @@ const ICON_MAP: Record<string, React.FC<{ size?: number; color?: string; strokeW
   rings: RingsIcon,
   aperture: CameraIcon,
   sparkles: SparklesIcon,
+  compass: CompassIcon,
+  wellness: WellnessIcon,
 };
 
 export default function VendorTypeScreen({ navigation }: Props) {

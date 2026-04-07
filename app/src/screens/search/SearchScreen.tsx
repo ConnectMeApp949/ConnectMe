@@ -20,6 +20,8 @@ const CATEGORIES = [
   { id: 'WEDDING_SERVICES', label: 'Weddings' },
   { id: 'PHOTOGRAPHY', label: 'Photography' },
   { id: 'ENTERTAINMENT', label: 'Entertainment' },
+  { id: 'EXPERIENCES', label: 'Experiences' },
+  { id: 'WELLNESS', label: 'Wellness' },
 ];
 
 const RATINGS = [0, 3, 3.5, 4, 4.5];
