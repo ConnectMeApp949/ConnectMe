@@ -13,7 +13,7 @@ import {
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 
 const CATEGORY_LABELS: Record<string, string> = {
-  FOOD_TRUCK: 'Food Trucks', DJ: 'Event Entertainment', CATERING: 'Catering',
+  FOOD_TRUCK: 'Food Trucks', DJ: 'Music', CATERING: 'Catering',
   WEDDING_SERVICES: 'Weddings', PHOTOGRAPHY: 'Photography',
   ENTERTAINMENT: 'Entertainment', OTHER: 'Other',
 };
@@ -309,7 +309,7 @@ const s = StyleSheet.create({
     fontFamily: fonts.semiBold,
   },
   tabBadge: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -484,7 +484,7 @@ const s = StyleSheet.create({
   },
   exploreBtn: {
     marginTop: 20,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
     borderRadius: 10,
     paddingVertical: 14,
     paddingHorizontal: 32,

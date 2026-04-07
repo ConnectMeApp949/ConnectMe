@@ -113,7 +113,7 @@ const s = StyleSheet.create({
   preview: { fontFamily: fonts.regular, fontSize: 14, color: colors.textMuted, marginTop: 2 },
   previewBold: { color: colors.text, fontFamily: fonts.medium },
   badge: {
-    minWidth: 22, height: 22, borderRadius: 11, backgroundColor: colors.secondary,
+    minWidth: 22, height: 22, borderRadius: 11, backgroundColor: colors.primary,
     alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6, marginLeft: 8,
   },
   badgeText: { fontFamily: fonts.bold, fontSize: 12, color: colors.white },

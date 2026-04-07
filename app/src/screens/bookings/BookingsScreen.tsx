@@ -181,6 +181,6 @@ const s = StyleSheet.create({
   emptyIconWrap: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.cardBackground, alignItems: 'center', justifyContent: 'center', marginBottom: 16, borderWidth: 1, borderColor: colors.border },
   emptyTitle: { fontFamily: fonts.bold, fontSize: 18, color: colors.text, marginBottom: 8 },
   emptySub: { fontFamily: fonts.regular, fontSize: 14, color: colors.textMuted, textAlign: 'center', lineHeight: 20 },
-  exploreBtn: { marginTop: 20, backgroundColor: colors.secondary, borderRadius: 10, paddingVertical: 14, paddingHorizontal: 32 },
+  exploreBtn: { marginTop: 20, backgroundColor: colors.primary, borderRadius: 10, paddingVertical: 14, paddingHorizontal: 32 },
   exploreBtnText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.white },
 });

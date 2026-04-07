@@ -15,7 +15,7 @@ const UNIT_SHORT: Record<string, string> = {
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
-  FOOD_TRUCK: 'Food Truck', DJ: 'Event Entertainment', CATERING: 'Catering',
+  FOOD_TRUCK: 'Food Truck', DJ: 'Music', CATERING: 'Catering',
   WEDDING_SERVICES: 'Weddings', PHOTOGRAPHY: 'Photography',
   ENTERTAINMENT: 'Entertainment', OTHER: 'Other',
 };

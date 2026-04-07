@@ -4,17 +4,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, borderRadius } from '../../theme';
 import {
-  ChevronLeftIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, ApertureIcon, SparklesIcon,
+  ChevronLeftIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon,
 } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'EditCategory'>;
 
 const CATEGORIES = [
   { id: 'FOOD_TRUCK', label: 'Food Truck', Icon: TruckIcon },
-  { id: 'DJ', label: 'Event Entertainment', Icon: MusicIcon },
+  { id: 'DJ', label: 'Music', Icon: MusicIcon },
   { id: 'CATERING', label: 'Catering', Icon: UtensilsIcon },
   { id: 'WEDDING_SERVICES', label: 'Wedding Services', Icon: RingsIcon },
-  { id: 'PHOTOGRAPHY', label: 'Photography', Icon: ApertureIcon },
+  { id: 'PHOTOGRAPHY', label: 'Photography', Icon: CameraIcon },
   { id: 'ENTERTAINMENT', label: 'Entertainment', Icon: SparklesIcon },
   { id: 'OTHER', label: 'Other', Icon: SparklesIcon },
 ];
@@ -52,7 +52,7 @@ const s = StyleSheet.create({
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   backText: { fontSize: 24, color: colors.text },
   headerTitle: { fontFamily: fonts.semiBold, fontSize: 17, color: colors.text },
-  saveText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.secondary },
+  saveText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.primary },
   content: { padding: 20 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   card: { width: '47%', backgroundColor: colors.cardBackground, borderRadius: 12, borderWidth: 2, borderColor: colors.border, paddingVertical: 20, alignItems: 'center' },

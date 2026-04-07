@@ -27,7 +27,7 @@ export interface PriceUnitOption {
 
 export const CATEGORIES = [
   { id: 'FOOD_TRUCK', label: 'Food Truck', icon: 'truck' },
-  { id: 'DJ', label: 'Event Entertainment', icon: 'music' },
+  { id: 'DJ', label: 'Music', icon: 'music' },
   { id: 'CATERING', label: 'Catering', icon: 'utensils' },
   { id: 'WEDDING_SERVICES', label: 'Wedding Services', icon: 'rings' },
   { id: 'PHOTOGRAPHY', label: 'Photography', icon: 'aperture' },

@@ -40,7 +40,7 @@ const s = StyleSheet.create({
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   backText: { fontSize: 24, color: colors.text },
   headerTitle: { fontFamily: fonts.semiBold, fontSize: 17, color: colors.text },
-  saveText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.secondary },
+  saveText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.primary },
   content: { padding: 24 },
   label: { fontFamily: fonts.medium, fontSize: 16, color: colors.text, marginBottom: 20 },
   options: { gap: 10 },

@@ -9,7 +9,7 @@ import { useVendorSearch } from '../../hooks/useVendors';
 import { useAuth } from '../../context/AuthContext';
 import { useRecentlyViewed } from '../../hooks/useRecentlyViewed';
 import { useLanguage } from '../../context/LanguageContext';
-import { TrendingIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, ApertureIcon, SparklesIcon, BellIcon, MapIcon, SearchIcon, CalendarIcon, ChevronRightIcon } from '../../components/Icons';
+import { TrendingIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon, BellIcon, MapIcon, SearchIcon, CalendarIcon, ChevronRightIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import NotificationPrompt from '../../components/NotificationPrompt';
 import RateAppPrompt from '../../components/RateAppPrompt';
@@ -17,10 +17,10 @@ import RateAppPrompt from '../../components/RateAppPrompt';
 const CATEGORIES = [
   { id: '', label: 'All', Icon: TrendingIcon },
   { id: 'FOOD_TRUCK', label: 'Food Trucks', Icon: TruckIcon },
-  { id: 'DJ', label: 'Event Entertainment', Icon: MusicIcon },
+  { id: 'DJ', label: 'Music', Icon: MusicIcon },
   { id: 'CATERING', label: 'Catering', Icon: UtensilsIcon },
   { id: 'WEDDING_SERVICES', label: 'Weddings', Icon: RingsIcon },
-  { id: 'PHOTOGRAPHY', label: 'Photography', Icon: ApertureIcon },
+  { id: 'PHOTOGRAPHY', label: 'Photography', Icon: CameraIcon },
   { id: 'ENTERTAINMENT', label: 'Entertainment', Icon: SparklesIcon },
 ];
 

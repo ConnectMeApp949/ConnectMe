@@ -330,7 +330,7 @@ const s = StyleSheet.create({
     height: 56,
   },
   continueBtn: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
     borderRadius: 12,
     height: 52,
     alignItems: 'center',

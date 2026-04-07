@@ -115,7 +115,7 @@ export default function OnboardingWalkthroughScreen({ navigation }: Props) {
         accessibilityRole="summary"
       >
         <View style={styles.iconContainer}>
-          <SlideIcon size={48} color={colors.secondary} />
+          <SlideIcon size={48} color={colors.primary} />
         </View>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.description}>{item.description}</Text>
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.xs,
   },
   dotActive: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
   },
   dotInactive: {
     backgroundColor: 'transparent',
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   getStartedButton: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.xxl,
     borderRadius: borderRadius.lg,

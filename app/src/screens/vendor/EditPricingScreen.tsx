@@ -444,7 +444,7 @@ const s = StyleSheet.create({
   },
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { fontFamily: fonts.semiBold, fontSize: 17, color: colors.text },
-  saveText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.secondary },
+  saveText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.primary },
   scroll: { padding: 24 },
 
   // Section

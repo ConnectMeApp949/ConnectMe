@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
   },
   bookBtn: {
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
     borderRadius: borderRadius.sm,
     paddingVertical: 8,
     paddingHorizontal: 12,

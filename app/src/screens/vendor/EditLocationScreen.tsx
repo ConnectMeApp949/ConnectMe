@@ -37,7 +37,7 @@ const s = StyleSheet.create({
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   backText: { fontSize: 24, color: colors.text },
   headerTitle: { fontFamily: fonts.semiBold, fontSize: 17, color: colors.text },
-  saveText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.secondary },
+  saveText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.primary },
   content: { padding: 20 },
   row: { flexDirection: 'row', gap: 10 },
   flex2: { flex: 2 },

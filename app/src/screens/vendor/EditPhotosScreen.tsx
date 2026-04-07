@@ -66,7 +66,7 @@ const s = StyleSheet.create({
   backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   backText: { fontSize: 24, color: colors.text },
   headerTitle: { fontFamily: fonts.semiBold, fontSize: 17, color: colors.text },
-  saveText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.secondary },
+  saveText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.primary },
   content: { padding: 20 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   slot: { width: '47%', aspectRatio: 4 / 3, borderRadius: 12, overflow: 'hidden', position: 'relative' },

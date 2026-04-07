@@ -613,7 +613,7 @@ const s = StyleSheet.create({
   note: { fontFamily: fonts.regular, fontSize: 12, color: colors.textMuted, textAlign: 'center', marginTop: 16, lineHeight: 18 },
 
   footer: { padding: 20, paddingBottom: 32, borderTopWidth: 1, borderTopColor: colors.border },
-  submitBtn: { backgroundColor: colors.secondary, borderRadius: 10, paddingVertical: 16, alignItems: 'center' },
+  submitBtn: { backgroundColor: colors.primary, borderRadius: 10, paddingVertical: 16, alignItems: 'center' },
   submitBtnDisabled: { opacity: 0.4 },
   submitBtnText: { fontFamily: fonts.semiBold, fontSize: 16, color: colors.white },
 });

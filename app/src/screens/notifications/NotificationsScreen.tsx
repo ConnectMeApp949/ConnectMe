@@ -94,7 +94,7 @@ const s = StyleSheet.create({
   notifTitleBold: { fontFamily: fonts.bold },
   notifBody: { fontFamily: fonts.regular, fontSize: 14, color: colors.textMuted, marginTop: 3, lineHeight: 20 },
   notifTime: { fontFamily: fonts.regular, fontSize: 12, color: colors.textMuted, marginTop: 6 },
-  unreadDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.secondary, marginTop: 6, marginLeft: 8 },
+  unreadDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.primary, marginTop: 6, marginLeft: 8 },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80 },
   emptyIconWrap: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.cardBackground, alignItems: 'center', justifyContent: 'center', marginBottom: 16, borderWidth: 1, borderColor: colors.border },
   emptyTitle: { fontFamily: fonts.bold, fontSize: 18, color: colors.text },

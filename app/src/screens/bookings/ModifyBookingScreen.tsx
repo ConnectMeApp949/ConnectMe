@@ -313,7 +313,7 @@ const s = StyleSheet.create({
 
   // Submit
   submitBtn: {
-    backgroundColor: colors.secondary, borderRadius: 10, paddingVertical: 16,
+    backgroundColor: colors.primary, borderRadius: 10, paddingVertical: 16,
     alignItems: 'center', marginTop: spacing.lg,
   },
   submitBtnDisabled: { opacity: 0.4 },

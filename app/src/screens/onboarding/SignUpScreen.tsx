@@ -134,7 +134,7 @@ const s = StyleSheet.create({
   formErrorText: { fontFamily: fonts.medium, fontSize: 14, color: colors.error },
   terms: { fontFamily: fonts.regular, fontSize: 12, color: colors.textMuted, lineHeight: 18, marginBottom: 20 },
   termsBold: { fontFamily: fonts.semiBold, color: colors.text, textDecorationLine: 'underline' },
-  submitBtn: { marginBottom: 16, backgroundColor: colors.secondary },
+  submitBtn: { marginBottom: 16, backgroundColor: colors.primary },
   signInLink: { fontFamily: fonts.regular, fontSize: 14, color: colors.textMuted, textAlign: 'center' },
   signInBold: { fontFamily: fonts.semiBold, color: colors.text, textDecorationLine: 'underline' },
 });

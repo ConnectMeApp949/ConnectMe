@@ -4,14 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
-import { CheckIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, ApertureIcon, SparklesIcon } from '../../components/Icons';
+import { CheckIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon } from '../../components/Icons';
 import { OnboardingStackParamList } from '../../navigation/types';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'VendorType'>;
 
 const CATEGORIES = [
   { id: 'FOOD_TRUCK', label: 'Food Truck', icon: 'truck' },
-  { id: 'DJ', label: 'Event Entertainment', icon: 'music' },
+  { id: 'DJ', label: 'Music', icon: 'music' },
   { id: 'CATERING', label: 'Catering', icon: 'utensils' },
   { id: 'WEDDING_SERVICES', label: 'Wedding Services', icon: 'rings' },
   { id: 'PHOTOGRAPHY', label: 'Photography', icon: 'aperture' },
@@ -24,7 +24,7 @@ const ICON_MAP: Record<string, React.FC<{ size?: number; color?: string; strokeW
   music: MusicIcon,
   utensils: UtensilsIcon,
   rings: RingsIcon,
-  aperture: ApertureIcon,
+  aperture: CameraIcon,
   sparkles: SparklesIcon,
 };
 

@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import {
-  ChevronLeftIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, ApertureIcon, SparklesIcon,
+  ChevronLeftIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon,
   CheckIcon,
 } from '../../components/Icons';
 
@@ -12,10 +12,10 @@ type Props = NativeStackScreenProps<any, 'VendorBusinessType'>;
 
 const CATEGORIES = [
   { id: 'FOOD_TRUCK', label: 'Food Truck', Icon: TruckIcon },
-  { id: 'DJ', label: 'Event Entertainment', Icon: MusicIcon },
+  { id: 'DJ', label: 'Music', Icon: MusicIcon },
   { id: 'CATERING', label: 'Catering', Icon: UtensilsIcon },
   { id: 'WEDDING_SERVICES', label: 'Wedding Services', Icon: RingsIcon },
-  { id: 'PHOTOGRAPHY', label: 'Photography', Icon: ApertureIcon },
+  { id: 'PHOTOGRAPHY', label: 'Photography', Icon: CameraIcon },
   { id: 'ENTERTAINMENT', label: 'Entertainment', Icon: SparklesIcon },
   { id: 'OTHER', label: 'Other', Icon: SparklesIcon },
 ];

@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
   View, Text, TextInput, StyleSheet, FlatList, ScrollView,
-  TouchableOpacity, ActivityIndicator, Platform,
+  TouchableOpacity, ActivityIndicator, Platform, Image, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-// Using inline calendar instead of DateTimePicker
+import MapView, { Marker, Callout } from 'react-native-maps';
 import VendorCard, { VendorCardSkeleton } from '../../components/VendorCard';
 import { useVendorSearch } from '../../hooks/useVendors';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
@@ -15,7 +15,7 @@ import { useSavedSearches } from '../../hooks/useSavedSearches';
 const CATEGORIES = [
   { id: '', label: 'All' },
   { id: 'FOOD_TRUCK', label: 'Food Trucks' },
-  { id: 'DJ', label: 'Event Entertainment' },
+  { id: 'DJ', label: 'Music' },
   { id: 'CATERING', label: 'Catering' },
   { id: 'WEDDING_SERVICES', label: 'Weddings' },
   { id: 'PHOTOGRAPHY', label: 'Photography' },
@@ -23,6 +23,32 @@ const CATEGORIES = [
 ];
 
 const RATINGS = [0, 3, 3.5, 4, 4.5];
+
+const GOOGLE_MAPS_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyCtFg5weRBNkpbZWmjaQrLpYyegYLGapqs';
+const SCREEN_WIDTH = Dimensions.get('window').width;
+
+// San Antonio area coordinates for vendors
+const SA_COORDS: Record<string, { lat: number; lng: number }> = {
+  'San Antonio': { lat: 29.4241, lng: -98.4936 },
+  'Alamo Heights': { lat: 29.4848, lng: -98.4656 },
+  'Stone Oak': { lat: 29.6127, lng: -98.4839 },
+  'Helotes': { lat: 29.5781, lng: -98.6898 },
+  'Boerne': { lat: 29.7947, lng: -98.7320 },
+  'Downtown': { lat: 29.4241, lng: -98.4936 },
+};
+
+function buildMapUrl(vendors: any[]): string {
+  const center = '29.4841,-98.5136';
+  const zoom = 10;
+  const size = Math.round(SCREEN_WIDTH) + 'x400';
+  let markers = '';
+  vendors.slice(0, 15).forEach((v: any) => {
+    const coords = SA_COORDS[v.city] || SA_COORDS['San Antonio'];
+    const jitter = (Math.random() - 0.5) * 0.05;
+    markers += '&markers=color:0x2A8B8B%7Clabel:' + (v.businessName?.[0] || 'V') + '%7C' + (coords.lat + jitter).toFixed(4) + ',' + (coords.lng + jitter).toFixed(4);
+  });
+  return 'https://maps.googleapis.com/maps/api/staticmap?center=' + center + '&zoom=' + zoom + '&size=' + size + '&maptype=roadmap&style=feature:all%7Celement:geometry%7Ccolor:0xf5f5f5&style=feature:water%7Celement:geometry%7Ccolor:0xc9e8e3' + markers + '&key=' + GOOGLE_MAPS_KEY;
+}
 
 const TRENDING_SEARCHES = [
   'Wedding DJ',
@@ -555,17 +581,66 @@ export default function SearchScreen({ navigation, route }: Props) {
               </Text>
             </View>
           ) : viewMode === 'map' ? (
-            <ScrollView contentContainerStyle={styles.mapGrid} showsVerticalScrollIndicator={false}>
-              {vendors.map((v: any) => (
-                <TouchableOpacity key={v.id} style={styles.mapCard} activeOpacity={0.8} onPress={() => navigateToVendor(v)} accessibilityLabel={`${v.businessName}, $${Number(v.basePrice).toFixed(0)}, rated ${Number(v.averageRating).toFixed(1)} stars`} accessibilityRole="button" accessibilityHint="Opens vendor detail page">
-                  <View style={styles.mapPin}>
-                    <Text style={styles.mapPinText}>${Number(v.basePrice).toFixed(0)}</Text>
-                  </View>
-                  <Text style={styles.mapCardName} numberOfLines={1}>{v.businessName}</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}><StarIcon size={12} color={colors.star} /><Text style={styles.mapCardSub}> {Number(v.averageRating).toFixed(1)} · {v.city}</Text></View>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+            <View style={styles.mapContainer}>
+              <MapView
+                style={styles.mapView}
+                initialRegion={{
+                  latitude: 29.4841,
+                  longitude: -98.5136,
+                  latitudeDelta: 0.35,
+                  longitudeDelta: 0.35,
+                }}
+                showsUserLocation
+                showsMyLocationButton
+              >
+                {vendors.map((v: any) => {
+                  const coords = SA_COORDS[v.city] || SA_COORDS['San Antonio'];
+                  const jitter = (v.id?.charCodeAt(0) || 0) * 0.001;
+                  return (
+                    <Marker
+                      key={v.id}
+                      coordinate={{ latitude: coords.lat + jitter, longitude: coords.lng + jitter }}
+                      title={v.businessName}
+                      description={'$' + Number(v.basePrice).toFixed(0) + ' · ' + Number(v.averageRating).toFixed(1) + ' stars'}
+                    >
+                      <View style={styles.mapMarker}>
+                        <Text style={styles.mapMarkerText}>${Number(v.basePrice).toFixed(0)}</Text>
+                      </View>
+                      <Callout onPress={() => navigateToVendor(v)}>
+                        <View style={styles.calloutContainer}>
+                          <Text style={styles.calloutTitle}>{v.businessName}</Text>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                            <Text style={styles.calloutRating}>{Number(v.averageRating).toFixed(1)} stars</Text>
+                            <Text style={styles.calloutCity}>· {v.city}</Text>
+                          </View>
+                          <Text style={styles.calloutPrice}>${Number(v.basePrice).toFixed(0)}</Text>
+                          <Text style={styles.calloutTap}>Tap to view profile</Text>
+                        </View>
+                      </Callout>
+                    </Marker>
+                  );
+                })}
+              </MapView>
+              {/* Vendor cards overlay at bottom */}
+              <View style={styles.mapCardsOverlay}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.mapCardsScroll}>
+                  {vendors.map((v: any) => (
+                    <TouchableOpacity key={v.id} style={styles.mapVendorCard} activeOpacity={0.8} onPress={() => navigateToVendor(v)} accessibilityLabel={v.businessName + ', $' + Number(v.basePrice).toFixed(0)} accessibilityRole="button">
+                      <Image source={{ uri: v.coverPhoto }} style={styles.mapVendorImage} />
+                      <View style={styles.mapVendorInfo}>
+                        <Text style={styles.mapVendorName} numberOfLines={1}>{v.businessName}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                          <StarIcon size={12} color={colors.star} />
+                          <Text style={styles.mapVendorRating}>{Number(v.averageRating).toFixed(1)}</Text>
+                          <Text style={styles.mapVendorCity}>· {v.city}</Text>
+                        </View>
+                        <Text style={styles.mapVendorPrice}>${Number(v.basePrice).toFixed(0)}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            </View>
           ) : (
             <FlatList
               data={vendors}
@@ -959,44 +1034,116 @@ const styles = StyleSheet.create({
   },
 
   // Map view
-  mapGrid: {
-    padding: spacing.lg,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
+  mapContainer: {
+    flex: 1,
   },
-  mapCard: {
-    width: '48%',
-    backgroundColor: colors.cardBackground,
-    borderRadius: 12,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
+  mapView: {
+    flex: 1,
   },
-  mapPin: {
-    backgroundColor: colors.text,
-    borderRadius: 16,
+  mapMarker: {
+    backgroundColor: colors.primary,
+    borderRadius: 20,
     paddingHorizontal: 10,
-    paddingVertical: 4,
-    marginBottom: 8,
+    paddingVertical: 6,
+    borderWidth: 2,
+    borderColor: colors.white,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 4,
   },
-  mapPinText: {
+  mapMarkerText: {
     fontFamily: fonts.bold,
-    fontSize: 14,
+    fontSize: 13,
     color: colors.white,
   },
-  mapCardName: {
-    fontFamily: fonts.semiBold,
-    fontSize: 13,
-    color: colors.text,
-    textAlign: 'center',
+  calloutContainer: {
+    width: 180,
+    padding: 8,
   },
-  mapCardSub: {
+  calloutTitle: {
+    fontFamily: fonts.semiBold,
+    fontSize: 14,
+    color: colors.text,
+    marginBottom: 2,
+  },
+  calloutRating: {
+    fontFamily: fonts.medium,
+    fontSize: 12,
+    color: colors.text,
+  },
+  calloutCity: {
     fontFamily: fonts.regular,
     fontSize: 12,
     color: colors.textMuted,
-    marginTop: 2,
+  },
+  calloutPrice: {
+    fontFamily: fonts.bold,
+    fontSize: 15,
+    color: colors.primary,
+    marginTop: 4,
+  },
+  calloutTap: {
+    fontFamily: fonts.regular,
+    fontSize: 11,
+    color: colors.textMuted,
+    marginTop: 4,
+    fontStyle: 'italic',
+  },
+  mapCardsOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingBottom: 16,
+    paddingTop: 8,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+  },
+  mapCardsScroll: {
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  mapVendorCard: {
+    width: 220,
+    backgroundColor: colors.white,
+    borderRadius: 14,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  mapVendorImage: {
+    width: 220,
+    height: 120,
+  },
+  mapVendorInfo: {
+    padding: 10,
+  },
+  mapVendorName: {
+    fontFamily: fonts.semiBold,
+    fontSize: 14,
+    color: colors.text,
+  },
+  mapVendorRating: {
+    fontFamily: fonts.medium,
+    fontSize: 12,
+    color: colors.text,
+  },
+  mapVendorCity: {
+    fontFamily: fonts.regular,
+    fontSize: 12,
+    color: colors.textMuted,
+  },
+  mapVendorPrice: {
+    fontFamily: fonts.bold,
+    fontSize: 15,
+    color: colors.primary,
+    marginTop: 4,
   },
 
   // Save search button

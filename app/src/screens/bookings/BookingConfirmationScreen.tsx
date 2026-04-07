@@ -696,7 +696,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.sm,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
     borderRadius: 10,
     paddingVertical: 14,
   },

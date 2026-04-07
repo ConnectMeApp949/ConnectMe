@@ -109,7 +109,7 @@ const s = StyleSheet.create({
   infoText: { fontFamily: fonts.regular, fontSize: 13, color: colors.primary, flex: 1, lineHeight: 20 },
 
   footer: { padding: 20, paddingBottom: 32, borderTopWidth: 1, borderTopColor: colors.border },
-  publishBtn: { backgroundColor: colors.secondary, borderRadius: 10, paddingVertical: 16, alignItems: 'center' },
+  publishBtn: { backgroundColor: colors.primary, borderRadius: 10, paddingVertical: 16, alignItems: 'center' },
   publishBtnDisabled: { opacity: 0.6 },
   publishBtnText: { fontFamily: fonts.semiBold, fontSize: 16, color: colors.white },
 });

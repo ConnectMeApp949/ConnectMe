@@ -24,7 +24,7 @@ import {
   DollarIcon,
   MusicIcon,
   UtensilsIcon,
-  ApertureIcon,
+  CameraIcon,
   SparklesIcon,
   ShareIcon,
   XIcon,
@@ -134,7 +134,7 @@ function CategoryIcon({ icon, size = 20, color }: { icon: string; size?: number;
     case 'catering':
       return <UtensilsIcon size={size} color={c} />;
     case 'photography':
-      return <ApertureIcon size={size} color={c} />;
+      return <CameraIcon size={size} color={c} />;
     case 'decorations':
       return <SparklesIcon size={size} color={c} />;
     case 'entertainment':
@@ -335,7 +335,7 @@ export default function EventPlannerScreen({ navigation }: Props) {
 
           <View style={styles.budgetItem}>
             <Text style={styles.budgetLabel}>Spent</Text>
-            <Text style={[styles.budgetValue, { color: colors.secondary }]}>
+            <Text style={[styles.budgetValue, { color: colors.primary }]}>
               ${spent.toLocaleString()}
             </Text>
           </View>

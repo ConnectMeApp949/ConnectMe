@@ -14,7 +14,7 @@ export const BADGES: Record<BadgeType, BadgeDefinition> = {
   TOP_RATED: {
     type: 'TOP_RATED',
     label: 'Top Rated',
-    icon: 'star',
+    icon: '⭐',
     backgroundColor: colors.star,
     textColor: '#1A1A1A',
   },
@@ -28,7 +28,7 @@ export const BADGES: Record<BadgeType, BadgeDefinition> = {
   QUICK_RESPONDER: {
     type: 'QUICK_RESPONDER',
     label: 'Quick Responder',
-    icon: 'bolt',
+    icon: '⚡',
     backgroundColor: colors.success,
     textColor: colors.white,
   },
@@ -42,7 +42,7 @@ export const BADGES: Record<BadgeType, BadgeDefinition> = {
   NEW: {
     type: 'NEW',
     label: 'New',
-    icon: 'sparkle',
+    icon: '✨',
     backgroundColor: '#8B5CF6',
     textColor: colors.white,
   },

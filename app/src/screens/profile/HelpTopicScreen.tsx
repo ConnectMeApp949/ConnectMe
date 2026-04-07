@@ -142,7 +142,7 @@ const s = StyleSheet.create({
   helpfulBtnContent: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   helpfulBtnText: { fontFamily: fonts.medium, fontSize: 14, color: colors.text },
   contactBtn: { alignItems: 'center' },
-  contactBtnText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.secondary, textDecorationLine: 'underline' },
+  contactBtnText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.primary, textDecorationLine: 'underline' },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyText: { fontFamily: fonts.regular, fontSize: 15, color: colors.textMuted },
 });

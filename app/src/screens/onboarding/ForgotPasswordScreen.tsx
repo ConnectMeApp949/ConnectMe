@@ -155,7 +155,7 @@ const s = StyleSheet.create({
   },
   input: { fontFamily: fonts.regular, fontSize: 16, color: colors.text, paddingHorizontal: 16, height: 50 },
 
-  resetBtn: { backgroundColor: colors.secondary, borderRadius: borderRadius.md, paddingVertical: 15, alignItems: 'center', marginBottom: 20 },
+  resetBtn: { backgroundColor: colors.primary, borderRadius: borderRadius.md, paddingVertical: 15, alignItems: 'center', marginBottom: 20 },
   resetBtnDisabled: { opacity: 0.6 },
   resetBtnText: { fontFamily: fonts.semiBold, fontSize: 16, color: colors.white },
 
