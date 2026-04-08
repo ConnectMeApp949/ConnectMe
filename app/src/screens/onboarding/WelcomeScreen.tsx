@@ -138,44 +138,11 @@ export default function WelcomeScreen({ navigation }: Props) {
       return;
     }
 
-    try {
-      // Use native Apple Authentication if available
-      let AppleAuthentication: any = null;
-      try { AppleAuthentication = require('expo-apple-authentication'); } catch { /* not installed */ }
-
-      if (AppleAuthentication && AppleAuthentication.isAvailableAsync) {
-        const isAvailable = await AppleAuthentication.isAvailableAsync();
-        if (isAvailable) {
-          const credential = await AppleAuthentication.signInAsync({
-            requestedScopes: [
-              AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-              AppleAuthentication.AppleAuthenticationScope.EMAIL,
-            ],
-          });
-          if (credential.identityToken) {
-            // TODO: Send credential.identityToken to backend to verify and create/login user
-            Alert.alert('Sign In', 'Apple sign-in is being configured. Please use email and password to sign in for now.', [{ text: 'OK' }]);
-            return;
-          }
-        }
-      }
-
-      // Fallback: web-based Apple Sign In
-      const redirectUri = 'https://auth.expo.io/@connectme/connectme';
-      const clientId = 'com.connectmeapp.services';
-      const authUrl = 'https://appleid.apple.com/auth/authorize?client_id=' + encodeURIComponent(clientId) + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&scope=name%20email&response_type=code&response_mode=form_post';
-
-      const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
-
-      if (result.type === 'success') {
-        Alert.alert('Sign In', 'Apple sign-in is being configured. Please use email and password to sign in for now.', [{ text: 'OK' }]);
-      }
-    } catch (error: any) {
-      // User cancelled or Apple Sign In not available
-      if (error.code !== 'ERR_CANCELED') {
-        Alert.alert('Apple Sign In', 'Please use email and password to sign in.', [{ text: 'OK' }]);
-      }
-    }
+    Alert.alert(
+      'Sign in with Apple',
+      'Apple sign-in will be available in an upcoming update. Please use email and password to sign in for now.',
+      [{ text: 'OK' }]
+    );
   }
 
   return (
