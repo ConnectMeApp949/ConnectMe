@@ -121,7 +121,7 @@ export default function SearchScreen({ navigation, route }: Props) {
   const [showCustomPrice, setShowCustomPrice] = useState(false);
   const [customPrice, setCustomPrice] = useState('');
   const [viewMode, setViewMode] = useState<'list' | 'map'>(initialView);
-  const [inputFocused, setInputFocused] = useState(false);
+  const [inputFocused, setInputFocused] = useState(initialView !== 'map');
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [saveToastVisible, setSaveToastVisible] = useState(false);
 
@@ -129,7 +129,9 @@ export default function SearchScreen({ navigation, route }: Props) {
   const isCurrentSearchSaved = hasSearch(committedSearch, category);
 
   useEffect(() => {
-    setTimeout(() => inputRef.current?.focus(), 300);
+    if (initialView !== 'map') {
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }
   }, []);
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -537,12 +539,12 @@ export default function SearchScreen({ navigation, route }: Props) {
         </View>
       )}
 
-      {/* ---- View toggle ---- */}
-      {!showSuggestionPanel && !isLoading && vendors.length > 0 && (
+      {/* ---- View toggle (always visible when vendors exist) ---- */}
+      {!isLoading && vendors.length > 0 && (
         <View style={styles.viewToggle}>
           <TouchableOpacity
             style={[styles.viewToggleBtn, viewMode === 'list' && styles.viewToggleBtnActive]}
-            onPress={() => setViewMode('list')}
+            onPress={() => { setViewMode('list'); setInputFocused(false); inputRef.current?.blur(); }}
             activeOpacity={0.7}
             accessibilityLabel="List view"
             accessibilityRole="tab"
@@ -552,7 +554,7 @@ export default function SearchScreen({ navigation, route }: Props) {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.viewToggleBtn, viewMode === 'map' && styles.viewToggleBtnActive]}
-            onPress={() => setViewMode('map')}
+            onPress={() => { setViewMode('map'); setInputFocused(false); inputRef.current?.blur(); }}
             activeOpacity={0.7}
             accessibilityLabel="Map view"
             accessibilityRole="tab"
@@ -564,7 +566,7 @@ export default function SearchScreen({ navigation, route }: Props) {
       )}
 
       {/* ---- Results ---- */}
-      {!showSuggestionPanel && (
+      {(!showSuggestionPanel || viewMode === 'map') && (
         <>
           {isLoading ? (
             <View style={styles.grid}>
@@ -665,8 +667,8 @@ export default function SearchScreen({ navigation, route }: Props) {
           )}
         </>
       )}
-      {/* Floating Compare pill */}
-      {!showSuggestionPanel && !isLoading && vendors.length >= 2 && (
+      {/* Compare pill - positioned near view toggle */}
+      {!showSuggestionPanel && !isLoading && vendors.length >= 2 && viewMode === 'list' && (
         <TouchableOpacity
           style={styles.comparePill}
           onPress={handleCompare}
@@ -1098,33 +1100,41 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingBottom: 16,
-    paddingTop: 8,
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    paddingBottom: 24,
+    paddingTop: 12,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
   },
   mapCardsScroll: {
     paddingHorizontal: 16,
     gap: 12,
+    paddingRight: 24,
   },
   mapVendorCard: {
-    width: 220,
+    width: 240,
     backgroundColor: colors.white,
-    borderRadius: 14,
+    borderRadius: 16,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 6,
     elevation: 3,
     borderWidth: 1,
     borderColor: colors.border,
   },
   mapVendorImage: {
-    width: 220,
-    height: 120,
+    width: 240,
+    height: 130,
   },
   mapVendorInfo: {
-    padding: 10,
+    padding: 12,
   },
   mapVendorName: {
     fontFamily: fonts.semiBold,
@@ -1157,17 +1167,18 @@ const styles = StyleSheet.create({
   // Compare pill
   comparePill: {
     position: 'absolute',
-    bottom: 24,
-    alignSelf: 'center',
-    backgroundColor: colors.text,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    right: 16,
+    top: 8,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: borderRadius.full,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+    zIndex: 10,
   },
   comparePillText: {
     fontFamily: fonts.semiBold,
