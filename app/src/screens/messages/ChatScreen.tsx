@@ -41,86 +41,9 @@ interface Message {
   createdAt: string;
 }
 
-// ─── Demo data ──────────────────────────────────────────
+// ─── API URL ──────────────────────────────────────────────
 
-function buildDemoMessages(): Message[] {
-  const now = Date.now();
-  const hour = 3600000;
-  const day = 86400000;
-
-  return [
-    {
-      id: '1',
-      content:
-        "Hi! I saw your listing for wedding photography and I'm really interested. Are you available June 14th?",
-      senderId: 'me',
-      createdAt: new Date(now - 3 * day - 4 * hour).toISOString(),
-    },
-    {
-      id: '2',
-      content:
-        "Hello! Thanks for reaching out. Yes, June 14th is open on my calendar. Could you tell me more about the event?",
-      senderId: 'them',
-      createdAt: new Date(now - 3 * day - 3.5 * hour).toISOString(),
-    },
-    {
-      id: '3',
-      content:
-        "It's an outdoor ceremony at Lakewood Gardens, around 80 guests. We'd need coverage from 2 PM to 9 PM.",
-      senderId: 'me',
-      createdAt: new Date(now - 3 * day - 3 * hour).toISOString(),
-    },
-    {
-      id: '4',
-      content:
-        "That sounds lovely! For 7 hours of coverage at Lakewood, my rate would be $2,400. That includes editing and a private online gallery.",
-      senderId: 'them',
-      createdAt: new Date(now - 2 * day - 6 * hour).toISOString(),
-    },
-    {
-      id: '5',
-      content:
-        "That's within our budget. Do you also offer engagement photo sessions?",
-      senderId: 'me',
-      createdAt: new Date(now - 2 * day - 5 * hour).toISOString(),
-    },
-    {
-      id: '6',
-      content:
-        "Absolutely! I can bundle an engagement session for $350 extra — normally it's $500 on its own. We could do it 2-3 weeks before the wedding.",
-      senderId: 'them',
-      createdAt: new Date(now - 2 * day - 4.5 * hour).toISOString(),
-    },
-    {
-      id: '7',
-      content:
-        "That's a great deal. Let's do the full package — wedding plus engagement session. How do we confirm the booking?",
-      senderId: 'me',
-      createdAt: new Date(now - 1 * day - 2 * hour).toISOString(),
-    },
-    {
-      id: '8',
-      content:
-        "I'll send you a booking request through the app with all the details. A 30% deposit secures the date. Looking forward to working with you!",
-      senderId: 'them',
-      createdAt: new Date(now - 1 * day - 1.5 * hour).toISOString(),
-    },
-    {
-      id: '9',
-      content:
-        'Perfect, I just accepted the booking request and submitted the deposit. See you at the engagement session!',
-      senderId: 'me',
-      createdAt: new Date(now - 2 * hour).toISOString(),
-    },
-    {
-      id: '10',
-      content:
-        "Payment received — you're all set! I'll follow up next week to plan the engagement shoot location. Congrats again!",
-      senderId: 'them',
-      createdAt: new Date(now - 1.5 * hour).toISOString(),
-    },
-  ];
-}
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
 // ─── Date / time helpers ────────────────────────────────
 
@@ -240,11 +163,31 @@ export default function ChatScreen({ navigation, route }: Props) {
 
   const { user, isVendorMode } = useAuth();
 
-  const [messages, setMessages] = useState<Message[]>(buildDemoMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const flatListRef = useRef<FlatList>(null);
   const inputRef = useRef<TextInput>(null);
+
+  // Fetch real messages from API
+  useEffect(() => {
+    async function fetchMessages() {
+      try {
+        const conversationId = conversation?.id;
+        if (!conversationId) return;
+        const res = await fetch(`${API_URL}/messages/${conversationId}`, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+        const data = await res.json();
+        if (data.success && data.data) {
+          setMessages(data.data);
+        }
+      } catch {
+        // Network error — messages will remain empty
+      }
+    }
+    fetchMessages();
+  }, [conversation?.id]);
 
   // ─── Quick reply templates (vendor only) ────────────
   const [quickReplies, setQuickReplies] = useState<string[]>(DEFAULT_QUICK_REPLIES);
@@ -288,7 +231,7 @@ export default function ChatScreen({ navigation, route }: Props) {
 
   // ─── Send handler ───────────────────────────────────
 
-  const handleSend = useCallback(() => {
+  const handleSend = useCallback(async () => {
     const text = inputText.trim();
     if (!text) return;
 
@@ -302,22 +245,20 @@ export default function ChatScreen({ navigation, route }: Props) {
     setMessages((prev) => [...prev, newMsg]);
     setInputText('');
 
-    // Simulate vendor typing, then auto-reply after 2 seconds
-    setIsTyping(true);
-    const timer = setTimeout(() => {
-      setIsTyping(false);
-      const reply: Message = {
-        id: `reply-${Date.now()}`,
-        content:
-          "Thanks for the message! I'll get back to you shortly with more details.",
-        senderId: 'them',
-        createdAt: new Date().toISOString(),
-      };
-      setMessages((prev) => [...prev, reply]);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [inputText]);
+    // Send to API
+    try {
+      const conversationId = conversation?.id;
+      if (conversationId) {
+        await fetch(`${API_URL}/messages/${conversationId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: text }),
+        });
+      }
+    } catch {
+      // Message displayed locally even if send fails; retry can be added later
+    }
+  }, [inputText, conversation?.id]);
 
   // ─── Build list data (with date separators, reversed for inverted list) ──
 
@@ -448,7 +389,9 @@ export default function ChatScreen({ navigation, route }: Props) {
         <TouchableOpacity
           style={s.headerCenter}
           onPress={() => {
-            /* TODO: navigate to profile */
+            if (conversation?.otherParty?.vendorId) {
+              navigation.navigate('VendorDetail', { vendorId: conversation.otherParty.vendorId });
+            }
           }}
           activeOpacity={0.7}
           accessibilityLabel={`View ${contactName} profile`}

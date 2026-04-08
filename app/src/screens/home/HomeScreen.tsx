@@ -34,10 +34,11 @@ export default function HomeScreen({ navigation }: Props) {
   const { recentlyViewed } = useRecentlyViewed();
   const [activeCategory, setActiveCategory] = React.useState('');
 
-  const featured = useVendorSearch({ city: 'San Antonio' });
+  const userCity = auth.user?.city || undefined;
+  const featured = useVendorSearch({ city: userCity });
   const recent = useVendorSearch({
     category: activeCategory || undefined,
-    city: 'San Antonio',
+    city: userCity,
   });
 
   const featuredVendors = featured.data?.pages.flatMap((p) => p.vendors) ?? [];

@@ -448,7 +448,7 @@ export default function App() {
         <RecentlyViewedContext.Provider value={recentlyViewed}>
         <SavedSearchesContext.Provider value={savedSearches}>
         <QueryClientProvider client={queryClient}>
-          <StripeProvider publishableKey="pk_live_51TG1VgECfXBYZgZGMbENz8uj7BlJF3FLpi9GhCqQb5BYQn4yc9dW3XHbYnnKIZ7dFDmutG5IKe8BpO75oYfHrG6E005gIGjxDk">
+          <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_live_51TG1VgECfXBYZgZGMbENz8uj7BlJF3FLpi9GhCqQb5BYQn4yc9dW3XHbYnnKIZ7dFDmutG5IKe8BpO75oYfHrG6E005gIGjxDk'}>
           <ThemeProvider>
             <LanguageProvider>
               <AppContent />

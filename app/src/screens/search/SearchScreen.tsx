@@ -9,8 +9,9 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import VendorCard, { VendorCardSkeleton } from '../../components/VendorCard';
 import { useVendorSearch } from '../../hooks/useVendors';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
-import { ChevronLeftIcon, ChevronRightIcon, StarIcon, XIcon, SearchIcon, ClockIcon, TrendingIcon, BookmarkIcon, BookmarkFilledIcon } from '../../components/Icons';
+import { ChevronLeftIcon, ChevronRightIcon, StarIcon, XIcon, SearchIcon, ClockIcon, TrendingIcon, BookmarkIcon, BookmarkFilledIcon, HeartIcon, HeartFilledIcon } from '../../components/Icons';
 import { useSavedSearches } from '../../hooks/useSavedSearches';
+import { useSavedVendors } from '../../hooks/useSavedVendors';
 
 const CATEGORIES = [
   { id: '', label: 'All' },
@@ -26,7 +27,7 @@ const CATEGORIES = [
 
 const RATINGS = [0, 3, 3.5, 4, 4.5];
 
-const GOOGLE_MAPS_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyCtFg5weRBNkpbZWmjaQrLpYyegYLGapqs';
+const GOOGLE_MAPS_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 // San Antonio area coordinates for vendors
@@ -127,6 +128,7 @@ export default function SearchScreen({ navigation, route }: Props) {
 
   const { addSearch, hasSearch } = useSavedSearches();
   const isCurrentSearchSaved = hasSearch(committedSearch, category);
+  const { isSaved, toggle } = useSavedVendors();
 
   useEffect(() => {
     if (initialView !== 'map') {
@@ -630,7 +632,18 @@ export default function SearchScreen({ navigation, route }: Props) {
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.mapCardsScroll}>
                   {vendors.map((v: any) => (
                     <TouchableOpacity key={v.id} style={styles.mapVendorCard} activeOpacity={0.8} onPress={() => navigateToVendor(v)} accessibilityLabel={v.businessName + ', $' + Number(v.basePrice).toFixed(0)} accessibilityRole="button">
-                      <Image source={{ uri: v.coverPhoto }} style={styles.mapVendorImage} />
+                      <View>
+                        <Image source={{ uri: v.coverPhoto }} style={styles.mapVendorImage} />
+                        <TouchableOpacity
+                          style={styles.mapHeartBtn}
+                          onPress={(e) => { e.stopPropagation?.(); toggle(v); }}
+                          accessibilityLabel={isSaved(v.id) ? 'Remove from favorites' : 'Add to favorites'}
+                          accessibilityRole="button"
+                          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        >
+                          {isSaved(v.id) ? <HeartFilledIcon size={18} color={colors.secondary} /> : <HeartIcon size={18} color={colors.white} strokeWidth={2} />}
+                        </TouchableOpacity>
+                      </View>
                       <View style={styles.mapVendorInfo}>
                         <Text style={styles.mapVendorName} numberOfLines={1}>{v.businessName}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
@@ -1132,6 +1145,17 @@ const styles = StyleSheet.create({
   mapVendorImage: {
     width: 240,
     height: 130,
+  },
+  mapHeartBtn: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   mapVendorInfo: {
     padding: 12,

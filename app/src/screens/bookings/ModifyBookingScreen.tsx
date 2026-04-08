@@ -66,15 +66,32 @@ export default function ModifyBookingScreen({ navigation, route }: Props) {
   async function handleSubmit() {
     if (!hasChanges) return;
     setLoading(true);
-    // TODO: call PATCH /bookings/:id API
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      const res = await fetch(`${API_URL}/bookings/${booking?.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventDate: eventDate.toISOString(),
+          guestCount,
+          eventLocation: location,
+          notes,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error?.message || 'Modification failed');
+      }
       Alert.alert(
         'Modification Request Sent',
         'The vendor will review your changes and respond within 24 hours.',
         [{ text: 'OK', onPress: () => navigation.goBack() }],
       );
-    }, 1500);
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (

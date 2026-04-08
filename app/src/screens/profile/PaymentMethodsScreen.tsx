@@ -35,9 +35,7 @@ const CARD_FALLBACKS: Record<string, { label: string; color: string }> = {
 };
 
 export default function PaymentMethodsScreen({ navigation }: Props) {
-  const [methods, setMethods] = useState<PaymentMethod[]>([
-    { id: '1', type: 'card', label: 'Visa ending in 4242', last4: '4242', brand: 'visa', isDefault: true },
-  ]);
+  const [methods, setMethods] = useState<PaymentMethod[]>([]);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState<'paypal' | 'card' | null>(null);
   const [logoErrors, setLogoErrors] = useState<Record<string, boolean>>({});

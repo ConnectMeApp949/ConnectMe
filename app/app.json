@@ -17,11 +17,14 @@
       "supportsTablet": true,
       "buildNumber": "1",
       "bundleIdentifier": "com.connectmeapp.services",
+      "usesAppleSignIn": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "ConnectMe uses your location to find vendors near you.",
         "NSPhotoLibraryUsageDescription": "ConnectMe needs access to your photos to upload profile and portfolio images.",
         "NSCameraUsageDescription": "ConnectMe needs camera access to take photos for your profile.",
-        "NSPhotoLibraryAddUsageDescription": "ConnectMe needs access to save photos to your library",
+        "NSPhotoLibraryAddUsageDescription": "ConnectMe needs access to save photos to your library.",
+        "NSFaceIDUsageDescription": "ConnectMe uses Face ID to securely log you in.",
+        "NSMicrophoneUsageDescription": "ConnectMe needs microphone access for video calls with vendors.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -86,7 +89,8 @@
           "enableGooglePay": true
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-apple-authentication"
     ],
     "extra": {
       "eas": {

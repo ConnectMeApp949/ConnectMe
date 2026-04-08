@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, Modal, Linking, Pressable,
+  View, Text, StyleSheet, TouchableOpacity, Modal, Pressable,
 } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { StarIcon, StarOutlineIcon } from './Icons';
@@ -8,7 +8,9 @@ import { colors, fonts, spacing, borderRadius } from '../theme';
 
 const HAS_RATED_KEY = 'hasRatedApp';
 const RATE_APP_OPEN_COUNT_KEY = 'rateAppOpenCount';
-const APP_STORE_URL = 'https://apps.apple.com/app/connectme';
+// Use StoreReview API instead of raw URL to avoid broken links and comply with Apple guidelines
+let StoreReview: any = null;
+try { StoreReview = require('expo-store-review'); } catch { /* unavailable */ }
 
 interface RateAppPromptProps {
   onNavigateToHelp: () => void;
@@ -59,9 +61,11 @@ export default function RateAppPrompt({ onNavigateToHelp }: RateAppPromptProps) 
 
   async function handleRateOnStore() {
     try {
-      await Linking.openURL(APP_STORE_URL);
+      if (StoreReview && await StoreReview.isAvailableAsync()) {
+        await StoreReview.requestReview();
+      }
     } catch {
-      // URL open failed
+      // Review request failed
     }
     handleDismiss();
   }

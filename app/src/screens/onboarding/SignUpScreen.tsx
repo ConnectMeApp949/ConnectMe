@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity,
+  View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, TouchableOpacity, Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -104,7 +104,11 @@ export default function SignUpScreen({ navigation, route }: Props) {
           <PasswordStrength password={password} />
 
           <Text style={s.terms}>
-            By selecting <Text style={s.termsBold}>Agree and continue</Text>, I agree to ConnectMe's Terms of Service, Payments Terms of Service, and Nondiscrimination Policy and acknowledge the Privacy Policy.
+            By selecting <Text style={s.termsBold}>Agree and continue</Text>, I agree to ConnectMe's{' '}
+            <Text style={s.termsLink} onPress={() => Linking.openURL('https://connectmeapp.services/terms')}>Terms of Service</Text>,{' '}
+            <Text style={s.termsLink} onPress={() => Linking.openURL('https://connectmeapp.services/payment-terms')}>Payments Terms of Service</Text>, and{' '}
+            <Text style={s.termsLink} onPress={() => Linking.openURL('https://connectmeapp.services/nondiscrimination')}>Nondiscrimination Policy</Text> and acknowledge the{' '}
+            <Text style={s.termsLink} onPress={() => Linking.openURL('https://connectmeapp.services/privacy')}>Privacy Policy</Text>.
           </Text>
 
           <Button title="Agree and continue" onPress={handleSignUp} loading={loading} style={s.submitBtn} accessibilityLabel="Agree and continue" accessibilityRole="button" accessibilityHint="Double tap to create your account" accessibilityState={{ disabled: loading }} />
@@ -134,6 +138,7 @@ const s = StyleSheet.create({
   formErrorText: { fontFamily: fonts.medium, fontSize: 14, color: colors.error },
   terms: { fontFamily: fonts.regular, fontSize: 12, color: colors.textMuted, lineHeight: 18, marginBottom: 20 },
   termsBold: { fontFamily: fonts.semiBold, color: colors.text, textDecorationLine: 'underline' },
+  termsLink: { fontFamily: fonts.medium, color: colors.primary, textDecorationLine: 'underline' },
   submitBtn: { marginBottom: 16, backgroundColor: colors.primary },
   signInLink: { fontFamily: fonts.regular, fontSize: 14, color: colors.textMuted, textAlign: 'center' },
   signInBold: { fontFamily: fonts.semiBold, color: colors.text, textDecorationLine: 'underline' },

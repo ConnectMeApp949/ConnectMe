@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CalendarIcon, StarOutlineIcon, MessageIcon, SparklesIcon, BellIcon, ChevronLeftIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
 type Props = NativeStackScreenProps<any, 'Notifications'>;
 
@@ -11,24 +13,53 @@ type IconComp = React.FC<{ size?: number; color?: string; strokeWidth?: number }
 
 interface Notification {
   id: string;
-  Icon: IconComp;
-  iconBg: string;
-  iconColor: string;
+  type: string;
   title: string;
   body: string;
   time: string;
   read: boolean;
 }
 
-const DEMO_NOTIFICATIONS: Notification[] = [
-  { id: '1', Icon: CalendarIcon, iconBg: colors.lightBlue, iconColor: colors.primary, title: 'Booking confirmed', body: 'Your booking with DJ Alamo Beats has been confirmed for Saturday.', time: '2h ago', read: false },
-  { id: '2', Icon: StarOutlineIcon, iconBg: '#FFF8EB', iconColor: '#AA8330', title: 'Leave a review', body: 'How was your experience with Alamo City Catering? Leave a review!', time: '1d ago', read: false },
-  { id: '3', Icon: MessageIcon, iconBg: '#F0FFF4', iconColor: '#16A34A', title: 'New message', body: 'Taco Libre SA sent you a message about your upcoming event.', time: '2d ago', read: true },
-  { id: '4', Icon: SparklesIcon, iconBg: '#FDF2F8', iconColor: '#E31C5F', title: 'Welcome to ConnectMe!', body: 'Start exploring vendors in your area and book your next event.', time: '1w ago', read: true },
-];
+const ICON_MAP: Record<string, { Icon: IconComp; iconBg: string; iconColor: string }> = {
+  booking: { Icon: CalendarIcon, iconBg: colors.lightBlue, iconColor: colors.primary },
+  review: { Icon: StarOutlineIcon, iconBg: '#FFF8EB', iconColor: '#AA8330' },
+  message: { Icon: MessageIcon, iconBg: '#F0FFF4', iconColor: '#16A34A' },
+  default: { Icon: SparklesIcon, iconBg: '#FDF2F8', iconColor: '#E31C5F' },
+};
+
+function formatNotifTime(iso: string): string {
+  const d = new Date(iso);
+  const now = new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffHours = diffMs / (1000 * 60 * 60);
+  if (diffHours < 1) return `${Math.max(1, Math.round(diffMs / 60000))}m ago`;
+  if (diffHours < 24) return `${Math.round(diffHours)}h ago`;
+  if (diffHours < 168) return `${Math.round(diffHours / 24)}d ago`;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
 
 export default function NotificationsScreen({ navigation }: Props) {
-  const [notifications, setNotifications] = useState(DEMO_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchNotifications() {
+      try {
+        const res = await fetch(`${API_URL}/notifications`, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+        const data = await res.json();
+        if (data.success) {
+          setNotifications(data.data ?? []);
+        }
+      } catch {
+        // Network error; empty list shown
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchNotifications();
+  }, []);
 
   function handleNotificationPress(item: Notification) {
     setNotifications(prev =>
@@ -47,36 +78,42 @@ export default function NotificationsScreen({ navigation }: Props) {
         <View style={s.backBtn} />
       </View>
 
-      <FlatList
-        data={notifications}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => {
-          const NotifIcon = item.Icon;
-          return (
-            <TouchableOpacity style={[s.notifRow, !item.read && s.notifUnread]} activeOpacity={0.7} onPress={() => handleNotificationPress(item)} accessibilityLabel={`${item.title}, ${item.body}, ${item.time}${!item.read ? ', unread' : ''}`} accessibilityRole="button" accessibilityHint="Opens notification details">
-              <View style={[s.notifIconWrap, { backgroundColor: item.iconBg }]}>
-                <NotifIcon size={22} color={item.iconColor} strokeWidth={1.5} />
+      {loading ? (
+        <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />
+      ) : (
+        <FlatList
+          data={notifications}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => {
+            const iconInfo = ICON_MAP[item.type] ?? ICON_MAP.default;
+            const NotifIcon = iconInfo.Icon;
+            const displayTime = item.time ?? '';
+            return (
+              <TouchableOpacity style={[s.notifRow, !item.read && s.notifUnread]} activeOpacity={0.7} onPress={() => handleNotificationPress(item)} accessibilityLabel={`${item.title}, ${item.body}, ${displayTime}${!item.read ? ', unread' : ''}`} accessibilityRole="button" accessibilityHint="Opens notification details">
+                <View style={[s.notifIconWrap, { backgroundColor: iconInfo.iconBg }]}>
+                  <NotifIcon size={22} color={iconInfo.iconColor} strokeWidth={1.5} />
+                </View>
+                <View style={s.notifContent}>
+                  <Text style={[s.notifTitle, !item.read && s.notifTitleBold]}>{item.title}</Text>
+                  <Text style={s.notifBody} numberOfLines={2}>{item.body}</Text>
+                  <Text style={s.notifTime}>{displayTime}</Text>
+                </View>
+                {!item.read && <View style={s.unreadDot} />}
+              </TouchableOpacity>
+            );
+          }}
+          ListEmptyComponent={
+            <View style={s.empty}>
+              <View style={s.emptyIconWrap}>
+                <BellIcon size={36} color={colors.textMuted} strokeWidth={1.5} />
               </View>
-              <View style={s.notifContent}>
-                <Text style={[s.notifTitle, !item.read && s.notifTitleBold]}>{item.title}</Text>
-                <Text style={s.notifBody} numberOfLines={2}>{item.body}</Text>
-                <Text style={s.notifTime}>{item.time}</Text>
-              </View>
-              {!item.read && <View style={s.unreadDot} />}
-            </TouchableOpacity>
-          );
-        }}
-        ListEmptyComponent={
-          <View style={s.empty}>
-            <View style={s.emptyIconWrap}>
-              <BellIcon size={36} color={colors.textMuted} strokeWidth={1.5} />
+              <Text style={s.emptyTitle}>No notifications</Text>
+              <Text style={s.emptySub}>You're all caught up!</Text>
             </View>
-            <Text style={s.emptyTitle}>No notifications</Text>
-            <Text style={s.emptySub}>You're all caught up!</Text>
-          </View>
-        }
-      />
+          }
+        />
+      )}
     </SafeAreaView>
   );
 }

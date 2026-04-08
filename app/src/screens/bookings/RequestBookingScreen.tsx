@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -106,9 +106,21 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
   const [protectionEnabled, setProtectionEnabled] = useState(false);
 
   const PROTECTION_FLAT_FEE = 9.99;
+  const priceUnit = vendor?.priceUnit || 'PER_EVENT';
 
-  const serviceFee = parseFloat((basePrice * 0.05).toFixed(2));
-  const subtotal = basePrice + serviceFee;
+  // Calculate duration in hours for per-hour pricing
+  const durationHours = useMemo(() => {
+    if (!startTime || !endTime) return 1;
+    const start = parseTimeSlot(startTime);
+    const end = parseTimeSlot(endTime);
+    const diffMin = (end.hours * 60 + end.minutes) - (start.hours * 60 + start.minutes);
+    return diffMin > 0 ? diffMin / 60 : 1;
+  }, [startTime, endTime]);
+
+  // For PER_HOUR vendors, multiply base price by duration
+  const vendorFee = priceUnit === 'PER_HOUR' ? parseFloat((basePrice * durationHours).toFixed(2)) : basePrice;
+  const serviceFee = parseFloat((vendorFee * 0.05).toFixed(2));
+  const subtotal = vendorFee + serviceFee;
 
   const discount = (() => {
     if (!promoCode) return 0;
@@ -147,9 +159,30 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
   async function handleSubmit() {
     if (!isValid) return;
     setLoading(true);
-    // TODO: call POST /bookings API
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      const res = await fetch(`${API_URL}/bookings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          vendorId: vendor?.id,
+          instantBook,
+          eventType,
+          eventDate: eventDate?.toISOString(),
+          startTime,
+          endTime,
+          guestCount,
+          eventLocation: location,
+          notes,
+          promoCode,
+          protectionEnabled,
+          totalAmount: total,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error?.message || 'Booking failed');
+      }
       navigation.replace('BookingConfirmation', {
         instantBook,
         vendor,
@@ -158,8 +191,13 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
         guestCount,
         totalAmount: total.toFixed(2),
         eventType,
+        confirmationCode: data.data?.confirmationCode,
       });
-    }, 1500);
+    } catch (err: any) {
+      Alert.alert('Booking Error', err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -358,8 +396,10 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
         <View style={s.priceCard}>
           <Text style={s.priceTitle}>Price details</Text>
           <View style={s.priceRow}>
-            <Text style={s.priceLabel}>{vendorName}</Text>
-            <Text style={s.priceValue}>${basePrice.toFixed(2)}</Text>
+            <Text style={s.priceLabel}>
+              {vendorName}{priceUnit === 'PER_HOUR' && startTime && endTime ? ' ($' + basePrice.toFixed(0) + '/hr x ' + durationHours.toFixed(durationHours % 1 === 0 ? 0 : 1) + ' hrs)' : ''}
+            </Text>
+            <Text style={s.priceValue}>${vendorFee.toFixed(2)}</Text>
           </View>
           <View style={s.priceRow}>
             <Text style={s.priceLabel}>ConnectMe service fee</Text>

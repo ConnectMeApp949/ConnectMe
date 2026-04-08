@@ -5,6 +5,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as WebBrowser from 'expo-web-browser';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { OnboardingStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
@@ -138,11 +139,34 @@ export default function WelcomeScreen({ navigation }: Props) {
       return;
     }
 
-    Alert.alert(
-      'Sign in with Apple',
-      'Apple sign-in will be available in an upcoming update. Please use email and password to sign in for now.',
-      [{ text: 'OK' }]
-    );
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      // credential.identityToken is a JWT that should be sent to the backend
+      // to verify and create/login the user
+      if (credential.identityToken) {
+        // TODO: Send credential.identityToken to backend for verification
+        // For now, create a local session with the Apple credential info
+        const appleUser = {
+          email: credential.email ?? `apple-${credential.user}@privaterelay.appleid.com`,
+          firstName: credential.fullName?.givenName ?? '',
+          lastName: credential.fullName?.familyName ?? '',
+          appleUserId: credential.user,
+        };
+        auth.login(appleUser, credential.identityToken);
+      }
+    } catch (error: any) {
+      if (error.code === 'ERR_REQUEST_CANCELED') {
+        // User cancelled — do nothing
+        return;
+      }
+      Alert.alert('Sign In Failed', 'Unable to sign in with Apple. Please try again or use email and password.');
+    }
   }
 
   return (

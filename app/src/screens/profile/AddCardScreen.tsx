@@ -66,7 +66,7 @@ export default function AddCardScreen({ navigation }: Props) {
     return cleaned;
   }
 
-  function handleDone() {
+  async function handleDone() {
     const cleanCard = cardNumber.replace(/\s/g, '');
     if (cleanCard.length < 13) { Alert.alert('Invalid', 'Please enter a valid card number.'); return; }
     if (!luhnCheck(cleanCard)) { Alert.alert('Invalid', 'Please enter a valid card number.'); return; }
@@ -74,10 +74,29 @@ export default function AddCardScreen({ navigation }: Props) {
     if (cvv.length < 3) { Alert.alert('Invalid', 'Please enter a valid CVV.'); return; }
     if (!zipCode.trim()) { Alert.alert('Invalid', 'Please enter your zip code.'); return; }
 
-    // TODO: tokenize card via Stripe
-    Alert.alert('Card Added', 'Your payment method has been saved.', [
-      { text: 'OK', onPress: () => navigation.goBack() },
-    ]);
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      const res = await fetch(`${API_URL}/payment-methods`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cardNumber: cleanCard,
+          expiration,
+          cvv,
+          zipCode,
+          country,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error?.message || 'Failed to add card');
+      }
+      Alert.alert('Card Added', 'Your payment method has been saved.', [
+        { text: 'OK', onPress: () => navigation.goBack() },
+      ]);
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Could not add your card. Please try again.');
+    }
   }
 
   return (

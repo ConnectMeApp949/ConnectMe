@@ -82,7 +82,26 @@ export default function CancelBookingScreen({ navigation, route }: Props) {
         {
           text: 'Yes, Cancel Booking',
           style: 'destructive',
-          onPress: () => setCancelled(true),
+          onPress: async () => {
+            try {
+              const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+              const res = await fetch(`${API_URL}/bookings/${booking?.id}/cancel`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  reason: selectedReason,
+                  comments,
+                }),
+              });
+              const data = await res.json();
+              if (!data.success) {
+                throw new Error(data.error?.message || 'Cancellation failed');
+              }
+              setCancelled(true);
+            } catch (err: any) {
+              Alert.alert('Error', err.message || 'Could not cancel booking. Please try again.');
+            }
+          },
         },
       ],
     );

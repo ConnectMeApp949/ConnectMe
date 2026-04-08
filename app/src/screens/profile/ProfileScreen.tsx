@@ -17,7 +17,7 @@ export default function ProfileScreen({ navigation }: Props) {
   const user = auth.user;
   const firstName = user?.firstName ?? 'User';
   const lastName = user?.lastName ?? '';
-  const city = 'San Antonio, TX';
+  const city = user?.city ?? '';
 
   function handleSignOut() {
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
@@ -54,23 +54,23 @@ export default function ProfileScreen({ navigation }: Props) {
             </View>
           )}
           <Text style={styles.fullName}>{firstName} {lastName}</Text>
-          <Text style={styles.location}>{city}</Text>
+          {city !== '' && <Text style={styles.location}>{city}</Text>}
         </View>
 
         {/* ─── Stats row ─── */}
         <View style={styles.statsCard}>
           <View style={styles.statCol}>
-            <Text style={styles.statNumber}>3</Text>
+            <Text style={styles.statNumber}>{user?.bookingCount ?? 0}</Text>
             <Text style={styles.statLabel}>Bookings</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statCol}>
-            <Text style={styles.statNumber}>2</Text>
+            <Text style={styles.statNumber}>{user?.reviewCount ?? 0}</Text>
             <Text style={styles.statLabel}>Reviews</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statCol}>
-            <Text style={styles.statNumber}>1</Text>
+            <Text style={styles.statNumber}>{user?.memberYears ?? '<1'}</Text>
             <Text style={styles.statLabel}>Years on{'\n'}ConnectMe</Text>
           </View>
         </View>

@@ -1,32 +1,63 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
-import { ChevronLeftIcon, DollarIcon, CalendarIcon, CheckIcon, ClockIcon, ChevronRightIcon } from '../../components/Icons';
+import { ChevronLeftIcon, DollarIcon, CheckIcon, ClockIcon, ChevronRightIcon } from '../../components/Icons';
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
 type Props = NativeStackScreenProps<any, 'VendorEarnings'>;
 
-const PAYOUT_HISTORY = [
-  { id: '1', amount: 450.00, date: 'Mar 15, 2026', status: 'completed', method: 'Bank Account ••4521' },
-  { id: '2', amount: 320.00, date: 'Feb 28, 2026', status: 'completed', method: 'Bank Account ••4521' },
-  { id: '3', amount: 180.50, date: 'Feb 14, 2026', status: 'completed', method: 'Bank Account ••4521' },
-  { id: '4', amount: 275.00, date: 'Jan 31, 2026', status: 'completed', method: 'Bank Account ••4521' },
-];
+interface PayoutRecord {
+  id: string;
+  amount: number;
+  date: string;
+  status: string;
+  method: string;
+}
 
-const EARNINGS_BREAKDOWN = [
-  { label: 'Completed bookings', amount: 1425.50, count: 8 },
-  { label: 'Tips received', amount: 125.00, count: 5 },
-  { label: 'Platform fees', amount: -77.53, count: null },
-];
+interface BreakdownItem {
+  label: string;
+  amount: number;
+  count: number | null;
+}
 
 export default function VendorEarningsScreen({ navigation }: Props) {
   const [payoutLoading, setPayoutLoading] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
+  const [loading, setLoading] = useState(true);
 
-  const availableBalance = 387.50;
-  const pendingBalance = 150.00;
-  const totalEarnings = 1472.97;
+  const [availableBalance, setAvailableBalance] = useState(0);
+  const [pendingBalance, setPendingBalance] = useState(0);
+  const [totalEarnings, setTotalEarnings] = useState(0);
+  const [payoutHistory, setPayoutHistory] = useState<PayoutRecord[]>([]);
+  const [earningsBreakdown, setEarningsBreakdown] = useState<BreakdownItem[]>([]);
+
+  useEffect(() => {
+    fetchEarnings();
+  }, [selectedPeriod]);
+
+  async function fetchEarnings() {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/vendor/earnings?period=${selectedPeriod}`, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAvailableBalance(data.data?.availableBalance ?? 0);
+        setPendingBalance(data.data?.pendingBalance ?? 0);
+        setTotalEarnings(data.data?.totalEarnings ?? 0);
+        setPayoutHistory(data.data?.payoutHistory ?? []);
+        setEarningsBreakdown(data.data?.breakdown ?? []);
+      }
+    } catch {
+      // Network error; zero state shown
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const handleRequestPayout = () => {
     Alert.alert(
@@ -36,16 +67,30 @@ export default function VendorEarningsScreen({ navigation }: Props) {
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Transfer Now',
-          onPress: () => {
+          onPress: async () => {
             setPayoutLoading(true);
-            setTimeout(() => {
+            try {
+              const res = await fetch(`${API_URL}/vendor/payouts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: availableBalance }),
+              });
+              const data = await res.json();
+              if (data.success) {
+                Alert.alert(
+                  'Payout Initiated',
+                  `$${availableBalance.toFixed(2)} is on its way to your bank account. You'll receive it within 2-3 business days.${data.data?.transactionId ? `\n\nTransaction ID: ${data.data.transactionId}` : ''}`,
+                  [{ text: 'Done' }]
+                );
+                fetchEarnings();
+              } else {
+                Alert.alert('Error', data.message ?? 'Unable to process payout. Please try again.');
+              }
+            } catch {
+              Alert.alert('Error', 'Unable to process payout. Please check your connection and try again.');
+            } finally {
               setPayoutLoading(false);
-              Alert.alert(
-                'Payout Initiated',
-                `$${availableBalance.toFixed(2)} is on its way to your bank account. You'll receive it within 2-3 business days.\n\nTransaction ID: TXN-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
-                [{ text: 'Done' }]
-              );
-            }, 2000);
+            }
           },
         },
       ]
@@ -152,8 +197,8 @@ export default function VendorEarningsScreen({ navigation }: Props) {
         {/* ─── Earnings Breakdown ─── */}
         <Text style={s.sectionTitle}>Earnings Breakdown</Text>
         <View style={s.breakdownCard}>
-          {EARNINGS_BREAKDOWN.map((item, i) => (
-            <View key={item.label} style={[s.breakdownRow, i < EARNINGS_BREAKDOWN.length - 1 && s.breakdownRowBorder]}>
+          {earningsBreakdown.map((item, i) => (
+            <View key={item.label} style={[s.breakdownRow, i < earningsBreakdown.length - 1 && s.breakdownRowBorder]}>
               <View style={s.breakdownLeft}>
                 <Text style={s.breakdownLabel}>{item.label}</Text>
                 {item.count !== null && <Text style={s.breakdownCount}>{item.count} transactions</Text>}
@@ -171,7 +216,7 @@ export default function VendorEarningsScreen({ navigation }: Props) {
 
         {/* ─── Payout History ─── */}
         <Text style={s.sectionTitle}>Payout History</Text>
-        {PAYOUT_HISTORY.map((payout) => (
+        {payoutHistory.map((payout) => (
           <TouchableOpacity key={payout.id} style={s.payoutRow} activeOpacity={0.6} onPress={() => Alert.alert('Payout Details', `Amount: $${payout.amount.toFixed(2)}\nDate: ${payout.date}\nMethod: ${payout.method}\nStatus: Completed\n\nTransaction ID: TXN-${payout.id.padStart(6, '0')}`)}>
             <View style={s.payoutIconWrap}>
               <CheckIcon size={18} color={colors.success} strokeWidth={2} />

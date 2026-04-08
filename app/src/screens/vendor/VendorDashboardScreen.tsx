@@ -33,7 +33,7 @@ export default function VendorDashboardScreen({ navigation }: Props) {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); setTimeout(() => setRefreshing(false), 1000); }} tintColor={colors.primary} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={async () => { setRefreshing(true); /* Re-fetch dashboard data when API is connected */ setRefreshing(false); }} tintColor={colors.primary} />}
       >
         <Text style={s.greeting}>{greeting}, {firstName}</Text>
         <Text style={s.date}>{today}</Text>

@@ -63,12 +63,28 @@ export default function ReceiptScreen({ navigation, route }: Props) {
       })
     : eventDate;
 
-  function handleDownloadPdf() {
-    Alert.alert('Receipt Downloaded', 'Your receipt PDF has been saved to your device.');
+  async function handleDownloadPdf() {
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      const res = await fetch(`${API_URL}/bookings/${bookingId}/receipt-pdf`);
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error?.message || 'Download failed');
+      Alert.alert('Receipt Downloaded', 'Your receipt PDF has been saved to your device.');
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Could not download receipt. Please try again.');
+    }
   }
 
-  function handleEmailReceipt() {
-    Alert.alert('Receipt Sent', 'Receipt sent to your email.');
+  async function handleEmailReceipt() {
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      const res = await fetch(`${API_URL}/bookings/${bookingId}/email-receipt`, { method: 'POST' });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error?.message || 'Email failed');
+      Alert.alert('Receipt Sent', 'Receipt has been sent to your email address.');
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Could not send receipt. Please try again.');
+    }
   }
 
   async function handleShare() {
@@ -171,7 +187,7 @@ export default function ReceiptScreen({ navigation, route }: Props) {
           <Text style={s.cardTitle}>Payment Information</Text>
           <View style={s.detailRow}>
             <Text style={s.detailLabel}>Payment method</Text>
-            <Text style={s.detailValue}>Visa ending in 4242</Text>
+            <Text style={s.detailValue}>{booking?.paymentMethodLabel ?? 'Card on file'}</Text>
           </View>
           <View style={s.detailRow}>
             <Text style={s.detailLabel}>Payment date</Text>

@@ -76,11 +76,22 @@ export default function TipScreen({ navigation, route }: Props) {
 
     setSubmitting(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      const res = await fetch(`${API_URL}/bookings/${booking?.id}/tip`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: tipAmount,
+          message: message.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error?.message || 'Tip failed');
+      }
       setSuccess(true);
-    } catch {
-      Alert.alert('Error', 'Unable to send tip. Please try again.');
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Unable to send tip. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -267,7 +278,7 @@ export default function TipScreen({ navigation, route }: Props) {
             <View style={s.summaryDivider} />
             <View style={s.summaryRow}>
               <Text style={s.summaryLabel}>Payment method</Text>
-              <Text style={s.summaryValue}>Visa ending in 4242</Text>
+              <Text style={s.summaryValue}>{booking?.paymentMethodLabel ?? 'Card on file'}</Text>
             </View>
           </View>
         )}

@@ -20,6 +20,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 
 // ─── Constants ──────────────────────────────────────────
 
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 const MAX_DETAILS_LENGTH = 1000;
 const MAX_ATTACHMENTS = 3;
 
@@ -86,14 +87,30 @@ export default function ReportScreen({ navigation, route }: Props) {
 
     setSubmitting(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const res = await fetch(`${API_URL}/reports`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          vendorId,
+          reason: selectedReason,
+          details: details.trim() || null,
+          attachments: attachments.length > 0 ? attachments : null,
+        }),
+      });
 
-    // TODO: Replace with actual API call
-    // await api.post('/reports', { vendorId, reason: selectedReason, details, attachments });
+      const data = await res.json();
 
-    setSubmitting(false);
-    setSubmitted(true);
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        Alert.alert('Error', data.message ?? 'Unable to submit report. Please try again.');
+      }
+    } catch {
+      Alert.alert('Error', 'Unable to submit report. Please check your connection and try again.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   // ─── Success screen ───────────────────────────────────
