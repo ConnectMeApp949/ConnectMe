@@ -184,10 +184,12 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
 
           {/* Overlays on hero bottom-left */}
           <View style={styles.heroOverlay}>
-            <View style={styles.verifiedBadge}>
-              <CheckIcon size={14} color={colors.white} strokeWidth={2.5} />
-              <Text style={styles.verifiedText}> Verified</Text>
-            </View>
+            {vendor.user?.isVerified && (
+              <View style={styles.verifiedBadge}>
+                <CheckIcon size={12} color={colors.white} strokeWidth={2.5} />
+                <Text style={styles.verifiedText}>Verified</Text>
+              </View>
+            )}
             <View style={styles.categoryPill}>
               <Text style={styles.categoryPillText}>
                 {CATEGORY_LABELS[vendor.category] ?? vendor.category}
@@ -334,18 +336,8 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
           </Text>
         </View>
         <View style={styles.footerBookSection}>
-          {isInstantBook && (
-            <View
-              style={styles.instantBadge}
-              accessibilityLabel="Instant book available"
-              accessibilityRole="text"
-            >
-              <SparklesIcon size={14} color={colors.white} />
-              <Text style={styles.instantBadgeText}>Instant Book</Text>
-            </View>
-          )}
           <Button
-            title={isInstantBook ? 'Instant Book' : 'Book Now'}
+            title={isInstantBook ? 'Instant Book' : 'Reserve'}
             onPress={handleBookNow}
             style={styles.bookButton}
           />
@@ -399,16 +391,19 @@ const styles = StyleSheet.create({
   },
   heroOverlay: {
     position: 'absolute',
-    bottom: spacing.md,
-    left: spacing.md,
+    bottom: 12,
+    left: 12,
     flexDirection: 'row',
-    gap: spacing.sm,
+    gap: 6,
   },
   verifiedBadge: {
-    backgroundColor: colors.success,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
+    gap: 4,
   },
   verifiedText: {
     fontFamily: fonts.semiBold,
@@ -416,17 +411,15 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   categoryPill: {
-    backgroundColor: colors.backgroundWarm,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.sm,
-    borderWidth: 1,
-    borderColor: colors.primary,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
   },
   categoryPillText: {
     fontFamily: fonts.medium,
     fontSize: 12,
-    color: colors.primary,
+    color: colors.white,
   },
   heroActions: {
     position: 'absolute',
@@ -586,23 +579,21 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
 
-  // Sticky footer
+  // Sticky footer — Airbnb-style
   stickyFooter: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 80,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    paddingBottom: 28,
     backgroundColor: colors.background,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
   footerPrice: {
     flexDirection: 'column',
@@ -610,41 +601,21 @@ const styles = StyleSheet.create({
   },
   footerPriceAmount: {
     fontFamily: fonts.bold,
-    fontSize: 22,
+    fontSize: 20,
     color: colors.text,
   },
   footerPriceUnit: {
     fontFamily: fonts.regular,
     fontSize: 13,
     color: colors.textMuted,
-    marginTop: 2,
+    marginTop: 1,
   },
   bookButton: {
-    flex: 1,
-    marginLeft: spacing.lg,
-    height: 52,
-    borderRadius: 12,
+    height: 48,
+    borderRadius: 10,
+    paddingHorizontal: 28,
   },
   footerBookSection: {
-    flex: 1,
     alignItems: 'flex-end',
-    gap: spacing.xs,
-  },
-  instantBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.success,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.sm,
-    gap: 4,
-  },
-  instantBadgeIcon: {
-    fontSize: 12,
-  },
-  instantBadgeText: {
-    fontFamily: fonts.semiBold,
-    fontSize: 11,
-    color: colors.white,
   },
 });
