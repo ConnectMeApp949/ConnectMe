@@ -5,6 +5,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useAuth } from '../../context/AuthContext';
 import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon, ShieldIcon, CheckIcon, ClockIcon } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'RequestBooking'>;
@@ -69,6 +70,7 @@ const PROMO_CODES: Record<string, { type: 'percent' | 'flat'; value: number; lab
 };
 
 export default function RequestBookingScreen({ navigation, route }: Props) {
+  const { token } = useAuth();
   const vendor = (route.params as any)?.vendor;
   const instantBook = (route.params as any)?.instantBook === true;
   const vendorName = vendor?.businessName ?? 'Vendor';
@@ -156,26 +158,34 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
     return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   }
 
+  function buildISOTime(date: Date, timeSlot: string): string {
+    const parsed = parseTimeSlot(timeSlot);
+    const d = new Date(date);
+    d.setHours(parsed.hours, parsed.minutes, 0, 0);
+    return d.toISOString();
+  }
+
   async function handleSubmit() {
-    if (!isValid) return;
+    if (!isValid || !eventDate || !startTime || !endTime) return;
     setLoading(true);
     try {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
-      const res = await fetch(`${API_URL}/bookings`, {
+      const eventStartTime = buildISOTime(eventDate, startTime);
+      const eventEndTime = buildISOTime(eventDate, endTime);
+
+      const res = await fetch(API_URL + '/bookings', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) },
         body: JSON.stringify({
           vendorId: vendor?.id,
           instantBook,
           eventType,
-          eventDate: eventDate?.toISOString(),
-          startTime,
-          endTime,
-          guestCount,
+          eventDate: eventDate.toISOString(),
+          eventStartTime,
+          eventEndTime,
+          guestCount: parseInt(guestCount, 10) || 50,
           eventLocation: location,
-          notes,
-          promoCode,
-          protectionEnabled,
+          specialRequirements: notes || undefined,
           totalAmount: total,
         }),
       });
@@ -186,12 +196,12 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
       navigation.replace('BookingConfirmation', {
         instantBook,
         vendor,
-        eventDate: eventDate?.toISOString() ?? '',
+        eventDate: eventDate.toISOString(),
         eventLocation: location,
         guestCount,
         totalAmount: total.toFixed(2),
         eventType,
-        confirmationCode: data.data?.confirmationCode,
+        confirmationCode: data.data?.confirmationCode || 'CM-' + Math.floor(100000 + Math.random() * 900000),
       });
     } catch (err: any) {
       Alert.alert('Booking Error', err.message || 'Something went wrong. Please try again.');

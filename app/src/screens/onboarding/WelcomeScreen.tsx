@@ -231,20 +231,21 @@ export default function WelcomeScreen({ navigation }: Props) {
           <View style={s.dividerLine} />
         </View>
 
-        {/* Social Sign-In buttons */}
-        <View style={s.socialRow}>
-          <TouchableOpacity style={s.socialCircle} activeOpacity={0.7} onPress={handleFacebookLogin} accessibilityLabel="Continue with Facebook" accessibilityRole="button">
-            <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2023_Facebook_icon.svg/600px-2023_Facebook_icon.svg.png' }} style={s.socialLogo} onError={() => {}} />
+        {/* Social Sign-In buttons — text-based for guaranteed rendering */}
+        <TouchableOpacity style={[s.socialBtn, { backgroundColor: '#1877F2' }]} activeOpacity={0.7} onPress={handleFacebookLogin} accessibilityLabel="Continue with Facebook" accessibilityRole="button">
+          <Text style={s.socialBtnIcon}>f</Text>
+          <Text style={s.socialBtnText}>Continue with Facebook</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[s.socialBtn, { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border }]} activeOpacity={0.7} onPress={handleGoogleLogin} accessibilityLabel="Continue with Google" accessibilityRole="button">
+          <Text style={[s.socialBtnIcon, { color: '#4285F4' }]}>G</Text>
+          <Text style={[s.socialBtnText, { color: colors.text }]}>Continue with Google</Text>
+        </TouchableOpacity>
+        {Platform.OS === 'ios' && (
+          <TouchableOpacity style={[s.socialBtn, { backgroundColor: '#000000' }]} activeOpacity={0.7} onPress={handleAppleLogin} accessibilityLabel="Continue with Apple" accessibilityRole="button">
+            <Text style={s.socialBtnIcon}>{'\uF8FF'}</Text>
+            <Text style={s.socialBtnText}>Continue with Apple</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.socialCircle} activeOpacity={0.7} onPress={handleGoogleLogin} accessibilityLabel="Continue with Google" accessibilityRole="button">
-            <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png' }} style={s.socialLogo} onError={() => {}} />
-          </TouchableOpacity>
-          {Platform.OS === 'ios' && (
-            <TouchableOpacity style={s.socialCircle} activeOpacity={0.7} onPress={handleAppleLogin} accessibilityLabel="Continue with Apple" accessibilityRole="button">
-              <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/488px-Apple_logo_black.svg.png' }} style={s.socialLogo} onError={() => {}} />
-            </TouchableOpacity>
-          )}
-        </View>
+        )}
 
         {/* Biometric login button — only visible for returning users with biometrics enabled */}
         {showBiometricButton && biometricType && (
@@ -350,11 +351,24 @@ const s = StyleSheet.create({
     color: colors.textMuted,
     marginHorizontal: 16,
   },
-  socialRow: {
+  socialBtn: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
-    gap: 24,
-    marginBottom: 20,
+    height: 52,
+    borderRadius: 12,
+    marginBottom: 12,
+    gap: 10,
+  },
+  socialBtnIcon: {
+    fontFamily: fonts.bold,
+    fontSize: 20,
+    color: colors.white,
+  },
+  socialBtnText: {
+    fontFamily: fonts.semiBold,
+    fontSize: 15,
+    color: colors.white,
   },
   socialCircle: {
     width: 56,
