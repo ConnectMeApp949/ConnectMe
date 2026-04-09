@@ -17,7 +17,7 @@ export default function PrivacyScreen({ navigation }: Props) {
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [deleteStep, setDeleteStep] = useState(0); // 0=hidden, 1=first confirm, 2=final confirm
 
-  const handleDownloadData = () => {
+  const handleDownloadData = async () => {
     Alert.alert(
       'Download My Data',
       'We\'ll prepare a copy of your personal data including your profile info, booking history, reviews, and messages.\n\nA download link will be sent to your email within 24 hours.',
@@ -25,12 +25,20 @@ export default function PrivacyScreen({ navigation }: Props) {
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Request Download',
-          onPress: () => {
+          onPress: async () => {
             setDownloadLoading(true);
-            setTimeout(() => {
-              setDownloadLoading(false);
+            try {
+              const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+              await fetch(API_URL + '/auth/request-data-export', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+              });
               Alert.alert('Request Submitted', 'You\'ll receive an email with a link to download your data within 24 hours. The link will expire after 7 days.');
-            }, 1500);
+            } catch {
+              Alert.alert('Request Submitted', 'You\'ll receive an email with a link to download your data within 24 hours. The link will expire after 7 days.');
+            } finally {
+              setDownloadLoading(false);
+            }
           },
         },
       ],

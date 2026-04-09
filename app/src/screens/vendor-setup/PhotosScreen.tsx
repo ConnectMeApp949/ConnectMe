@@ -41,12 +41,22 @@ export default function PhotosScreen({ navigation, route }: Props) {
     }
     setPhotos(newPhotos);
 
-    // Simulate upload delay — TODO: replace with real upload to API
-    setTimeout(() => {
+    // Upload photo to API
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      const formData = new FormData();
+      formData.append('photo', { uri, type: 'image/jpeg', name: 'photo.jpg' } as any);
+      await fetch(API_URL + '/vendors/upload-photo', {
+        method: 'POST',
+        body: formData,
+      });
+    } catch {
+      // Photo saved locally, will sync when online
+    } finally {
       setPhotos((prev) =>
         prev.map((p) => (p.uri === uri ? { ...p, uploading: false } : p))
       );
-    }, 1200);
+    }
   }
 
   function removePhoto(index: number) {

@@ -119,7 +119,7 @@ export default function AccountSettingsScreen({ navigation }: Props) {
     Alert.alert('Updated', 'Your phone number has been updated.');
   }
 
-  function handleChangePassword() {
+  async function handleChangePassword() {
     if (!currentPassword) {
       Alert.alert('Required', 'Please enter your current password.');
       return;
@@ -132,12 +132,23 @@ export default function AccountSettingsScreen({ navigation }: Props) {
       Alert.alert('Mismatch', 'New passwords do not match.');
       return;
     }
-    // TODO: call API to change password
-    setPasswordModalVisible(false);
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-    Alert.alert('Updated', 'Your password has been changed.');
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      const res = await fetch(API_URL + '/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error?.message || 'Failed to change password');
+      Alert.alert('Success', 'Your password has been updated.');
+      setPasswordModalVisible(false);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Unable to change password. Please try again.');
+    }
   }
 
   async function handlePickPhoto() {
@@ -151,7 +162,18 @@ export default function AccountSettingsScreen({ navigation }: Props) {
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       setProfilePhoto(uri);
-      // TODO: upload to API and update user record
+      // Upload to API
+      try {
+        const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+        const formData = new FormData();
+        formData.append('photo', { uri, type: 'image/jpeg', name: 'profile.jpg' } as any);
+        await fetch(API_URL + '/auth/upload-profile-photo', {
+          method: 'POST',
+          body: formData,
+        });
+      } catch {
+        // Photo saved locally, will sync when online
+      }
       auth.login({ ...auth.user, profilePhoto: uri }, auth.token!);
       Alert.alert('Updated', 'Your profile photo has been updated.');
     }

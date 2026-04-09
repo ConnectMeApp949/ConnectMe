@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert, Linking, Platform, ScrollView,
+  View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert, Platform, ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as WebBrowser from 'expo-web-browser';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { OnboardingStackParamList } from '../../navigation/types';
@@ -20,12 +19,7 @@ import {
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'Welcome'>;
 
-// Complete warm-up for web browser auth sessions
-WebBrowser.maybeCompleteAuthSession();
-
 const SOCIAL_FALLBACKS: Record<string, { label: string; color: string }> = {
-  facebook: { label: 'f', color: '#1877F2' },
-  google: { label: 'G', color: '#4285F4' },
   apple: { label: '\uF8FF', color: '#000000' },
 };
 
@@ -35,7 +29,7 @@ export default function WelcomeScreen({ navigation }: Props) {
   const [input, setInput] = useState('');
   const [biometricType, setBiometricType] = useState<string | null>(null);
   const [showBiometricButton, setShowBiometricButton] = useState(false);
-  const [socialImgErrors, setSocialImgErrors] = useState<Record<string, boolean>>({});
+  const [appleImgError, setAppleImgError] = useState(false);
 
   useEffect(() => {
     async function tryBiometricLogin() {
@@ -70,53 +64,6 @@ export default function WelcomeScreen({ navigation }: Props) {
       return;
     }
     navigation.navigate('SignIn', { email: input.trim() });
-  }
-
-  async function handleFacebookLogin() {
-    try {
-      // Facebook OAuth via web browser
-      // TODO: Replace with your Facebook App ID from developers.facebook.com
-      const redirectUri = 'https://auth.expo.io/@connectme/connectme';
-      const fbAppId = '951097110641665';
-      const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${fbAppId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=email,public_profile&response_type=token`;
-
-      const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
-
-      if (result.type === 'success' && result.url) {
-        // Extract access token from URL
-        const params = new URLSearchParams(result.url.split('#')[1]);
-        const accessToken = params.get('access_token');
-        if (accessToken) {
-          // TODO: Send token to backend to verify and create/login user
-          Alert.alert('Sign In', 'Social sign-in is being set up. Please use email and password to sign in for now.', [{ text: 'OK' }]);
-        }
-      }
-    } catch (error) {
-      Alert.alert('Facebook Login', 'Facebook authentication requires a custom build. Configure your Facebook App ID in the code to enable this feature.');
-    }
-  }
-
-  async function handleGoogleLogin() {
-    try {
-      // Google OAuth via web browser
-      // TODO: Replace with your Google OAuth Client ID from console.cloud.google.com
-      const redirectUri = 'https://auth.expo.io/@connectme/connectme';
-      const clientId = '528402499661-nktq259d8g6h6trep8nkj37ii6046681.apps.googleusercontent.com';
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=email%20profile&response_type=token`;
-
-      const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
-
-      if (result.type === 'success' && result.url) {
-        const params = new URLSearchParams(result.url.split('#')[1]);
-        const accessToken = params.get('access_token');
-        if (accessToken) {
-          // TODO: Send token to backend to verify and create/login user
-          Alert.alert('Sign In', 'Social sign-in is being set up. Please use email and password to sign in for now.', [{ text: 'OK' }]);
-        }
-      }
-    } catch (error) {
-      Alert.alert('Google Login', 'Google authentication requires OAuth credentials. Configure your Google Client ID in the code to enable this feature.');
-    }
   }
 
   async function handleBiometricLogin() {
@@ -218,27 +165,11 @@ export default function WelcomeScreen({ navigation }: Props) {
           <View style={s.dividerLine} />
         </View>
 
-        {/* Social login buttons */}
-        <View style={s.socialRow}>
-          <TouchableOpacity style={s.socialCircle} activeOpacity={0.7} onPress={handleFacebookLogin} accessibilityLabel="Continue with Facebook" accessibilityRole="button" accessibilityHint="Double tap to sign in with your Facebook account">
-            {!socialImgErrors.facebook ? (
-              <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png' }} style={s.socialCircleIcon} onError={() => setSocialImgErrors(prev => ({ ...prev, facebook: true }))} accessibilityLabel="Facebook logo" accessibilityRole="image" />
-            ) : (
-              <Text style={[s.socialFallbackText, { color: SOCIAL_FALLBACKS.facebook.color }]} accessibilityLabel="Facebook logo">f</Text>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity style={s.socialCircle} activeOpacity={0.7} onPress={handleGoogleLogin} accessibilityLabel="Continue with Google" accessibilityRole="button" accessibilityHint="Double tap to sign in with your Google account">
-            {!socialImgErrors.google ? (
-              <Image source={{ uri: 'https://www.google.com/favicon.ico' }} style={s.socialCircleIcon} onError={() => setSocialImgErrors(prev => ({ ...prev, google: true }))} accessibilityLabel="Google logo" accessibilityRole="image" />
-            ) : (
-              <Text style={[s.socialFallbackText, { color: SOCIAL_FALLBACKS.google.color }]} accessibilityLabel="Google logo">G</Text>
-            )}
-          </TouchableOpacity>
-
+        {/* Apple Sign-In button */}
+        <View style={s.appleButtonRow}>
           <TouchableOpacity style={s.socialCircle} activeOpacity={0.7} onPress={handleAppleLogin} accessibilityLabel="Continue with Apple" accessibilityRole="button" accessibilityHint="Double tap to sign in with your Apple account">
-            {!socialImgErrors.apple ? (
-              <Image source={{ uri: 'https://img.icons8.com/ios-filled/50/000000/mac-os.png' }} style={s.socialCircleIcon} onError={() => setSocialImgErrors(prev => ({ ...prev, apple: true }))} accessibilityLabel="Apple logo" accessibilityRole="image" />
+            {!appleImgError ? (
+              <Image source={{ uri: 'https://img.icons8.com/ios-filled/50/000000/mac-os.png' }} style={s.socialCircleIcon} onError={() => setAppleImgError(true)} accessibilityLabel="Apple logo" accessibilityRole="image" />
             ) : (
               <Text style={[s.socialFallbackText, { color: SOCIAL_FALLBACKS.apple.color }]} accessibilityLabel="Apple logo">{SOCIAL_FALLBACKS.apple.label}</Text>
             )}
@@ -349,10 +280,8 @@ const s = StyleSheet.create({
     color: colors.textMuted,
     marginHorizontal: 16,
   },
-  socialRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 24,
+  appleButtonRow: {
+    alignItems: 'center',
     marginBottom: 20,
   },
   socialCircle: {
