@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as WebBrowser from 'expo-web-browser';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { OnboardingStackParamList } from '../../navigation/types';
@@ -19,7 +20,11 @@ import {
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'Welcome'>;
 
+WebBrowser.maybeCompleteAuthSession();
+
 const SOCIAL_FALLBACKS: Record<string, { label: string; color: string }> = {
+  facebook: { label: 'f', color: '#1877F2' },
+  google: { label: 'G', color: '#4285F4' },
   apple: { label: '\uF8FF', color: '#000000' },
 };
 
@@ -29,7 +34,6 @@ export default function WelcomeScreen({ navigation }: Props) {
   const [input, setInput] = useState('');
   const [biometricType, setBiometricType] = useState<string | null>(null);
   const [showBiometricButton, setShowBiometricButton] = useState(false);
-  const [appleImgError, setAppleImgError] = useState(false);
 
   useEffect(() => {
     async function tryBiometricLogin() {
@@ -77,6 +81,68 @@ export default function WelcomeScreen({ navigation }: Props) {
     );
     if (success) {
       auth.login({ email: credentials.email }, credentials.token);
+    }
+  }
+
+  async function handleFacebookLogin() {
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      const fbAppId = '951097110641665';
+      const redirectUri = 'https://auth.expo.io/@connectme/connectme';
+      const authUrl = 'https://www.facebook.com/v18.0/dialog/oauth?client_id=' + fbAppId + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&scope=email,public_profile&response_type=token';
+
+      const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
+
+      if (result.type === 'success' && result.url) {
+        const params = new URLSearchParams(result.url.split('#')[1]);
+        const accessToken = params.get('access_token');
+        if (accessToken) {
+          const res = await fetch(API_URL + '/auth/social-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ provider: 'facebook', accessToken }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            auth.login(data.data.user, data.data.accessToken);
+          } else {
+            Alert.alert('Sign In Failed', data.error?.message || 'Unable to sign in with Facebook.');
+          }
+        }
+      }
+    } catch {
+      Alert.alert('Sign In Failed', 'Unable to sign in with Facebook. Please try again or use email and password.');
+    }
+  }
+
+  async function handleGoogleLogin() {
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      const clientId = '528402499661-nktq259d8g6h6trep8nkj37ii6046681.apps.googleusercontent.com';
+      const redirectUri = 'https://auth.expo.io/@connectme/connectme';
+      const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' + clientId + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&scope=email%20profile&response_type=token';
+
+      const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
+
+      if (result.type === 'success' && result.url) {
+        const params = new URLSearchParams(result.url.split('#')[1]);
+        const accessToken = params.get('access_token');
+        if (accessToken) {
+          const res = await fetch(API_URL + '/auth/social-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ provider: 'google', accessToken }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            auth.login(data.data.user, data.data.accessToken);
+          } else {
+            Alert.alert('Sign In Failed', data.error?.message || 'Unable to sign in with Google.');
+          }
+        }
+      }
+    } catch {
+      Alert.alert('Sign In Failed', 'Unable to sign in with Google. Please try again or use email and password.');
     }
   }
 
@@ -165,15 +231,19 @@ export default function WelcomeScreen({ navigation }: Props) {
           <View style={s.dividerLine} />
         </View>
 
-        {/* Apple Sign-In button */}
-        <View style={s.appleButtonRow}>
-          <TouchableOpacity style={s.socialCircle} activeOpacity={0.7} onPress={handleAppleLogin} accessibilityLabel="Continue with Apple" accessibilityRole="button" accessibilityHint="Double tap to sign in with your Apple account">
-            {!appleImgError ? (
-              <Image source={{ uri: 'https://img.icons8.com/ios-filled/50/000000/mac-os.png' }} style={s.socialCircleIcon} onError={() => setAppleImgError(true)} accessibilityLabel="Apple logo" accessibilityRole="image" />
-            ) : (
-              <Text style={[s.socialFallbackText, { color: SOCIAL_FALLBACKS.apple.color }]} accessibilityLabel="Apple logo">{SOCIAL_FALLBACKS.apple.label}</Text>
-            )}
+        {/* Social Sign-In buttons */}
+        <View style={s.socialRow}>
+          <TouchableOpacity style={s.socialCircle} activeOpacity={0.7} onPress={handleFacebookLogin} accessibilityLabel="Continue with Facebook" accessibilityRole="button">
+            <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2023_Facebook_icon.svg/600px-2023_Facebook_icon.svg.png' }} style={s.socialLogo} onError={() => {}} />
           </TouchableOpacity>
+          <TouchableOpacity style={s.socialCircle} activeOpacity={0.7} onPress={handleGoogleLogin} accessibilityLabel="Continue with Google" accessibilityRole="button">
+            <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png' }} style={s.socialLogo} onError={() => {}} />
+          </TouchableOpacity>
+          {Platform.OS === 'ios' && (
+            <TouchableOpacity style={s.socialCircle} activeOpacity={0.7} onPress={handleAppleLogin} accessibilityLabel="Continue with Apple" accessibilityRole="button">
+              <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/488px-Apple_logo_black.svg.png' }} style={s.socialLogo} onError={() => {}} />
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Biometric login button — only visible for returning users with biometrics enabled */}
@@ -280,8 +350,10 @@ const s = StyleSheet.create({
     color: colors.textMuted,
     marginHorizontal: 16,
   },
-  appleButtonRow: {
-    alignItems: 'center',
+  socialRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 24,
     marginBottom: 20,
   },
   socialCircle: {
@@ -298,6 +370,11 @@ const s = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 2,
+  },
+  socialLogo: {
+    width: 28,
+    height: 28,
+    resizeMode: 'contain',
   },
   socialCircleIcon: {
     width: 24,
