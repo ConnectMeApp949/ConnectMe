@@ -24,7 +24,7 @@ type Props = NativeStackScreenProps<any, 'AccountSettings'>;
 
 export default function AccountSettingsScreen({ navigation }: Props) {
   const auth = useAuth();
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark, toggleTheme, colors: themeColors } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const [twoFactor, setTwoFactor] = useState(false);
   const [pushNotif, setPushNotif] = useState(true);
@@ -186,24 +186,24 @@ export default function AccountSettingsScreen({ navigation }: Props) {
 
   function Row({ label, right, onPress }: { label: string; right?: React.ReactNode; onPress?: () => void }) {
     return (
-      <TouchableOpacity style={s.row} onPress={onPress} activeOpacity={onPress ? 0.6 : 1} disabled={!onPress} accessibilityLabel={label} accessibilityRole="button">
-        <Text style={s.rowLabel}>{label}</Text>
-        {right ?? <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />}
+      <TouchableOpacity style={[s.row, { borderBottomColor: themeColors.border }]} onPress={onPress} activeOpacity={onPress ? 0.6 : 1} disabled={!onPress} accessibilityLabel={label} accessibilityRole="button">
+        <Text style={[s.rowLabel, { color: themeColors.text }]}>{label}</Text>
+        {right ?? <ChevronRightIcon size={18} color={themeColors.textSecondary} strokeWidth={1.5} />}
       </TouchableOpacity>
     );
   }
 
   function Section({ title, children }: { title: string; children: React.ReactNode }) {
-    return <View style={s.section}><Text style={s.sectionTitle}>{title}</Text>{children}</View>;
+    return <View style={s.section}><Text style={[s.sectionTitle, { color: themeColors.textSecondary }]}>{title}</Text>{children}</View>;
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Account Settings</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Account Settings</Text>
         <View style={s.backBtn} />
       </View>
 
@@ -213,7 +213,7 @@ export default function AccountSettingsScreen({ navigation }: Props) {
             label="Edit Name"
             right={
               <View style={s.rowRight}>
-                <Text style={s.rowRightText}>{auth.user?.firstName} {auth.user?.lastName}</Text>
+                <Text style={[s.rowRightText, { color: themeColors.textSecondary }]}>{auth.user?.firstName} {auth.user?.lastName}</Text>
                 <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
               </View>
             }
@@ -244,12 +244,12 @@ export default function AccountSettingsScreen({ navigation }: Props) {
         <Section title="CONTACT">
           <Row
             label="Email Address"
-            right={<View style={s.rowRight}><Text style={s.rowRightText}>{auth.user?.email ?? ''}</Text><ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} /></View>}
+            right={<View style={s.rowRight}><Text style={[s.rowRightText, { color: themeColors.textSecondary }]}>{auth.user?.email ?? ''}</Text><ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} /></View>}
             onPress={() => { setEditEmail(auth.user?.email ?? ''); setEmailModalVisible(true); }}
           />
           <Row
             label="Phone Number"
-            right={<View style={s.rowRight}><Text style={s.rowRightText}>{auth.user?.phone ?? 'Not set'}</Text><ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} /></View>}
+            right={<View style={s.rowRight}><Text style={[s.rowRightText, { color: themeColors.textSecondary }]}>{auth.user?.phone ?? 'Not set'}</Text><ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} /></View>}
             onPress={() => { setEditPhone(auth.user?.phone ?? ''); setPhoneModalVisible(true); }}
           />
         </Section>
@@ -281,7 +281,7 @@ export default function AccountSettingsScreen({ navigation }: Props) {
             label={t('language')}
             right={
               <View style={s.rowRight}>
-                <Text style={s.rowRightText}>{language === 'en' ? 'English' : 'Español'}</Text>
+                <Text style={[s.rowRightText, { color: themeColors.textSecondary }]}>{language === 'en' ? 'English' : 'Español'}</Text>
                 <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
               </View>
             }
@@ -355,17 +355,17 @@ export default function AccountSettingsScreen({ navigation }: Props) {
       {/* ─── Edit Name Modal ─── */}
       <Modal visible={nameModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
         <View style={s.modalOverlay}>
-          <View style={s.modalSheet}>
+          <View style={[s.modalSheet, { backgroundColor: themeColors.cardBackground }]}>
             <View style={s.modalHeader}>
-              <Text style={s.modalTitle}>Edit Name</Text>
+              <Text style={[s.modalTitle, { color: themeColors.text }]}>Edit Name</Text>
               <TouchableOpacity onPress={() => setNameModalVisible(false)} accessibilityLabel="Close" accessibilityRole="button">
                 <XIcon size={18} color={colors.textMuted} strokeWidth={2} />
               </TouchableOpacity>
             </View>
 
-            <Text style={s.inputLabel}>First name</Text>
+            <Text style={[s.inputLabel, { color: themeColors.text }]}>First name</Text>
             <TextInput
-              style={s.input}
+              style={[s.input, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
               value={editFirstName}
               onChangeText={setEditFirstName}
               placeholder="First name"
@@ -375,9 +375,9 @@ export default function AccountSettingsScreen({ navigation }: Props) {
               accessibilityRole="text"
             />
 
-            <Text style={s.inputLabel}>Last name</Text>
+            <Text style={[s.inputLabel, { color: themeColors.text }]}>Last name</Text>
             <TextInput
-              style={s.input}
+              style={[s.input, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
               value={editLastName}
               onChangeText={setEditLastName}
               placeholder="Last name"
@@ -403,17 +403,17 @@ export default function AccountSettingsScreen({ navigation }: Props) {
       {/* ─── Edit Email Modal ─── */}
       <Modal visible={emailModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
         <View style={s.modalOverlay}>
-          <View style={s.modalSheet}>
+          <View style={[s.modalSheet, { backgroundColor: themeColors.cardBackground }]}>
             <View style={s.modalHeader}>
-              <Text style={s.modalTitle}>Edit Email</Text>
+              <Text style={[s.modalTitle, { color: themeColors.text }]}>Edit Email</Text>
               <TouchableOpacity onPress={() => setEmailModalVisible(false)} accessibilityLabel="Close" accessibilityRole="button">
                 <XIcon size={18} color={colors.textMuted} strokeWidth={2} />
               </TouchableOpacity>
             </View>
 
-            <Text style={s.inputLabel}>Email address</Text>
+            <Text style={[s.inputLabel, { color: themeColors.text }]}>Email address</Text>
             <TextInput
-              style={s.input}
+              style={[s.input, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
               value={editEmail}
               onChangeText={setEditEmail}
               placeholder="you@example.com"
@@ -442,17 +442,17 @@ export default function AccountSettingsScreen({ navigation }: Props) {
       {/* ─── Change Password Modal ─── */}
       <Modal visible={passwordModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
         <View style={s.modalOverlay}>
-          <View style={s.modalSheet}>
+          <View style={[s.modalSheet, { backgroundColor: themeColors.cardBackground }]}>
             <View style={s.modalHeader}>
-              <Text style={s.modalTitle}>Change Password</Text>
+              <Text style={[s.modalTitle, { color: themeColors.text }]}>Change Password</Text>
               <TouchableOpacity onPress={() => setPasswordModalVisible(false)} accessibilityLabel="Close" accessibilityRole="button">
                 <XIcon size={18} color={colors.textMuted} strokeWidth={2} />
               </TouchableOpacity>
             </View>
 
-            <Text style={s.inputLabel}>Current password</Text>
+            <Text style={[s.inputLabel, { color: themeColors.text }]}>Current password</Text>
             <TextInput
-              style={s.input}
+              style={[s.input, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
               value={currentPassword}
               onChangeText={setCurrentPassword}
               placeholder="Enter current password"
@@ -463,9 +463,9 @@ export default function AccountSettingsScreen({ navigation }: Props) {
               accessibilityRole="text"
             />
 
-            <Text style={s.inputLabel}>New password</Text>
+            <Text style={[s.inputLabel, { color: themeColors.text }]}>New password</Text>
             <TextInput
-              style={s.input}
+              style={[s.input, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
               value={newPassword}
               onChangeText={setNewPassword}
               placeholder="At least 8 characters"
@@ -475,9 +475,9 @@ export default function AccountSettingsScreen({ navigation }: Props) {
               accessibilityRole="text"
             />
 
-            <Text style={s.inputLabel}>Confirm new password</Text>
+            <Text style={[s.inputLabel, { color: themeColors.text }]}>Confirm new password</Text>
             <TextInput
-              style={s.input}
+              style={[s.input, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               placeholder="Re-enter new password"
@@ -504,15 +504,15 @@ export default function AccountSettingsScreen({ navigation }: Props) {
       {/* ─── Connected Accounts Modal ─── */}
       <Modal visible={connectedModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
         <View style={s.modalOverlay}>
-          <View style={s.modalSheet}>
+          <View style={[s.modalSheet, { backgroundColor: themeColors.cardBackground }]}>
             <View style={s.modalHeader}>
-              <Text style={s.modalTitle}>Connected Accounts</Text>
+              <Text style={[s.modalTitle, { color: themeColors.text }]}>Connected Accounts</Text>
               <TouchableOpacity onPress={() => setConnectedModalVisible(false)} accessibilityLabel="Close" accessibilityRole="button">
                 <XIcon size={18} color={colors.textMuted} strokeWidth={2} />
               </TouchableOpacity>
             </View>
 
-            <Text style={s.connectedSub}>Link your accounts for faster sign-in</Text>
+            <Text style={[s.connectedSub, { color: themeColors.textSecondary }]}>Link your accounts for faster sign-in</Text>
 
             <View style={s.connectedRow}>
               <View style={s.connectedLeft}>
@@ -520,8 +520,8 @@ export default function AccountSettingsScreen({ navigation }: Props) {
                   <Text style={[s.connectedLogoFallbackText, { color: '#4285F4' }]}>G</Text>
                 </View>
                 <View>
-                  <Text style={s.connectedLabel}>Google</Text>
-                  <Text style={s.connectedStatus}>{googleConnected ? 'Connected' : 'Not connected'}</Text>
+                  <Text style={[s.connectedLabel, { color: themeColors.text }]}>Google</Text>
+                  <Text style={[s.connectedStatus, { color: themeColors.textSecondary }]}>{googleConnected ? 'Connected' : 'Not connected'}</Text>
                 </View>
               </View>
               <Switch value={googleConnected} onValueChange={setGoogleConnected} trackColor={{ true: colors.primary }} accessibilityLabel="Connect Google account" accessibilityRole="switch" />
@@ -533,8 +533,8 @@ export default function AccountSettingsScreen({ navigation }: Props) {
                   <Text style={[s.connectedLogoFallbackText, { color: '#000000' }]}>{'\uF8FF'}</Text>
                 </View>
                 <View>
-                  <Text style={s.connectedLabel}>Apple</Text>
-                  <Text style={s.connectedStatus}>{appleConnected ? 'Connected' : 'Not connected'}</Text>
+                  <Text style={[s.connectedLabel, { color: themeColors.text }]}>Apple</Text>
+                  <Text style={[s.connectedStatus, { color: themeColors.textSecondary }]}>{appleConnected ? 'Connected' : 'Not connected'}</Text>
                 </View>
               </View>
               <Switch value={appleConnected} onValueChange={setAppleConnected} trackColor={{ true: colors.primary }} accessibilityLabel="Connect Apple account" accessibilityRole="switch" />
@@ -546,8 +546,8 @@ export default function AccountSettingsScreen({ navigation }: Props) {
                   <Text style={[s.connectedLogoFallbackText, { color: '#1877F2' }]}>f</Text>
                 </View>
                 <View>
-                  <Text style={s.connectedLabel}>Facebook</Text>
-                  <Text style={s.connectedStatus}>{facebookConnected ? 'Connected' : 'Not connected'}</Text>
+                  <Text style={[s.connectedLabel, { color: themeColors.text }]}>Facebook</Text>
+                  <Text style={[s.connectedStatus, { color: themeColors.textSecondary }]}>{facebookConnected ? 'Connected' : 'Not connected'}</Text>
                 </View>
               </View>
               <Switch value={facebookConnected} onValueChange={setFacebookConnected} trackColor={{ true: colors.primary }} accessibilityLabel="Connect Facebook account" accessibilityRole="switch" />
@@ -559,17 +559,17 @@ export default function AccountSettingsScreen({ navigation }: Props) {
       {/* ─── Edit Phone Modal ─── */}
       <Modal visible={phoneModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
         <View style={s.modalOverlay}>
-          <View style={s.modalSheet}>
+          <View style={[s.modalSheet, { backgroundColor: themeColors.cardBackground }]}>
             <View style={s.modalHeader}>
-              <Text style={s.modalTitle}>Edit Phone Number</Text>
+              <Text style={[s.modalTitle, { color: themeColors.text }]}>Edit Phone Number</Text>
               <TouchableOpacity onPress={() => setPhoneModalVisible(false)} accessibilityLabel="Close" accessibilityRole="button">
                 <XIcon size={18} color={colors.textMuted} strokeWidth={2} />
               </TouchableOpacity>
             </View>
 
-            <Text style={s.inputLabel}>Phone number</Text>
+            <Text style={[s.inputLabel, { color: themeColors.text }]}>Phone number</Text>
             <TextInput
-              style={s.input}
+              style={[s.input, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
               value={editPhone}
               onChangeText={setEditPhone}
               placeholder="(555) 555-5555"

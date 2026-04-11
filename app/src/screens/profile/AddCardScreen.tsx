@@ -5,6 +5,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useAuth } from '../../context/AuthContext';
 import { ChevronLeftIcon, XIcon, CheckIcon } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'AddCard'>;
@@ -47,6 +48,7 @@ function luhnCheck(num: string): boolean {
 }
 
 export default function AddCardScreen({ navigation }: Props) {
+  const { token } = useAuth();
   const [cardNumber, setCardNumber] = useState('');
   const [expiration, setExpiration] = useState('');
   const [cvv, setCvv] = useState('');
@@ -78,7 +80,10 @@ export default function AddCardScreen({ navigation }: Props) {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       const res = await fetch(`${API_URL}/payment-methods`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           cardNumber: cleanCard,
           expiration,
@@ -87,6 +92,9 @@ export default function AddCardScreen({ navigation }: Props) {
           country,
         }),
       });
+      if (!res.ok) {
+        throw new Error(`Server error (${res.status})`);
+      }
       const data = await res.json();
       if (!data.success) {
         throw new Error(data.error?.message || 'Failed to add card');

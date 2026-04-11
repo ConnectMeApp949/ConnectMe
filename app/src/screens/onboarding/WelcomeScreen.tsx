@@ -163,8 +163,23 @@ export default function WelcomeScreen({ navigation }: Props) {
       // credential.identityToken is a JWT that should be sent to the backend
       // to verify and create/login the user
       if (credential.identityToken) {
-        // TODO: Send credential.identityToken to backend for verification
-        // For now, create a local session with the Apple credential info
+        const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+        try {
+          const res = await fetch(`${API_URL}/auth/social-login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ provider: 'apple', identityToken: credential.identityToken }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            auth.login(data.data.user, data.data.accessToken);
+            return;
+          }
+        } catch {
+          // Backend unavailable — fall back to local session
+        }
+
+        // Fallback: create a local session with the Apple credential info
         const appleUser = {
           email: credential.email ?? `apple-${credential.user}@privaterelay.appleid.com`,
           firstName: credential.fullName?.givenName ?? '',

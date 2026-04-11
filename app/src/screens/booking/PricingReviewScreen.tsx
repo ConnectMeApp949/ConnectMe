@@ -5,6 +5,7 @@ import ProfileSetupLayout from '../../components/ProfileSetupLayout';
 import { BookingFlowParamList } from './types';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { CalendarIcon, ClockIcon, MapPinIcon, SparklesIcon, FileTextIcon } from '../../components/Icons';
+import { useAuth } from '../../context/AuthContext';
 
 const SERVICE_FEE_RATE = 0.05;
 
@@ -17,6 +18,7 @@ const UNIT_LABELS: Record<string, string> = {
 type Props = NativeStackScreenProps<BookingFlowParamList, 'PricingReview'>;
 
 export default function PricingReviewScreen({ navigation, route }: Props) {
+  const { token } = useAuth();
   const { vendor, draft } = route.params;
   const [loading, setLoading] = useState(false);
 
@@ -35,7 +37,10 @@ export default function PricingReviewScreen({ navigation, route }: Props) {
         `${process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services'}/bookings`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+          },
           body: JSON.stringify({
             vendorId: vendor.id,
             eventDate: draft.eventDate,

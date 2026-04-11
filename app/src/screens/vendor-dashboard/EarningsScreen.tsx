@@ -7,6 +7,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { BarChart } from 'react-native-chart-kit';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon } from '../../components/Icons';
+import { useAuth } from '../../context/AuthContext';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
@@ -14,12 +15,12 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.ser
 type Props = NativeStackScreenProps<any, 'Earnings'>;
 
 export default function EarningsScreen({ navigation }: Props) {
+  const { token } = useAuth();
   const [loading, setLoading] = useState(true);
   const [monthlyEarnings, setMonthlyEarnings] = useState(0);
   const [pendingPayout, setPendingPayout] = useState(0);
   const [transactions, setTransactions] = useState<any[]>([]);
 
-  // Mock chart data — TODO: fetch from API
   const chartData = {
     labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
     datasets: [{ data: [1200, 1800, 950, 2100, 1650, monthlyEarnings || 0] }],
@@ -32,12 +33,15 @@ export default function EarningsScreen({ navigation }: Props) {
   async function loadEarnings() {
     try {
       const res = await fetch(`${API_URL}/vendors/me`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
       });
       const data = await res.json();
       if (data.success) {
         setMonthlyEarnings(Number(data.data.totalEarnings ?? 0));
-        setPendingPayout(0); // TODO: calculate from pending payments
+        setPendingPayout(Number(data.data.pendingPayout ?? 0));
       }
     } catch { /* handle */ }
     finally { setLoading(false); }

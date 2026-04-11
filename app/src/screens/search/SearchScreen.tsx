@@ -27,7 +27,7 @@ const CATEGORIES = [
 
 const RATINGS = [0, 3, 3.5, 4, 4.5];
 
-const GOOGLE_MAPS_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
+const GOOGLE_MAPS_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyCtFg5weRBNkpbZWmjaQrLpYyegYLGapqs';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 // San Antonio area coordinates for vendors

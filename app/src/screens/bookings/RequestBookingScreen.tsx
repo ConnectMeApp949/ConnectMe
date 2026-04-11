@@ -187,8 +187,13 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
           eventLocation: location,
           specialRequirements: notes || undefined,
           totalAmount: total,
+          promoCode: promoCode || undefined,
+          protectionEnabled,
         }),
       });
+      if (!res.ok) {
+        throw new Error(`Server error (${res.status}). Please try again.`);
+      }
       const data = await res.json();
       if (!data.success) {
         throw new Error(data.error?.message || 'Booking failed');

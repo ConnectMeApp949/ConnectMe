@@ -11,6 +11,7 @@ import { useRecentlyViewed } from '../../hooks/useRecentlyViewed';
 import { useLanguage } from '../../context/LanguageContext';
 import { TrendingIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon, CompassIcon, WellnessIcon, BellIcon, MapIcon, SearchIcon, CalendarIcon, ChevronRightIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 import NotificationPrompt from '../../components/NotificationPrompt';
 import RateAppPrompt from '../../components/RateAppPrompt';
 
@@ -30,6 +31,7 @@ type Props = NativeStackScreenProps<any, 'Home'>;
 
 export default function HomeScreen({ navigation }: Props) {
   const auth = useAuth();
+  const { colors: themeColors } = useTheme();
   const { t } = useLanguage();
   const { recentlyViewed } = useRecentlyViewed();
   const [activeCategory, setActiveCategory] = React.useState('');
@@ -83,7 +85,7 @@ export default function HomeScreen({ navigation }: Props) {
   ];
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       <FlatList
         data={sections}
         keyExtractor={(item) => item.key}
@@ -104,14 +106,14 @@ export default function HomeScreen({ navigation }: Props) {
                     accessibilityRole="image"
                   />
                   <TouchableOpacity
-                    style={styles.bellBtn}
+                    style={[styles.bellBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
                     onPress={() => navigation.navigate('Notifications')}
                     activeOpacity={0.6}
                     accessibilityLabel="Notifications"
                     accessibilityRole="button"
                     accessibilityHint="Opens your notifications"
                   >
-                    <BellIcon size={22} color={colors.text} strokeWidth={1.5} />
+                    <BellIcon size={22} color={themeColors.text} strokeWidth={1.5} />
                   </TouchableOpacity>
                 </View>
               );
@@ -122,7 +124,7 @@ export default function HomeScreen({ navigation }: Props) {
             case 'search':
               return (
                 <TouchableOpacity
-                  style={styles.searchBar}
+                  style={[styles.searchBar, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
                   onPress={() => navigation.navigate('Search')}
                   activeOpacity={0.8}
                   accessibilityLabel="Search vendors"
@@ -130,11 +132,11 @@ export default function HomeScreen({ navigation }: Props) {
                   accessibilityHint="Opens the vendor search screen"
                 >
                   <View style={styles.searchIconWrap}>
-                    <SearchIcon size={18} color={colors.textMuted} />
+                    <SearchIcon size={18} color={themeColors.textSecondary} />
                   </View>
                   <View style={styles.searchTextWrap}>
-                    <Text style={styles.searchTitle}>Where to?</Text>
-                    <Text style={styles.searchSubtitle}>Search vendors · Any date</Text>
+                    <Text style={[styles.searchTitle, { color: themeColors.text }]}>Where to?</Text>
+                    <Text style={[styles.searchSubtitle, { color: themeColors.textSecondary }]}>Search vendors · Any date</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -142,7 +144,7 @@ export default function HomeScreen({ navigation }: Props) {
             case 'plan_event':
               return (
                 <TouchableOpacity
-                  style={styles.planEventCard}
+                  style={[styles.planEventCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
                   onPress={() => navigation.navigate('EventPlanner')}
                   activeOpacity={0.7}
                   accessibilityLabel="Plan an event"
@@ -153,10 +155,10 @@ export default function HomeScreen({ navigation }: Props) {
                     <CalendarIcon size={22} color={colors.primary} />
                   </View>
                   <View style={styles.planEventText}>
-                    <Text style={styles.planEventTitle}>Plan an Event</Text>
-                    <Text style={styles.planEventSub}>Organize vendors, budgets, and checklists</Text>
+                    <Text style={[styles.planEventTitle, { color: themeColors.text }]}>Plan an Event</Text>
+                    <Text style={[styles.planEventSub, { color: themeColors.textSecondary }]}>Organize vendors, budgets, and checklists</Text>
                   </View>
-                  <ChevronRightIcon size={20} color={colors.textMuted} />
+                  <ChevronRightIcon size={20} color={themeColors.textSecondary} />
                 </TouchableOpacity>
               );
 
@@ -180,10 +182,10 @@ export default function HomeScreen({ navigation }: Props) {
                         accessibilityState={{ selected: isActive }}
                         accessibilityHint={`Filter vendors by ${cat.label}`}
                       >
-                        <View style={[styles.chipIconWrap, isActive && styles.chipIconWrapActive]}>
-                          <CatIcon size={22} color={isActive ? colors.white : colors.textMuted} strokeWidth={isActive ? 2 : 1.5} />
+                        <View style={[styles.chipIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }, isActive && styles.chipIconWrapActive]}>
+                          <CatIcon size={22} color={isActive ? colors.white : themeColors.textSecondary} strokeWidth={isActive ? 2 : 1.5} />
                         </View>
-                        <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>
+                        <Text style={[styles.chipLabel, { color: themeColors.textSecondary }, isActive && styles.chipLabelActive, isActive && { color: themeColors.text }]}>
                           {cat.label}
                         </Text>
                         {isActive && <View style={styles.chipUnderline} />}
@@ -196,7 +198,7 @@ export default function HomeScreen({ navigation }: Props) {
             case 'featured_title':
               return (
                 <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>{t('featuredVendors')}</Text>
+                  <Text style={[styles.sectionTitle, { color: themeColors.text }]}>{t('featuredVendors')}</Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate('Search', { filter: 'featured' })}
                     accessibilityLabel="See all featured vendors"
@@ -216,7 +218,7 @@ export default function HomeScreen({ navigation }: Props) {
                 );
               }
               if (featuredVendors.length === 0) {
-                return <Text style={[styles.emptyText, { marginLeft: spacing.lg }]}>No featured vendors yet</Text>;
+                return <Text style={[styles.emptyText, { marginLeft: spacing.lg, color: themeColors.textSecondary }]}>No featured vendors yet</Text>;
               }
               return (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.featuredRow}>
@@ -231,7 +233,7 @@ export default function HomeScreen({ navigation }: Props) {
             case 'recently_viewed_title':
               return (
                 <View style={styles.sectionHeader} accessibilityRole="header">
-                  <Text style={styles.sectionTitle}>
+                  <Text style={[styles.sectionTitle, { color: themeColors.text }]}>
                     {t('recentlyViewed')} ({recentlyViewed.length})
                   </Text>
                   <TouchableOpacity
@@ -264,7 +266,7 @@ export default function HomeScreen({ navigation }: Props) {
             case 'recent_title':
               return (
                 <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>{t('recentlyAdded')}</Text>
+                  <Text style={[styles.sectionTitle, { color: themeColors.text }]}>{t('recentlyAdded')}</Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate('Search')}
                     accessibilityLabel="See all recently added"
@@ -276,7 +278,7 @@ export default function HomeScreen({ navigation }: Props) {
               );
 
             case 'empty':
-              return <Text style={[styles.emptyText, { textAlign: 'center', marginTop: 40 }]}>No vendors found</Text>;
+              return <Text style={[styles.emptyText, { textAlign: 'center', marginTop: 40, color: themeColors.textSecondary }]}>No vendors found</Text>;
 
             case 'loading':
               return (

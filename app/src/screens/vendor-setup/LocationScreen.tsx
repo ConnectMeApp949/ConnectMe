@@ -7,7 +7,7 @@ import TextInput from '../../components/TextInput';
 import { VendorSetupParamList } from './types';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 
-const GOOGLE_MAPS_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
+const GOOGLE_MAPS_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyCtFg5weRBNkpbZWmjaQrLpYyegYLGapqs';
 
 type Props = NativeStackScreenProps<VendorSetupParamList, 'Location'>;
 

@@ -11,6 +11,7 @@ import {
   XIcon, ClockIcon,
 } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 
 const CATEGORY_LABELS: Record<string, string> = {
   FOOD_TRUCK: 'Food Trucks', DJ: 'Music', CATERING: 'Catering',
@@ -21,6 +22,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 type Props = NativeStackScreenProps<any, 'Wishlists'>;
 
 export default function WishlistsScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const { saved, toggle } = useSavedVendors();
   const { searches, removeSearch, toggleAlert } = useSavedSearches();
   const vendors = Array.from(saved.values());
@@ -50,11 +52,11 @@ export default function WishlistsScreen({ navigation }: Props) {
     if (vendors.length === 0) {
       return (
         <View style={s.empty}>
-          <View style={s.emptyIconWrap}>
-            <HeartIcon size={36} color={colors.textMuted} strokeWidth={1.5} />
+          <View style={[s.emptyIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <HeartIcon size={36} color={themeColors.textSecondary} strokeWidth={1.5} />
           </View>
-          <Text style={s.emptyTitle}>No saved vendors yet</Text>
-          <Text style={s.emptySub}>Tap the heart icon on any vendor to save them here</Text>
+          <Text style={[s.emptyTitle, { color: themeColors.text }]}>No saved vendors yet</Text>
+          <Text style={[s.emptySub, { color: themeColors.textSecondary }]}>Tap the heart icon on any vendor to save them here</Text>
           <TouchableOpacity
             style={s.exploreBtn}
             onPress={() => navigation.navigate('Explore')}
@@ -107,8 +109,8 @@ export default function WishlistsScreen({ navigation }: Props) {
             >
               <HeartFilledIcon size={20} color={colors.secondary} />
             </TouchableOpacity>
-            <Text style={s.cardName} numberOfLines={1}>{item.businessName}</Text>
-            <Text style={s.cardCategory}>{item.category?.replace(/_/g, ' ')}</Text>
+            <Text style={[s.cardName, { color: themeColors.text }]} numberOfLines={1}>{item.businessName}</Text>
+            <Text style={[s.cardCategory, { color: themeColors.textSecondary }]}>{item.category?.replace(/_/g, ' ')}</Text>
           </TouchableOpacity>
         )}
       />
@@ -119,11 +121,11 @@ export default function WishlistsScreen({ navigation }: Props) {
     if (searches.length === 0) {
       return (
         <View style={s.empty}>
-          <View style={s.emptyIconWrap}>
-            <SearchIcon size={36} color={colors.textMuted} strokeWidth={1.5} />
+          <View style={[s.emptyIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <SearchIcon size={36} color={themeColors.textSecondary} strokeWidth={1.5} />
           </View>
-          <Text style={s.emptyTitle}>No saved searches yet</Text>
-          <Text style={s.emptySub}>
+          <Text style={[s.emptyTitle, { color: themeColors.text }]}>No saved searches yet</Text>
+          <Text style={[s.emptySub, { color: themeColors.textSecondary }]}>
             Save a search from the search screen to get notified of new matches
           </Text>
           <TouchableOpacity
@@ -147,7 +149,7 @@ export default function WishlistsScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={s.searchCard}
+            style={[s.searchCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
             activeOpacity={0.7}
             onPress={() => handleTapSavedSearch(item)}
             accessibilityLabel={`Saved search: ${item.query || 'All'}, ${CATEGORY_LABELS[item.category] || 'All categories'}`}
@@ -159,7 +161,7 @@ export default function WishlistsScreen({ navigation }: Props) {
                 <SearchIcon size={18} color={colors.primary} strokeWidth={1.5} />
               </View>
               <View style={s.searchCardInfo}>
-                <Text style={s.searchCardQuery} numberOfLines={1}>
+                <Text style={[s.searchCardQuery, { color: themeColors.text }]} numberOfLines={1}>
                   {item.query || 'All vendors'}
                 </Text>
                 <View style={s.searchCardMeta}>
@@ -219,32 +221,32 @@ export default function WishlistsScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <Text style={s.header}>Favorites</Text>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <Text style={[s.header, { color: themeColors.text }]}>Favorites</Text>
 
       {/* Tab toggle */}
-      <View style={s.tabToggle}>
+      <View style={[s.tabToggle, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
         <TouchableOpacity
-          style={[s.tabBtn, activeTab === 'vendors' && s.tabBtnActive]}
+          style={[s.tabBtn, activeTab === 'vendors' && s.tabBtnActive, activeTab === 'vendors' && { backgroundColor: themeColors.background }]}
           onPress={() => setActiveTab('vendors')}
           activeOpacity={0.7}
           accessibilityLabel="Vendors tab"
           accessibilityRole="tab"
           accessibilityState={{ selected: activeTab === 'vendors' }}
         >
-          <Text style={[s.tabBtnText, activeTab === 'vendors' && s.tabBtnTextActive]}>
+          <Text style={[s.tabBtnText, { color: themeColors.textSecondary }, activeTab === 'vendors' && s.tabBtnTextActive, activeTab === 'vendors' && { color: themeColors.text }]}>
             Vendors
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[s.tabBtn, activeTab === 'searches' && s.tabBtnActive]}
+          style={[s.tabBtn, activeTab === 'searches' && s.tabBtnActive, activeTab === 'searches' && { backgroundColor: themeColors.background }]}
           onPress={() => setActiveTab('searches')}
           activeOpacity={0.7}
           accessibilityLabel="Searches tab"
           accessibilityRole="tab"
           accessibilityState={{ selected: activeTab === 'searches' }}
         >
-          <Text style={[s.tabBtnText, activeTab === 'searches' && s.tabBtnTextActive]}>
+          <Text style={[s.tabBtnText, { color: themeColors.textSecondary }, activeTab === 'searches' && s.tabBtnTextActive, activeTab === 'searches' && { color: themeColors.text }]}>
             Searches
           </Text>
           {searches.length > 0 && (

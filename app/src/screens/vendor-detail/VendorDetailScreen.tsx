@@ -18,7 +18,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HERO_HEIGHT = 300;
-const GOOGLE_MAPS_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
+const GOOGLE_MAPS_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyCtFg5weRBNkpbZWmjaQrLpYyegYLGapqs';
 
 const UNIT_LABELS: Record<string, string> = {
   PER_HOUR: 'per hour',

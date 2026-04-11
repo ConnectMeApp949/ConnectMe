@@ -7,11 +7,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useAuth } from '../../context/AuthContext';
 import { ChevronLeftIcon } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'ModifyBooking'>;
 
 export default function ModifyBookingScreen({ navigation, route }: Props) {
+  const { token } = useAuth();
   const booking = (route.params as any)?.booking;
   const vendor = booking?.vendor;
   const vendorName = vendor?.businessName ?? 'Unknown Vendor';
@@ -70,14 +72,20 @@ export default function ModifyBookingScreen({ navigation, route }: Props) {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       const res = await fetch(`${API_URL}/bookings/${booking?.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           eventDate: eventDate.toISOString(),
-          guestCount,
+          guestCount: parseInt(guestCount, 10) || undefined,
           eventLocation: location,
           notes,
         }),
       });
+      if (!res.ok) {
+        throw new Error(`Server error (${res.status})`);
+      }
       const data = await res.json();
       if (!data.success) {
         throw new Error(data.error?.message || 'Modification failed');

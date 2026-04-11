@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { MessageIcon } from '../../components/Icons';
+import { useAuth } from '../../context/AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -41,6 +42,7 @@ function formatTime(iso: string): string {
 type Props = NativeStackScreenProps<any, 'Messages'>;
 
 export default function MessagesScreen({ navigation }: Props) {
+  const { token } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,7 +53,10 @@ export default function MessagesScreen({ navigation }: Props) {
   async function fetchConversations() {
     try {
       const res = await fetch(`${API_URL}/messages`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
       });
       const data = await res.json();
       if (data.success) setConversations(data.data);

@@ -159,7 +159,7 @@ const s = StyleSheet.create({
   resetBtnDisabled: { opacity: 0.6 },
   resetBtnText: { fontFamily: fonts.semiBold, fontSize: 16, color: colors.white },
 
-  backLink: { alignItems: 'center' },
+  backLink: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   backLinkText: { fontFamily: fonts.medium, fontSize: 14, color: colors.textMuted },
 
   // Sent state

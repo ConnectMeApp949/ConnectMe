@@ -8,11 +8,13 @@ import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { SettingsIcon, UserIcon, HelpCircleIcon, ShieldIcon, UsersIcon, FileTextIcon, LogOutIcon, ChevronRightIcon, CalendarIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'Profile'>;
 
 export default function ProfileScreen({ navigation }: Props) {
   const auth = useAuth();
+  const { colors: themeColors } = useTheme();
   const { t } = useLanguage();
   const user = auth.user;
   const firstName = user?.firstName ?? 'User';
@@ -41,7 +43,7 @@ export default function ProfileScreen({ navigation }: Props) {
   ];
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
         {/* ─── Profile header ─── */}
@@ -53,58 +55,58 @@ export default function ProfileScreen({ navigation }: Props) {
               <Text style={styles.avatarInitials}>{firstName[0]}{lastName?.[0] ?? ''}</Text>
             </View>
           )}
-          <Text style={styles.fullName}>{firstName} {lastName}</Text>
-          {city !== '' && <Text style={styles.location}>{city}</Text>}
+          <Text style={[styles.fullName, { color: themeColors.text }]}>{firstName} {lastName}</Text>
+          {city !== '' && <Text style={[styles.location, { color: themeColors.textSecondary }]}>{city}</Text>}
         </View>
 
         {/* ─── Stats row ─── */}
-        <View style={styles.statsCard}>
+        <View style={[styles.statsCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           <View style={styles.statCol}>
-            <Text style={styles.statNumber}>{user?.bookingCount ?? 0}</Text>
-            <Text style={styles.statLabel}>Bookings</Text>
+            <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.bookingCount ?? 0}</Text>
+            <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Bookings</Text>
           </View>
-          <View style={styles.statDivider} />
+          <View style={[styles.statDivider, { backgroundColor: themeColors.border }]} />
           <View style={styles.statCol}>
-            <Text style={styles.statNumber}>{user?.reviewCount ?? 0}</Text>
-            <Text style={styles.statLabel}>Reviews</Text>
+            <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.reviewCount ?? 0}</Text>
+            <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Reviews</Text>
           </View>
-          <View style={styles.statDivider} />
+          <View style={[styles.statDivider, { backgroundColor: themeColors.border }]} />
           <View style={styles.statCol}>
-            <Text style={styles.statNumber}>{user?.memberYears ?? '<1'}</Text>
-            <Text style={styles.statLabel}>Years on{'\n'}ConnectMe</Text>
+            <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.memberYears ?? '<1'}</Text>
+            <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Years on{'\n'}ConnectMe</Text>
           </View>
         </View>
 
         {/* ─── Activity cards ─── */}
         <View style={styles.activityRow}>
-          <TouchableOpacity style={styles.activityCard} activeOpacity={0.7} onPress={() => navigation.navigate('PastBookings')} accessibilityLabel="Past Bookings" accessibilityRole="button" accessibilityHint="View your past bookings">
-            <View style={styles.activityIconWrap}>
+          <TouchableOpacity style={[styles.activityCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('PastBookings')} accessibilityLabel="Past Bookings" accessibilityRole="button" accessibilityHint="View your past bookings">
+            <View style={[styles.activityIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <CalendarIcon size={28} color={colors.primary} strokeWidth={1.5} />
             </View>
-            <Text style={styles.activityLabel}>Past Bookings</Text>
+            <Text style={[styles.activityLabel, { color: themeColors.text }]}>Past Bookings</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.activityCard} activeOpacity={0.7} onPress={() => navigation.navigate('Connections')} accessibilityLabel="Connections" accessibilityRole="button" accessibilityHint="View your vendor connections">
-            <View style={styles.activityIconWrap}>
+          <TouchableOpacity style={[styles.activityCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('Connections')} accessibilityLabel="Connections" accessibilityRole="button" accessibilityHint="View your vendor connections">
+            <View style={[styles.activityIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <UsersIcon size={28} color={colors.primary} strokeWidth={1.5} />
             </View>
-            <Text style={styles.activityLabel}>Connections</Text>
+            <Text style={[styles.activityLabel, { color: themeColors.text }]}>Connections</Text>
           </TouchableOpacity>
         </View>
 
         {/* ─── Vendor mode banner ─── */}
         {auth.isVendorMode ? (
-          <TouchableOpacity style={styles.vendorBanner} activeOpacity={0.8} onPress={() => auth.toggleVendorMode()} accessibilityLabel="Switch to Booking" accessibilityRole="button" accessibilityHint="Browse and book vendors for your events">
+          <TouchableOpacity style={[styles.vendorBanner, { backgroundColor: themeColors.cardBackground }]} activeOpacity={0.8} onPress={() => auth.toggleVendorMode()} accessibilityLabel="Switch to Booking" accessibilityRole="button" accessibilityHint="Browse and book vendors for your events">
             <View style={styles.vendorBannerLeft}>
-              <Text style={styles.vendorBannerTitle}>Switch to Booking</Text>
-              <Text style={styles.vendorBannerSub}>Browse and book vendors for your events</Text>
+              <Text style={[styles.vendorBannerTitle, { color: themeColors.text }]}>Switch to Booking</Text>
+              <Text style={[styles.vendorBannerSub, { color: themeColors.textSecondary }]}>Browse and book vendors for your events</Text>
             </View>
             <ChevronRightIcon size={24} color={colors.primary} strokeWidth={1.5} />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.vendorBanner} activeOpacity={0.8} onPress={() => auth.toggleVendorMode()} accessibilityLabel="Switch to hosting" accessibilityRole="button" accessibilityHint="Manage your vendor business">
+          <TouchableOpacity style={[styles.vendorBanner, { backgroundColor: themeColors.cardBackground }]} activeOpacity={0.8} onPress={() => auth.toggleVendorMode()} accessibilityLabel="Switch to hosting" accessibilityRole="button" accessibilityHint="Manage your vendor business">
             <View style={styles.vendorBannerLeft}>
-              <Text style={styles.vendorBannerTitle}>Switch to hosting</Text>
-              <Text style={styles.vendorBannerSub}>Manage your vendor business</Text>
+              <Text style={[styles.vendorBannerTitle, { color: themeColors.text }]}>Switch to hosting</Text>
+              <Text style={[styles.vendorBannerSub, { color: themeColors.textSecondary }]}>Manage your vendor business</Text>
             </View>
             <ChevronRightIcon size={24} color={colors.primary} strokeWidth={1.5} />
           </TouchableOpacity>
@@ -117,7 +119,7 @@ export default function ProfileScreen({ navigation }: Props) {
             return (
               <TouchableOpacity
                 key={item.label}
-                style={[styles.menuRow, i < menuItems.length - 1 && styles.menuRowBorder]}
+                style={[styles.menuRow, i < menuItems.length - 1 && styles.menuRowBorder, i < menuItems.length - 1 && { borderBottomColor: themeColors.border }]}
                 onPress={item.onPress}
                 activeOpacity={0.6}
                 accessibilityLabel={item.label}
@@ -125,21 +127,21 @@ export default function ProfileScreen({ navigation }: Props) {
                 accessibilityHint={item.danger ? 'Signs you out of your account' : `Navigate to ${item.label}`}
               >
                 <View style={styles.menuRowLeft}>
-                  <View style={[styles.menuIconCircle, item.danger && styles.menuIconCircleDanger]}>
+                  <View style={[styles.menuIconCircle, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }, item.danger && styles.menuIconCircleDanger]}>
                     <IconComp size={20} color={item.danger ? colors.error : colors.primary} strokeWidth={1.5} />
                   </View>
-                  <Text style={[styles.menuLabel, item.danger && styles.menuLabelDanger]}>
+                  <Text style={[styles.menuLabel, { color: themeColors.text }, item.danger && styles.menuLabelDanger]}>
                     {item.label}
                   </Text>
                 </View>
-                <ChevronRightIcon size={18} color={item.danger ? colors.error : colors.textMuted} strokeWidth={1.5} />
+                <ChevronRightIcon size={18} color={item.danger ? colors.error : themeColors.textSecondary} strokeWidth={1.5} />
               </TouchableOpacity>
             );
           })}
         </View>
 
         {/* ─── Version ─── */}
-        <Text style={styles.version}>ConnectMe v1.0.0</Text>
+        <Text style={[styles.version, { color: themeColors.textSecondary }]}>ConnectMe v1.0.0</Text>
 
         <View style={{ height: 40 }} />
       </ScrollView>

@@ -161,7 +161,7 @@ export default function ChatScreen({ navigation, route }: Props) {
   const contactAvatar: string | undefined =
     conversation?.otherParty?.avatar;
 
-  const { user, isVendorMode } = useAuth();
+  const { user, isVendorMode, token } = useAuth();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
@@ -176,7 +176,10 @@ export default function ChatScreen({ navigation, route }: Props) {
         const conversationId = conversation?.id;
         if (!conversationId) return;
         const res = await fetch(`${API_URL}/messages/${conversationId}`, {
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+          },
         });
         const data = await res.json();
         if (data.success && data.data) {
@@ -251,7 +254,10 @@ export default function ChatScreen({ navigation, route }: Props) {
       if (conversationId) {
         await fetch(`${API_URL}/messages/${conversationId}`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+          },
           body: JSON.stringify({ content: text }),
         });
       }

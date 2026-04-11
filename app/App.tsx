@@ -338,7 +338,7 @@ function AppContent() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: isDark ? darkColors.background : lightColors.background }}>
       <SafeAreaProvider>
         <NavigationContainer
           theme={navTheme}

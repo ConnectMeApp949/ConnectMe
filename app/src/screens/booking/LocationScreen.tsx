@@ -28,7 +28,6 @@ export default function LocationScreen({ navigation, route }: Props) {
       }
       continueDisabled={!location.trim()}
     >
-      {/* TODO: Replace with Google Places Autocomplete */}
       <TextInput
         label="Event address"
         placeholder="123 Main St, San Antonio, TX"

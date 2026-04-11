@@ -17,6 +17,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useAuth } from '../../context/AuthContext';
 
 // ─── Constants ──────────────────────────────────────────
 
@@ -41,6 +42,7 @@ type ReportReason = (typeof REPORT_REASONS)[number];
 type Props = NativeStackScreenProps<any, 'Report'>;
 
 export default function ReportScreen({ navigation, route }: Props) {
+  const { token } = useAuth();
   const { name, photo, vendorId } = route.params as {
     name: string;
     photo: string | null;
@@ -68,7 +70,7 @@ export default function ReportScreen({ navigation, route }: Props) {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       quality: 0.8,
       allowsMultipleSelection: false,
     });
@@ -90,7 +92,10 @@ export default function ReportScreen({ navigation, route }: Props) {
     try {
       const res = await fetch(`${API_URL}/reports`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
         body: JSON.stringify({
           vendorId,
           reason: selectedReason,

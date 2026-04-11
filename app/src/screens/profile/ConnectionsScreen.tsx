@@ -5,11 +5,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, HeartFilledIcon, HeartIcon, UsersIcon } from '../../components/Icons';
+import { useAuth } from '../../context/AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 type Props = NativeStackScreenProps<any, 'Connections'>;
 
 export default function ConnectionsScreen({ navigation }: Props) {
+  const { token } = useAuth();
   const [filter, setFilter] = useState<'all' | 'favorites'>('all');
   const [connections, setConnections] = useState<any[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -21,7 +23,12 @@ export default function ConnectionsScreen({ navigation }: Props) {
 
   async function fetchConnections() {
     try {
-      const res = await fetch(`${API_URL}/bookings?status=COMPLETED`, { headers: { 'Content-Type': 'application/json' } });
+      const res = await fetch(`${API_URL}/bookings?status=COMPLETED`, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
+      });
       const data = await res.json();
       if (data.success) {
         const vendorMap = new Map<string, any>();

@@ -7,12 +7,14 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, CalendarIcon } from '../../components/Icons';
 import Skeleton from '../../components/Skeleton';
+import { useAuth } from '../../context/AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
 type Props = NativeStackScreenProps<any, 'PastBookings'>;
 
 export default function PastBookingsScreen({ navigation }: Props) {
+  const { token } = useAuth();
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +25,10 @@ export default function PastBookingsScreen({ navigation }: Props) {
   async function fetchBookings() {
     try {
       const res = await fetch(`${API_URL}/bookings?status=COMPLETED`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
       });
       const data = await res.json();
       if (data.success) {

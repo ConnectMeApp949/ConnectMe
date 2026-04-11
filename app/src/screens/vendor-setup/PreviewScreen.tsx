@@ -6,6 +6,7 @@ import Button from '../../components/Button';
 import { VendorSetupParamList, CATEGORIES } from './types';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { MapPinIcon, DollarIcon } from '../../components/Icons';
+import { useAuth } from '../../context/AuthContext';
 
 const UNIT_LABELS: Record<string, string> = {
   PER_HOUR: 'per hour',
@@ -16,6 +17,7 @@ const UNIT_LABELS: Record<string, string> = {
 type Props = NativeStackScreenProps<VendorSetupParamList, 'Preview'>;
 
 export default function PreviewScreen({ navigation, route }: Props) {
+  const { token } = useAuth();
   const { draft } = route.params;
   const [publishing, setPublishing] = useState(false);
 
@@ -30,7 +32,10 @@ export default function PreviewScreen({ navigation, route }: Props) {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       await fetch(`${API_URL}/vendors/profile`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
         body: JSON.stringify({
           businessName: draft.businessName,
           category: draft.category,

@@ -1,23 +1,32 @@
-export const colors = {
-  primary: '#2A8B8B',        // dark teal (main brand color)
-  accent: '#4DB8A4',         // medium teal
-  secondary: '#E31C5F',      // keep pink for CTAs
+export const lightColors = {
+  primary: '#2A8B8B',
+  accent: '#4DB8A4',
+  secondary: '#E31C5F',
   background: '#FFFFFF',
-  backgroundWarm: '#E8F6F3', // very light teal tint
-  cardBackground: '#F2FAF8', // subtle teal-tinted white
-  text: '#1A2B2B',           // dark teal-black
-  textSecondary: '#4A6B6B',  // medium teal-gray
-  textMuted: '#8BA5A5',      // muted teal-gray
-  border: '#D0E4E0',         // light teal border
+  backgroundWarm: '#E8F6F3',
+  cardBackground: '#F2FAF8',
+  text: '#1A2B2B',
+  textSecondary: '#4A6B6B',
+  textMuted: '#8BA5A5',
+  border: '#D0E4E0',
   error: '#DC2626',
   success: '#16A34A',
   warning: '#F59E0B',
   star: '#F59E0B',
   white: '#FFFFFF',
-  lightBlue: '#E8F6F3',      // light teal background
+  lightBlue: '#E8F6F3',
 } as const;
 
-export const lightColors = { ...colors } as const;
+// Mutable colors object — ThemeContext updates this when dark mode toggles
+// This allows all screens using `colors` to reflect the current theme
+export const colors: Record<string, string> = { ...lightColors };
+
+export function applyTheme(dark: boolean) {
+  const source = dark ? darkColors : lightColors;
+  for (const key in source) {
+    (colors as any)[key] = (source as any)[key];
+  }
+}
 
 export const darkColors = {
   primary: '#4DB8A4',        // lighter teal for dark backgrounds

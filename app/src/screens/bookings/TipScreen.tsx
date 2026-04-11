@@ -6,6 +6,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useAuth } from '../../context/AuthContext';
 import { ChevronLeftIcon, SparklesIcon } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'Tip'>;
@@ -13,6 +14,7 @@ type Props = NativeStackScreenProps<any, 'Tip'>;
 const TIP_PERCENTAGES = [10, 15, 20, 25] as const;
 
 export default function TipScreen({ navigation, route }: Props) {
+  const { token } = useAuth();
   const booking = route.params?.booking as any;
   const vendor = booking?.vendor;
   const vendorName = vendor?.businessName ?? 'Your Vendor';
@@ -79,12 +81,18 @@ export default function TipScreen({ navigation, route }: Props) {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       const res = await fetch(`${API_URL}/bookings/${booking?.id}/tip`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           amount: tipAmount,
           message: message.trim() || undefined,
         }),
       });
+      if (!res.ok) {
+        throw new Error(`Server error (${res.status})`);
+      }
       const data = await res.json();
       if (!data.success) {
         throw new Error(data.error?.message || 'Tip failed');

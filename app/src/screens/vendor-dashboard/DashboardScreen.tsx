@@ -84,6 +84,7 @@ export default function DashboardScreen({ navigation }: Props) {
   const [reviews, setReviews] = useState<any[]>([]);
 
   const auth = useAuth();
+  const token = auth.token;
   const firstName = auth.user?.firstName ?? 'Vendor';
   const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening';
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -94,9 +95,13 @@ export default function DashboardScreen({ navigation }: Props) {
 
   async function loadDashboard() {
     try {
+      const authHeaders = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+      };
       const [bookingsRes, profileRes] = await Promise.all([
-        fetch(`${API_URL}/bookings?status=PENDING`, { headers: { 'Content-Type': 'application/json' } }),
-        fetch(`${API_URL}/vendors/me`, { headers: { 'Content-Type': 'application/json' } }),
+        fetch(`${API_URL}/bookings?status=PENDING`, { headers: authHeaders }),
+        fetch(`${API_URL}/vendors/me`, { headers: authHeaders }),
       ]);
 
       const bookingsData = await bookingsRes.json();
@@ -113,8 +118,8 @@ export default function DashboardScreen({ navigation }: Props) {
         setStats({
           bookings: p.totalBookings ?? 0,
           earnings: Number(p.totalEarnings ?? 0),
-          views: 0, // TODO: track profile views
-          responseRate: 98, // TODO: calculate from bookings
+          views: p.profileViews ?? 0,
+          responseRate: p.responseRate ?? 0,
         });
       }
     } catch { /* handle */ }

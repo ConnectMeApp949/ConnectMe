@@ -3,6 +3,7 @@ import { Linking, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
+import { useAuth } from '../context/AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -17,6 +18,7 @@ Notifications.setNotificationHandler({
 });
 
 export function useNotifications() {
+  const { token: authToken } = useAuth();
   const [token, setToken] = useState<string | null>(null);
   const notificationListener = useRef<Notifications.EventSubscription>();
   const responseListener = useRef<Notifications.EventSubscription>();
@@ -25,7 +27,7 @@ export function useNotifications() {
     registerForPushNotifications().then((t) => {
       if (t) {
         setToken(t);
-        saveTokenToServer(t);
+        saveTokenToServer(t, authToken ?? undefined);
       }
     });
 
@@ -88,12 +90,15 @@ async function registerForPushNotifications(): Promise<string | null> {
   return tokenData.data;
 }
 
-async function saveTokenToServer(token: string): Promise<void> {
+async function saveTokenToServer(pushToken: string, authToken?: string): Promise<void> {
   try {
     await fetch(`${API_URL}/notifications/register-token`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
+      headers: {
+        'Content-Type': 'application/json',
+        ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}),
+      },
+      body: JSON.stringify({ token: pushToken }),
     });
   } catch (err) {
     // Token registration failed silently; will retry on next launch

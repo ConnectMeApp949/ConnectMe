@@ -1,11 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Modal, Alert, Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useAuth } from '../../context/AuthContext';
 import { ChevronLeftIcon, ChevronRightIcon, XIcon, DollarIcon } from '../../components/Icons';
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
 type Props = NativeStackScreenProps<any, 'PaymentMethods'>;
 
@@ -35,10 +38,41 @@ const CARD_FALLBACKS: Record<string, { label: string; color: string }> = {
 };
 
 export default function PaymentMethodsScreen({ navigation }: Props) {
+  const { token } = useAuth();
   const [methods, setMethods] = useState<PaymentMethod[]>([]);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState<'paypal' | 'card' | null>(null);
   const [logoErrors, setLogoErrors] = useState<Record<string, boolean>>({});
+
+  const fetchPaymentMethods = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_URL}/payment-methods`, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        setMethods(data.data);
+      }
+    } catch {
+      // Silently fail -- the empty state is already handled in the UI
+    }
+  }, [token]);
+
+  useEffect(() => {
+    fetchPaymentMethods();
+  }, [fetchPaymentMethods]);
+
+  // Refresh when returning from AddCard screen
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchPaymentMethods();
+    });
+    return unsubscribe;
+  }, [navigation, fetchPaymentMethods]);
 
   const handleLogoError = useCallback((key: string) => {
     setLogoErrors(prev => ({ ...prev, [key]: true }));

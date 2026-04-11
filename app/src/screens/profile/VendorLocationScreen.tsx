@@ -80,7 +80,7 @@ export default function VendorLocationScreen({ navigation }: Props) {
   }
 
   const mapUrl = coords
-    ? `https://maps.googleapis.com/maps/api/staticmap?center=${coords.lat},${coords.lng}&zoom=15&size=600x300&markers=color:red%7C${coords.lat},${coords.lng}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || ''}`
+    ? `https://maps.googleapis.com/maps/api/staticmap?center=${coords.lat},${coords.lng}&zoom=15&size=600x300&markers=color:red%7C${coords.lat},${coords.lng}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyCtFg5weRBNkpbZWmjaQrLpYyegYLGapqs'}`
     : null;
 
   return (

@@ -7,6 +7,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, CalendarIcon, MapPinIcon } from '../../components/Icons';
+import { useAuth } from '../../context/AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -21,6 +22,7 @@ const STATUS_COLORS: Record<string, string> = {
 type Props = NativeStackScreenProps<any, 'BookingManagement'>;
 
 export default function BookingManagementScreen({ navigation }: Props) {
+  const { token } = useAuth();
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('PENDING');
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,10 @@ export default function BookingManagementScreen({ navigation }: Props) {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/bookings?status=${status}`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
       });
       const data = await res.json();
       if (data.success) setBookings(data.data ?? []);

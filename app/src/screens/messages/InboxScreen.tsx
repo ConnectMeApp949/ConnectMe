@@ -6,6 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MessageIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -23,6 +25,8 @@ function formatTime(iso: string): string {
 }
 
 export default function InboxScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
+  const { token } = useAuth();
   const [conversations, setConversations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +37,10 @@ export default function InboxScreen({ navigation }: Props) {
   async function fetchConversations() {
     try {
       const res = await fetch(`${API_URL}/messages`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
       });
       const data = await res.json();
       if (data.success) setConversations(data.data ?? []);
@@ -47,7 +54,7 @@ export default function InboxScreen({ navigation }: Props) {
     const truncated = preview.length > 50 ? preview.slice(0, 50) + '...' : preview;
 
     return (
-      <TouchableOpacity style={s.item} activeOpacity={0.7} onPress={() => navigation.navigate('ChatScreen', { conversation: item })} accessibilityLabel={`Conversation with ${name}${item.unreadCount > 0 ? `, ${item.unreadCount} unread` : ''}`} accessibilityRole="button" accessibilityHint="Opens conversation">
+      <TouchableOpacity style={[s.item, { borderBottomColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('ChatScreen', { conversation: item })} accessibilityLabel={`Conversation with ${name}${item.unreadCount > 0 ? `, ${item.unreadCount} unread` : ''}`} accessibilityRole="button" accessibilityHint="Opens conversation">
         {avatar ? (
           <Image source={{ uri: avatar }} style={s.avatar} accessibilityLabel={`${name} profile photo`} accessibilityRole="image" />
         ) : (
@@ -55,10 +62,10 @@ export default function InboxScreen({ navigation }: Props) {
         )}
         <View style={s.itemContent}>
           <View style={s.itemTop}>
-            <Text style={[s.name, item.unreadCount > 0 && s.nameBold]} numberOfLines={1}>{name}</Text>
-            {item.lastMessage && <Text style={s.time}>{formatTime(item.lastMessage.createdAt)}</Text>}
+            <Text style={[s.name, { color: themeColors.text }, item.unreadCount > 0 && s.nameBold]} numberOfLines={1}>{name}</Text>
+            {item.lastMessage && <Text style={[s.time, { color: themeColors.textSecondary }]}>{formatTime(item.lastMessage.createdAt)}</Text>}
           </View>
-          <Text style={[s.preview, item.unreadCount > 0 && s.previewBold]} numberOfLines={1}>
+          <Text style={[s.preview, { color: themeColors.textSecondary }, item.unreadCount > 0 && s.previewBold, item.unreadCount > 0 && { color: themeColors.text }]} numberOfLines={1}>
             {truncated || 'No messages yet'}
           </Text>
         </View>
@@ -70,18 +77,18 @@ export default function InboxScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <Text style={s.header}>Messages</Text>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <Text style={[s.header, { color: themeColors.text }]}>Messages</Text>
 
       {loading ? (
         <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />
       ) : conversations.length === 0 ? (
         <View style={s.empty}>
-          <View style={s.emptyIconWrap}>
-            <MessageIcon size={36} color={colors.textMuted} strokeWidth={1.5} />
+          <View style={[s.emptyIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <MessageIcon size={36} color={themeColors.textSecondary} strokeWidth={1.5} />
           </View>
-          <Text style={s.emptyTitle}>No messages yet</Text>
-          <Text style={s.emptySub}>When you contact a vendor or receive a booking message, it will appear here</Text>
+          <Text style={[s.emptyTitle, { color: themeColors.text }]}>No messages yet</Text>
+          <Text style={[s.emptySub, { color: themeColors.textSecondary }]}>When you contact a vendor or receive a booking message, it will appear here</Text>
         </View>
       ) : (
         <FlatList

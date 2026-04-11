@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { CommonActions } from '@react-navigation/native';
 import Button from '../../components/Button';
 import { BookingFlowParamList } from './types';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
@@ -78,7 +79,24 @@ export default function ConfirmationScreen({ navigation, route }: Props) {
         <Button
           title="Message Vendor"
           onPress={() => {
-            // TODO: Navigate to messaging screen
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'Main',
+                    state: {
+                      routes: [
+                        {
+                          name: 'Messages',
+                          params: { vendorId: vendor.id, vendorName: vendor.businessName },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              }),
+            );
           }}
           variant="outline"
           style={styles.actionButton}
@@ -86,7 +104,23 @@ export default function ConfirmationScreen({ navigation, route }: Props) {
         <Button
           title="View Booking"
           onPress={() => {
-            // TODO: Navigate to booking detail
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'Main',
+                    state: {
+                      routes: [
+                        {
+                          name: 'Bookings',
+                        },
+                      ],
+                    },
+                  },
+                ],
+              }),
+            );
           }}
           style={styles.actionButton}
         />

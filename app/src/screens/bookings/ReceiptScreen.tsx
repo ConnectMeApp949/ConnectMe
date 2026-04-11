@@ -11,11 +11,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useAuth } from '../../context/AuthContext';
 import { ChevronLeftIcon } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'Receipt'>;
 
 export default function ReceiptScreen({ navigation, route }: Props) {
+  const { token } = useAuth();
   const booking = route.params?.booking as any;
   const vendor = booking?.vendor;
   const vendorName = vendor?.businessName ?? 'Unknown Vendor';
@@ -66,7 +68,14 @@ export default function ReceiptScreen({ navigation, route }: Props) {
   async function handleDownloadPdf() {
     try {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
-      const res = await fetch(`${API_URL}/bookings/${bookingId}/receipt-pdf`);
+      const res = await fetch(`${API_URL}/bookings/${bookingId}/receipt-pdf`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      if (!res.ok) {
+        throw new Error(`Server error (${res.status})`);
+      }
       const data = await res.json();
       if (!data.success) throw new Error(data.error?.message || 'Download failed');
       Alert.alert('Receipt Downloaded', 'Your receipt PDF has been saved to your device.');
@@ -78,7 +87,16 @@ export default function ReceiptScreen({ navigation, route }: Props) {
   async function handleEmailReceipt() {
     try {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
-      const res = await fetch(`${API_URL}/bookings/${bookingId}/email-receipt`, { method: 'POST' });
+      const res = await fetch(`${API_URL}/bookings/${bookingId}/email-receipt`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      if (!res.ok) {
+        throw new Error(`Server error (${res.status})`);
+      }
       const data = await res.json();
       if (!data.success) throw new Error(data.error?.message || 'Email failed');
       Alert.alert('Receipt Sent', 'Receipt has been sent to your email address.');

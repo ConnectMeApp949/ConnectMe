@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CalendarIcon, StarOutlineIcon, MessageIcon, SparklesIcon, BellIcon, ChevronLeftIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useAuth } from '../../context/AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -39,6 +40,7 @@ function formatNotifTime(iso: string): string {
 }
 
 export default function NotificationsScreen({ navigation }: Props) {
+  const { token } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,7 +48,10 @@ export default function NotificationsScreen({ navigation }: Props) {
     async function fetchNotifications() {
       try {
         const res = await fetch(`${API_URL}/notifications`, {
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+          },
         });
         const data = await res.json();
         if (data.success) {
@@ -65,7 +70,21 @@ export default function NotificationsScreen({ navigation }: Props) {
     setNotifications(prev =>
       prev.map(n => n.id === item.id ? { ...n, read: true } : n)
     );
-    Alert.alert(item.title, item.body, [{ text: 'OK' }]);
+    // Navigate to relevant screen based on notification type
+    switch (item.type) {
+      case 'booking':
+        navigation.navigate('Bookings' as any);
+        break;
+      case 'message':
+        navigation.navigate('Messages' as any);
+        break;
+      case 'review':
+        navigation.navigate('MyReviews' as any);
+        break;
+      default:
+        Alert.alert(item.title, item.body, [{ text: 'OK' }]);
+        break;
+    }
   }
 
   return (
@@ -88,7 +107,7 @@ export default function NotificationsScreen({ navigation }: Props) {
           renderItem={({ item }) => {
             const iconInfo = ICON_MAP[item.type] ?? ICON_MAP.default;
             const NotifIcon = iconInfo.Icon;
-            const displayTime = item.time ?? '';
+            const displayTime = item.time ? formatNotifTime(item.time) : '';
             return (
               <TouchableOpacity style={[s.notifRow, !item.read && s.notifUnread]} activeOpacity={0.7} onPress={() => handleNotificationPress(item)} accessibilityLabel={`${item.title}, ${item.body}, ${displayTime}${!item.read ? ', unread' : ''}`} accessibilityRole="button" accessibilityHint="Opens notification details">
                 <View style={[s.notifIconWrap, { backgroundColor: iconInfo.iconBg }]}>

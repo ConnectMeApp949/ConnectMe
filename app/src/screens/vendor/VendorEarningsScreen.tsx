@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, DollarIcon, CheckIcon, ClockIcon, ChevronRightIcon } from '../../components/Icons';
+import { useAuth } from '../../context/AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -24,6 +25,7 @@ interface BreakdownItem {
 }
 
 export default function VendorEarningsScreen({ navigation }: Props) {
+  const { token } = useAuth();
   const [payoutLoading, setPayoutLoading] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
   const [loading, setLoading] = useState(true);
@@ -42,7 +44,10 @@ export default function VendorEarningsScreen({ navigation }: Props) {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/vendor/earnings?period=${selectedPeriod}`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
       });
       const data = await res.json();
       if (data.success) {
@@ -72,7 +77,10 @@ export default function VendorEarningsScreen({ navigation }: Props) {
             try {
               const res = await fetch(`${API_URL}/vendor/payouts`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                  'Content-Type': 'application/json',
+                  ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+                },
                 body: JSON.stringify({ amount: availableBalance }),
               });
               const data = await res.json();

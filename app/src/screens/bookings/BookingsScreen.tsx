@@ -5,8 +5,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
 import { CalendarIcon, CheckIcon, XIcon, SearchIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 import Skeleton from '../../components/Skeleton';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
@@ -17,7 +19,9 @@ const TAB_KEYS = ['upcoming', 'completed', 'cancelled'] as const;
 type TabKey = typeof TAB_KEYS[number];
 
 export default function BookingsScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const { t } = useLanguage();
+  const { token } = useAuth();
   const [activeTab, setActiveTab] = useState<TabKey>('upcoming');
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +31,7 @@ export default function BookingsScreen({ navigation }: Props) {
     setRefreshing(true);
     await fetchBookings();
     setRefreshing(false);
-  }, [activeTab]);
+  }, [activeTab, token]);
 
   useEffect(() => {
     fetchBookings();
@@ -37,13 +41,19 @@ export default function BookingsScreen({ navigation }: Props) {
     setLoading(true);
     try {
       const statusMap: Record<TabKey, string> = {
-        upcoming: 'CONFIRMED',
+        upcoming: 'CONFIRMED,PENDING',
         completed: 'COMPLETED',
         cancelled: 'CANCELLED',
       };
       const res = await fetch(`${API_URL}/bookings?status=${statusMap[activeTab]}`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
+      if (!res.ok) {
+        throw new Error(`Server error (${res.status})`);
+      }
       const data = await res.json();
       if (data.success) setBookings(data.data ?? []);
       else setBookings([]);
@@ -63,7 +73,7 @@ export default function BookingsScreen({ navigation }: Props) {
 
     return (
       <TouchableOpacity
-        style={s.card}
+        style={[s.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
         activeOpacity={0.7}
         onPress={() => navigation.navigate('BookingDetail', { booking: item })}
         accessibilityLabel={`Booking with ${vendorName}, ${date}, $${Number(item.totalAmount).toFixed(0)}`}
@@ -78,32 +88,32 @@ export default function BookingsScreen({ navigation }: Props) {
           </View>
         )}
         <View style={s.cardContent}>
-          <Text style={s.cardVendor} numberOfLines={1}>{vendorName}</Text>
-          <Text style={s.cardType}>{item.eventType}</Text>
-          <Text style={s.cardDate}>{date}</Text>
+          <Text style={[s.cardVendor, { color: themeColors.text }]} numberOfLines={1}>{vendorName}</Text>
+          <Text style={[s.cardType, { color: themeColors.textSecondary }]}>{item.eventType}</Text>
+          <Text style={[s.cardDate, { color: themeColors.textSecondary }]}>{date}</Text>
         </View>
-        <Text style={s.cardAmount}>${Number(item.totalAmount).toFixed(0)}</Text>
+        <Text style={[s.cardAmount, { color: themeColors.text }]}>${Number(item.totalAmount).toFixed(0)}</Text>
       </TouchableOpacity>
     );
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <Text style={s.header}>{t('bookings')}</Text>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <Text style={[s.header, { color: themeColors.text }]}>{t('bookings')}</Text>
 
       {/* Tabs */}
       <View style={s.tabRow}>
         {TAB_KEYS.map((tabKey) => (
           <TouchableOpacity
             key={tabKey}
-            style={[s.tab, activeTab === tabKey && s.tabActive]}
+            style={[s.tab, { borderColor: themeColors.border }, activeTab === tabKey && s.tabActive, activeTab === tabKey && { backgroundColor: themeColors.text, borderColor: themeColors.text }]}
             onPress={() => setActiveTab(tabKey)}
             activeOpacity={0.7}
             accessibilityLabel={`${t(tabKey)} ${t('bookings')}`}
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === tabKey }}
           >
-            <Text style={[s.tabText, activeTab === tabKey && s.tabTextActive]}>{t(tabKey)}</Text>
+            <Text style={[s.tabText, { color: themeColors.text }, activeTab === tabKey && s.tabTextActive]}>{t(tabKey)}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -124,11 +134,11 @@ export default function BookingsScreen({ navigation }: Props) {
         </View>
       ) : bookings.length === 0 ? (
         <View style={s.empty}>
-          <View style={s.emptyIconWrap}>
-            {activeTab === 'upcoming' ? <CalendarIcon size={36} color={colors.textMuted} strokeWidth={1.5} /> : activeTab === 'completed' ? <CheckIcon size={36} color={colors.textMuted} strokeWidth={1.5} /> : <XIcon size={36} color={colors.textMuted} strokeWidth={1.5} />}
+          <View style={[s.emptyIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            {activeTab === 'upcoming' ? <CalendarIcon size={36} color={themeColors.textSecondary} strokeWidth={1.5} /> : activeTab === 'completed' ? <CheckIcon size={36} color={themeColors.textSecondary} strokeWidth={1.5} /> : <XIcon size={36} color={themeColors.textSecondary} strokeWidth={1.5} />}
           </View>
-          <Text style={s.emptyTitle}>{t('noResults')}</Text>
-          <Text style={s.emptySub}>
+          <Text style={[s.emptyTitle, { color: themeColors.text }]}>{t('noResults')}</Text>
+          <Text style={[s.emptySub, { color: themeColors.textSecondary }]}>
             {activeTab === 'upcoming'
               ? 'When you book a vendor, your upcoming events will appear here'
               : activeTab === 'completed'

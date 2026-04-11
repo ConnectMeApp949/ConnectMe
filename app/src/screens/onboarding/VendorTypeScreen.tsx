@@ -6,6 +6,7 @@ import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { CheckIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon, CompassIcon, WellnessIcon } from '../../components/Icons';
 import { OnboardingStackParamList } from '../../navigation/types';
+import { useAuth } from '../../context/AuthContext';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'VendorType'>;
 
@@ -33,6 +34,7 @@ const ICON_MAP: Record<string, React.FC<{ size?: number; color?: string; strokeW
 };
 
 export default function VendorTypeScreen({ navigation }: Props) {
+  const { token } = useAuth();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
 
@@ -53,7 +55,10 @@ export default function VendorTypeScreen({ navigation }: Props) {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       await fetch(`${API_URL}/vendors/categories`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
         body: JSON.stringify({ categories: Array.from(selected) }),
       });
     } catch {

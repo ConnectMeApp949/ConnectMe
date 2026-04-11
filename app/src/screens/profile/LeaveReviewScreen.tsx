@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useAuth } from '../../context/AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 const MAX_COMMENT_LENGTH = 500;
@@ -33,6 +34,7 @@ const CATEGORY_RATINGS = ['Communication', 'Quality', 'Value', 'Punctuality'] as
 type Props = NativeStackScreenProps<any, 'LeaveReview'>;
 
 export default function LeaveReviewScreen({ navigation, route }: Props) {
+  const { token } = useAuth();
   const vendor = route.params?.vendor as any;
   const bookingDate = route.params?.bookingDate as string | undefined;
   const bookingId = route.params?.bookingId as string | undefined;
@@ -75,7 +77,7 @@ export default function LeaveReviewScreen({ navigation, route }: Props) {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsMultipleSelection: true,
       selectionLimit: remaining,
       quality: 0.8,
@@ -111,7 +113,10 @@ export default function LeaveReviewScreen({ navigation, route }: Props) {
 
       const res = await fetch(`${API_URL}/reviews`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
         body: JSON.stringify(body),
       });
 

@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useAuth } from '../../context/AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 const MAX_RESPONSE = 500;
@@ -21,6 +22,7 @@ interface VendorReviewResponseModalProps {
 export default function VendorReviewResponseModal({
   visible, reviewId, reviewerName, reviewComment, onClose, onSubmitted,
 }: VendorReviewResponseModalProps) {
+  const { token } = useAuth();
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +33,10 @@ export default function VendorReviewResponseModal({
     try {
       const res = await fetch(`${API_URL}/reviews/${reviewId}/response`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
         body: JSON.stringify({ response: response.trim() }),
       });
       const data = await res.json();
