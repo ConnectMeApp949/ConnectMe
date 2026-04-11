@@ -52,7 +52,7 @@ const slides: SlideData[] = [
     Icon: SparklesIcon,
     title: "Let's Make It Happen",
     description:
-      'Join thousands of people finding the best event vendors in San Antonio.',
+      'Join thousands of people finding the best event vendors in your area.',
   },
 ];
 
