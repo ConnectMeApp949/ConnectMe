@@ -26,7 +26,8 @@ function formatTime(iso: string): string {
 
 export default function InboxScreen({ navigation }: Props) {
   const { colors: themeColors } = useTheme();
-  const { token } = useAuth();
+  const auth = useAuth();
+  const { token } = auth;
   const [conversations, setConversations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -80,7 +81,24 @@ export default function InboxScreen({ navigation }: Props) {
     <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       <Text style={[s.header, { color: themeColors.text }]}>Messages</Text>
 
-      {loading ? (
+      {!auth.user ? (
+        <View style={s.empty}>
+          <View style={[s.emptyIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <MessageIcon size={36} color={themeColors.textSecondary} strokeWidth={1.5} />
+          </View>
+          <Text style={[s.emptyTitle, { color: themeColors.text }]}>Sign in to view your messages</Text>
+          <Text style={[s.emptySub, { color: themeColors.textSecondary }]}>Create an account to message vendors and manage conversations</Text>
+          <TouchableOpacity
+            style={s.signInBtn}
+            onPress={() => navigation.navigate('Onboarding')}
+            activeOpacity={0.7}
+            accessibilityLabel="Sign In"
+            accessibilityRole="button"
+          >
+            <Text style={s.signInBtnText}>Sign In</Text>
+          </TouchableOpacity>
+        </View>
+      ) : loading ? (
         <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />
       ) : conversations.length === 0 ? (
         <View style={s.empty}>
@@ -128,4 +146,6 @@ const s = StyleSheet.create({
   emptyIconWrap: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.cardBackground, alignItems: 'center', justifyContent: 'center', marginBottom: 16, borderWidth: 1, borderColor: colors.border },
   emptyTitle: { fontFamily: fonts.bold, fontSize: 18, color: colors.text, marginBottom: 8 },
   emptySub: { fontFamily: fonts.regular, fontSize: 14, color: colors.textMuted, textAlign: 'center', lineHeight: 20 },
+  signInBtn: { marginTop: 20, backgroundColor: colors.primary, borderRadius: 10, paddingVertical: 14, paddingHorizontal: 32 },
+  signInBtnText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.white },
 });

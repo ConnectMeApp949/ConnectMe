@@ -8,10 +8,11 @@ import { useSavedVendors } from '../../hooks/useSavedVendors';
 import { useSavedSearches, SavedSearch } from '../../hooks/useSavedSearches';
 import {
   HeartIcon, HeartFilledIcon, SearchIcon, BellIcon, BellFilledIcon,
-  XIcon, ClockIcon,
+  XIcon, ClockIcon, UserIcon,
 } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 const CATEGORY_LABELS: Record<string, string> = {
   FOOD_TRUCK: 'Food Trucks', DJ: 'Music', CATERING: 'Catering',
@@ -23,6 +24,7 @@ type Props = NativeStackScreenProps<any, 'Wishlists'>;
 
 export default function WishlistsScreen({ navigation }: Props) {
   const { colors: themeColors } = useTheme();
+  const auth = useAuth();
   const { saved, toggle } = useSavedVendors();
   const { searches, removeSearch, toggleAlert } = useSavedSearches();
   const vendors = Array.from(saved.values());
@@ -257,7 +259,35 @@ export default function WishlistsScreen({ navigation }: Props) {
         </TouchableOpacity>
       </View>
 
-      {activeTab === 'vendors' ? renderVendorsTab() : renderSearchesTab()}
+      {!auth.user ? (
+        <View style={s.empty}>
+          <View style={[s.emptyIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <UserIcon size={36} color={themeColors.textSecondary} strokeWidth={1.5} />
+          </View>
+          <Text style={[s.emptyTitle, { color: themeColors.text }]}>Sign in to save your favorite vendors</Text>
+          <Text style={[s.emptySub, { color: themeColors.textSecondary }]}>Create an account to save vendors and searches</Text>
+          <TouchableOpacity
+            style={s.exploreBtn}
+            onPress={() => navigation.navigate('Onboarding')}
+            activeOpacity={0.7}
+            accessibilityLabel="Sign In"
+            accessibilityRole="button"
+          >
+            <Text style={s.exploreBtnText}>Sign In</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[s.exploreBtn, { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.primary, marginTop: 12 }]}
+            onPress={() => navigation.navigate('Explore')}
+            activeOpacity={0.7}
+            accessibilityLabel="Start exploring"
+            accessibilityRole="button"
+          >
+            <Text style={[s.exploreBtnText, { color: colors.primary }]}>Start exploring</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        activeTab === 'vendors' ? renderVendorsTab() : renderSearchesTab()
+      )}
     </SafeAreaView>
   );
 }

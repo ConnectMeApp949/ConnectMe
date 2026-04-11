@@ -409,12 +409,13 @@ function AppContent() {
           }}
         >
           <RootStack.Navigator screenOptions={noHeader}>
-            {!user ? (
-              <RootStack.Screen name="Onboarding" component={OnboardingNavigator} />
-            ) : isVendorMode ? (
+            {isVendorMode && user ? (
               <RootStack.Screen name="VendorMain" component={VendorTabs} />
             ) : (
               <RootStack.Screen name="Main" component={MainTabs} />
+            )}
+            {!user && (
+              <RootStack.Screen name="Onboarding" component={OnboardingNavigator} options={{ presentation: 'modal' }} />
             )}
           </RootStack.Navigator>
         </NavigationContainer>

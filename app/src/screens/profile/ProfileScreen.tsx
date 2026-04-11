@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -41,6 +41,33 @@ export default function ProfileScreen({ navigation }: Props) {
     { label: t('legal'), icon: FileTextIcon, onPress: () => navigation.navigate('Legal') },
     { label: t('logOut'), icon: LogOutIcon, danger: true, onPress: handleSignOut },
   ];
+
+  if (!user) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+        <View style={styles.signInContainer}>
+          <Image
+            source={require('../../assets/connectme-logo.png')}
+            style={styles.signInLogo}
+            resizeMode="contain"
+            accessibilityLabel="ConnectMe logo"
+            accessibilityRole="image"
+          />
+          <Text style={[styles.signInTitle, { color: themeColors.text }]}>Your Profile</Text>
+          <Text style={[styles.signInSub, { color: themeColors.textSecondary }]}>Sign in to access your profile, bookings, and more</Text>
+          <TouchableOpacity
+            style={styles.signInBtn}
+            onPress={() => navigation.navigate('Onboarding')}
+            activeOpacity={0.7}
+            accessibilityLabel="Sign In"
+            accessibilityRole="button"
+          >
+            <Text style={styles.signInBtnText}>Sign In</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
@@ -398,5 +425,44 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     textAlign: 'center',
     marginTop: spacing.sm,
+  },
+
+  // Sign-in screen (unauthenticated)
+  signInContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 40,
+  },
+  signInLogo: {
+    width: 80,
+    height: 80,
+    borderRadius: 20,
+    marginBottom: 24,
+  },
+  signInTitle: {
+    fontFamily: fonts.bold,
+    fontSize: 22,
+    color: colors.text,
+    marginBottom: 8,
+  },
+  signInSub: {
+    fontFamily: fonts.regular,
+    fontSize: 15,
+    color: colors.textMuted,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 24,
+  },
+  signInBtn: {
+    backgroundColor: colors.primary,
+    borderRadius: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 48,
+  },
+  signInBtnText: {
+    fontFamily: fonts.semiBold,
+    fontSize: 16,
+    color: colors.white,
   },
 });

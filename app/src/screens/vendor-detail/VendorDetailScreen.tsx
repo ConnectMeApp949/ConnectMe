@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, Image, StyleSheet, ScrollView, TouchableOpacity,
-  FlatList, Dimensions, Share, NativeSyntheticEvent, NativeScrollEvent,
+  FlatList, Dimensions, Share, NativeSyntheticEvent, NativeScrollEvent, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -13,6 +13,7 @@ import PhotoGalleryModal from './PhotoGalleryModal';
 import ReviewsSection from './ReviewsSection';
 import { VendorDetail } from './types';
 import { useRecentlyViewed } from '../../hooks/useRecentlyViewed';
+import { useAuth } from '../../context/AuthContext';
 import { ChevronLeftIcon, FlagIcon, ShareIcon, HeartIcon, HeartFilledIcon, MapPinIcon, StarIcon, CalendarIcon, MessageIcon, CameraIcon, SparklesIcon, CheckIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 
@@ -86,6 +87,7 @@ const statStyles = StyleSheet.create({
 type Props = NativeStackScreenProps<any, 'VendorDetail'>;
 
 export default function VendorDetailScreen({ navigation, route }: Props) {
+  const auth = useAuth();
   const vendor = route.params!.vendor as any;
   const coverPhoto = vendor.coverPhoto ?? null;
   const portfolioPhotos = vendor.portfolioPhotos ?? [];
@@ -141,16 +143,39 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
     }
   }
 
+  function showSignInPrompt() {
+    Alert.alert('Sign In Required', 'Please sign in to access this feature.', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Sign In', onPress: () => navigation.navigate('Onboarding') },
+    ]);
+  }
+
   function handleBookNow() {
+    if (!auth.user) {
+      showSignInPrompt();
+      return;
+    }
     navigation.navigate('RequestBooking', { vendor, instantBook: isInstantBook });
   }
 
   function handleReport() {
+    if (!auth.user) {
+      showSignInPrompt();
+      return;
+    }
     navigation.navigate('Report', {
       name: vendor.businessName,
       photo: vendor.coverPhoto,
       vendorId: vendor.id,
     });
+  }
+
+  function handleSaveToggle() {
+    if (!auth.user) {
+      showSignInPrompt();
+      return;
+    }
+    setSaved(!saved);
   }
 
   const mapUrl = GOOGLE_MAPS_KEY
@@ -214,7 +239,7 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
               <TouchableOpacity style={styles.heroActionButton} onPress={handleShare} accessibilityLabel="Share this vendor" accessibilityRole="button">
                 <ShareIcon size={20} color={colors.text} strokeWidth={1.5} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.heroActionButton} onPress={() => setSaved(!saved)} accessibilityLabel={saved ? 'Remove from saved' : 'Save vendor'} accessibilityRole="button">
+              <TouchableOpacity style={styles.heroActionButton} onPress={handleSaveToggle} accessibilityLabel={saved ? 'Remove from saved' : 'Save vendor'} accessibilityRole="button">
                 {saved ? <HeartFilledIcon size={20} color={colors.secondary} /> : <HeartIcon size={20} color={colors.text} strokeWidth={1.5} />}
               </TouchableOpacity>
             </View>

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import {
-  View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, Image, RefreshControl,
+  View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, Image, RefreshControl, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -107,7 +107,16 @@ export default function HomeScreen({ navigation }: Props) {
                   />
                   <TouchableOpacity
                     style={[styles.bellBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
-                    onPress={() => navigation.navigate('Notifications')}
+                    onPress={() => {
+                      if (!auth.user) {
+                        Alert.alert('Sign In Required', 'Please sign in to access this feature.', [
+                          { text: 'Cancel', style: 'cancel' },
+                          { text: 'Sign In', onPress: () => navigation.navigate('Onboarding') },
+                        ]);
+                        return;
+                      }
+                      navigation.navigate('Notifications');
+                    }}
                     activeOpacity={0.6}
                     accessibilityLabel="Notifications"
                     accessibilityRole="button"

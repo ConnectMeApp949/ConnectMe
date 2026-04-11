@@ -21,7 +21,8 @@ type TabKey = typeof TAB_KEYS[number];
 export default function BookingsScreen({ navigation }: Props) {
   const { colors: themeColors } = useTheme();
   const { t } = useLanguage();
-  const { token } = useAuth();
+  const auth = useAuth();
+  const { token } = auth;
   const [activeTab, setActiveTab] = useState<TabKey>('upcoming');
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -118,7 +119,18 @@ export default function BookingsScreen({ navigation }: Props) {
         ))}
       </View>
 
-      {loading ? (
+      {!auth.user ? (
+        <View style={s.empty}>
+          <View style={[s.emptyIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <CalendarIcon size={36} color={themeColors.textSecondary} strokeWidth={1.5} />
+          </View>
+          <Text style={[s.emptyTitle, { color: themeColors.text }]}>Sign in to view your bookings</Text>
+          <Text style={[s.emptySub, { color: themeColors.textSecondary }]}>Create an account to book vendors and manage your events</Text>
+          <TouchableOpacity style={s.exploreBtn} onPress={() => navigation.navigate('Onboarding')} activeOpacity={0.7} accessibilityLabel="Sign In" accessibilityRole="button">
+            <Text style={s.exploreBtnText}>Sign In</Text>
+          </TouchableOpacity>
+        </View>
+      ) : loading ? (
         <View style={{ padding: 20 }}>
           {Array.from({ length: 3 }).map((_, i) => (
             <View key={i} style={s.card}>
