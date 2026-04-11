@@ -9,7 +9,7 @@ import { ChevronLeftIcon, AlertCircleIcon, XIcon } from '../../components/Icons'
 type Props = NativeStackScreenProps<any, 'Privacy'>;
 
 export default function PrivacyScreen({ navigation }: Props) {
-  const { logout } = useAuth();
+  const { logout, token } = useAuth();
   const [showProfile, setShowProfile] = useState(true);
   const [dataImprove, setDataImprove] = useState(true);
   const [shareHistory, setShareHistory] = useState(false);
@@ -31,7 +31,10 @@ export default function PrivacyScreen({ navigation }: Props) {
               const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
               await fetch(API_URL + '/auth/request-data-export', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                  'Content-Type': 'application/json',
+                  ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+                },
               });
               Alert.alert('Request Submitted', 'You\'ll receive an email with a link to download your data within 24 hours. The link will expire after 7 days.');
             } catch {
@@ -53,7 +56,17 @@ export default function PrivacyScreen({ navigation }: Props) {
     setDeleteStep(2);
   };
 
-  const handleDeleteFinal = () => {
+  const handleDeleteFinal = async () => {
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      await fetch(API_URL + '/auth/delete-account', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
+      });
+    } catch {}
     setDeleteStep(0);
     Alert.alert(
       'Account Deleted',

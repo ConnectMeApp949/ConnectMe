@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useAuth } from '../../context/AuthContext';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import {
   ChevronLeftIcon,
@@ -64,6 +65,7 @@ function buildDefaultQuestions(): DefaultQuestion[] {
 // ─── Screen ────────────────────────────────────────────
 
 export default function EditBookingQuestionsScreen({ navigation }: Props) {
+  const { token } = useAuth();
   const [defaults, setDefaults] = useState<DefaultQuestion[]>(buildDefaultQuestions);
   const [customs, setCustoms] = useState<CustomQuestion[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -127,7 +129,7 @@ export default function EditBookingQuestionsScreen({ navigation }: Props) {
 
   // ─── Save ─────────────────────────────────────────────
 
-  function handleSave() {
+  async function handleSave() {
     // Validate custom questions have text
     const emptyCustom = customs.find((q) => q.text.trim().length === 0);
     if (emptyCustom) {
@@ -136,13 +138,28 @@ export default function EditBookingQuestionsScreen({ navigation }: Props) {
     }
 
     setIsSaving(true);
-    // Simulate save
-    setTimeout(() => {
-      setIsSaving(false);
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      const res = await fetch(API_URL + '/vendor/booking-questions', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
+        body: JSON.stringify({ defaults, customs }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error?.message || 'Failed to save booking questions');
+      }
       Alert.alert('Saved', 'Your booking questions have been updated.', [
         { text: 'OK', onPress: () => navigation.goBack() },
       ]);
-    }, 600);
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Unable to save. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   // ─── Render ───────────────────────────────────────────

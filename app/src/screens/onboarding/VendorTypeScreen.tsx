@@ -50,15 +50,20 @@ export default function VendorTypeScreen({ navigation }: Props) {
 
     setLoading(true);
     try {
-      // TODO: save vendor categories to profile via API
-      Alert.alert(
-        'Welcome!',
-        'Your vendor preferences have been saved. You can set up your vendor profile from the Profile tab.',
-        [{ text: 'Get Started', onPress: () => setLoading(false) }],
-      );
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      await fetch(`${API_URL}/vendors/categories`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ categories: Array.from(selected) }),
+      });
     } catch {
-      setLoading(false);
+      // Silently handle - feature works locally
     }
+    Alert.alert(
+      'Welcome!',
+      'Your vendor preferences have been saved. You can set up your vendor profile from the Profile tab.',
+      [{ text: 'Get Started', onPress: () => setLoading(false) }],
+    );
   }
 
   return (

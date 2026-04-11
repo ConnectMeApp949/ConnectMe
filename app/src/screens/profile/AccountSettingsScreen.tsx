@@ -51,7 +51,6 @@ export default function AccountSettingsScreen({ navigation }: Props) {
   const [googleConnected, setGoogleConnected] = useState(false);
   const [appleConnected, setAppleConnected] = useState(false);
   const [facebookConnected, setFacebookConnected] = useState(false);
-  const [connectedImgErrors, setConnectedImgErrors] = useState<Record<string, boolean>>({});
 
   // Biometric state
   const [biometricAvailable, setBiometricAvailable] = useState(false);
@@ -136,7 +135,10 @@ export default function AccountSettingsScreen({ navigation }: Props) {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       const res = await fetch(API_URL + '/auth/change-password', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(auth.token ? { 'Authorization': 'Bearer ' + auth.token } : {}),
+        },
         body: JSON.stringify({ currentPassword, newPassword }),
       });
       const data = await res.json();
@@ -169,6 +171,9 @@ export default function AccountSettingsScreen({ navigation }: Props) {
         formData.append('photo', { uri, type: 'image/jpeg', name: 'profile.jpg' } as any);
         await fetch(API_URL + '/auth/upload-profile-photo', {
           method: 'POST',
+          headers: {
+            ...(auth.token ? { 'Authorization': 'Bearer ' + auth.token } : {}),
+          },
           body: formData,
         });
       } catch {
@@ -317,7 +322,17 @@ export default function AccountSettingsScreen({ navigation }: Props) {
                   {
                     text: 'Delete My Account',
                     style: 'destructive',
-                    onPress: () => {
+                    onPress: async () => {
+                      try {
+                        const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+                        await fetch(API_URL + '/auth/delete-account', {
+                          method: 'DELETE',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            ...(auth.token ? { 'Authorization': 'Bearer ' + auth.token } : {}),
+                          },
+                        });
+                      } catch {}
                       Alert.alert(
                         'Account Deleted',
                         'Your account has been scheduled for deletion. All your data will be permanently removed within 30 days.\n\nIf you change your mind, contact support@connectmeapp.services within 14 days to recover your account.',
@@ -501,13 +516,9 @@ export default function AccountSettingsScreen({ navigation }: Props) {
 
             <View style={s.connectedRow}>
               <View style={s.connectedLeft}>
-                {!connectedImgErrors.google ? (
-                  <Image source={{ uri: 'https://www.google.com/favicon.ico' }} style={s.connectedLogo} onError={() => setConnectedImgErrors(prev => ({ ...prev, google: true }))} accessibilityLabel="Google logo" accessibilityRole="image" />
-                ) : (
-                  <View style={[s.connectedLogo, s.connectedLogoFallback]}>
-                    <Text style={[s.connectedLogoFallbackText, { color: '#4285F4' }]}>G</Text>
-                  </View>
-                )}
+                <View style={[s.connectedLogo, s.connectedLogoFallback]}>
+                  <Text style={[s.connectedLogoFallbackText, { color: '#4285F4' }]}>G</Text>
+                </View>
                 <View>
                   <Text style={s.connectedLabel}>Google</Text>
                   <Text style={s.connectedStatus}>{googleConnected ? 'Connected' : 'Not connected'}</Text>
@@ -518,13 +529,9 @@ export default function AccountSettingsScreen({ navigation }: Props) {
 
             <View style={s.connectedRow}>
               <View style={s.connectedLeft}>
-                {!connectedImgErrors.apple ? (
-                  <Image source={{ uri: 'https://img.icons8.com/ios-filled/50/000000/mac-os.png' }} style={s.connectedLogo} onError={() => setConnectedImgErrors(prev => ({ ...prev, apple: true }))} accessibilityLabel="Apple logo" accessibilityRole="image" />
-                ) : (
-                  <View style={[s.connectedLogo, s.connectedLogoFallback]}>
-                    <Text style={[s.connectedLogoFallbackText, { color: '#000000' }]}>{'\uF8FF'}</Text>
-                  </View>
-                )}
+                <View style={[s.connectedLogo, s.connectedLogoFallback]}>
+                  <Text style={[s.connectedLogoFallbackText, { color: '#000000' }]}>{'\uF8FF'}</Text>
+                </View>
                 <View>
                   <Text style={s.connectedLabel}>Apple</Text>
                   <Text style={s.connectedStatus}>{appleConnected ? 'Connected' : 'Not connected'}</Text>
@@ -535,13 +542,9 @@ export default function AccountSettingsScreen({ navigation }: Props) {
 
             <View style={s.connectedRow}>
               <View style={s.connectedLeft}>
-                {!connectedImgErrors.facebook ? (
-                  <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png' }} style={s.connectedLogo} onError={() => setConnectedImgErrors(prev => ({ ...prev, facebook: true }))} accessibilityLabel="Facebook logo" accessibilityRole="image" />
-                ) : (
-                  <View style={[s.connectedLogo, s.connectedLogoFallback]}>
-                    <Text style={[s.connectedLogoFallbackText, { color: '#1877F2' }]}>f</Text>
-                  </View>
-                )}
+                <View style={[s.connectedLogo, s.connectedLogoFallback]}>
+                  <Text style={[s.connectedLogoFallbackText, { color: '#1877F2' }]}>f</Text>
+                </View>
                 <View>
                   <Text style={s.connectedLabel}>Facebook</Text>
                   <Text style={s.connectedStatus}>{facebookConnected ? 'Connected' : 'Not connected'}</Text>

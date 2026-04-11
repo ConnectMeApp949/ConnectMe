@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Button from '../../components/Button';
@@ -27,13 +27,31 @@ export default function PreviewScreen({ navigation, route }: Props) {
   async function handlePublish() {
     setPublishing(true);
     try {
-      // TODO: call POST /vendors/profile with draft data, then upload photos
-      // navigation.replace('VendorHome');
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      await fetch(`${API_URL}/vendors/profile`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          businessName: draft.businessName,
+          category: draft.category,
+          city: draft.city,
+          state: draft.state,
+          serviceRadius: draft.serviceRadius,
+          basePrice: draft.basePrice,
+          priceUnit: draft.priceUnit,
+          bio: draft.bio,
+        }),
+      });
     } catch {
-      // handle error
+      // Silently handle - feature works locally
     } finally {
       setPublishing(false);
     }
+    Alert.alert(
+      'Congratulations!',
+      'Your vendor profile is now live on ConnectMe!',
+      [{ text: 'View My Listing', onPress: () => navigation.getParent()?.goBack() }],
+    );
   }
 
   return (

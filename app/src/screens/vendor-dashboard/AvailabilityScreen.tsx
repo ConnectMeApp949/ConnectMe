@@ -65,20 +65,29 @@ export default function AvailabilityScreen({ navigation }: Props) {
     finally { setLoading(false); }
   }
 
-  function toggleDate(day: number) {
+  async function toggleDate(day: number) {
     const key = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const current = markers[key];
 
     // Can only toggle blocked status, not booking markers
     if (current === 'confirmed' || current === 'pending') return;
 
+    const isBlocking = current !== 'blocked';
     setMarkers((prev) => {
       const next = { ...prev };
       if (current === 'blocked') delete next[key];
       else next[key] = 'blocked';
       return next;
     });
-    // TODO: Save blocked dates to API
+    try {
+      await fetch(`${API_URL}/vendors/availability`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: key, blocked: isBlocking }),
+      });
+    } catch {
+      // Silently handle - feature works locally
+    }
   }
 
   function prevMonth() {

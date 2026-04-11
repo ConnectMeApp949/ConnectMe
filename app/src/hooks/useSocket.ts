@@ -1,18 +1,15 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { useAuth } from '../context/AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
-// TODO: get token from SecureStore/auth context
-let authToken = '';
-export function setSocketAuthToken(token: string) { authToken = token; }
-
 let socketInstance: Socket | null = null;
 
-function getSocket(): Socket {
+function getSocket(token: string | null): Socket {
   if (!socketInstance) {
     socketInstance = io(API_URL, {
-      auth: { token: authToken },
+      auth: { token: token ?? '' },
       autoConnect: false,
     });
   }
@@ -20,17 +17,25 @@ function getSocket(): Socket {
 }
 
 export function useSocket() {
-  const socket = useRef(getSocket());
+  const { token } = useAuth();
+  const socket = useRef(getSocket(token));
 
   useEffect(() => {
-    if (!socket.current.connected) {
-      socket.current.auth = { token: authToken };
+    // Update auth token whenever it changes
+    socket.current.auth = { token: token ?? '' };
+
+    if (token && !socket.current.connected) {
       socket.current.connect();
     }
+
+    if (!token && socket.current.connected) {
+      socket.current.disconnect();
+    }
+
     return () => {
       // Don't disconnect — keep alive for background notifications
     };
-  }, []);
+  }, [token]);
 
   const joinRoom = useCallback((bookingId: string) => {
     socket.current.emit('join_room', bookingId);

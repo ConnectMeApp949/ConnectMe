@@ -2,25 +2,42 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useAuth } from '../../context/AuthContext';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, CheckIcon, AlertCircleIcon } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'VendorReviewPublish'>;
 
 export default function VendorReviewPublishScreen({ navigation }: Props) {
+  const { token } = useAuth();
   const [publishing, setPublishing] = useState(false);
 
-  function handlePublish() {
+  async function handlePublish() {
     setPublishing(true);
-    // TODO: call API to create vendor profile
-    setTimeout(() => {
-      setPublishing(false);
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+      const res = await fetch(`${API_URL}/vendors/profile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+        },
+        body: JSON.stringify({ publish: true }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error?.message || 'Failed to publish listing');
+      }
       Alert.alert(
         'Congratulations!',
         'Your business is now live on ConnectMe. Clients can find and book you right away!',
         [{ text: 'View My Listing', onPress: () => navigation.popToTop() }]
       );
-    }, 1500);
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Unable to publish. Please try again.');
+    } finally {
+      setPublishing(false);
+    }
   }
 
   const steps = [

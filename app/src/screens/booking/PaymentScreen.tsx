@@ -55,7 +55,7 @@ export default function PaymentScreen({ navigation, route }: Props) {
       <Text style={styles.label}>Card details</Text>
       <CardField
         postalCodeEnabled={true}
-        placeholders={{ number: '4242 4242 4242 4242' }}
+        placeholders={{ number: '\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022' }}
         cardStyle={{
           backgroundColor: colors.cardBackground,
           textColor: colors.text,
