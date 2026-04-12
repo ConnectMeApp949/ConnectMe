@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation, Platform, UIManager } from 'react-native';
 import { colors, fonts, spacing } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 
 if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental?.(true);
@@ -13,6 +14,7 @@ interface CollapsibleSectionProps {
 }
 
 export default function CollapsibleSection({ title, children, defaultOpen = false }: CollapsibleSectionProps) {
+  const { colors: themeColors } = useTheme();
   const [open, setOpen] = useState(defaultOpen);
 
   function toggle() {
@@ -21,10 +23,10 @@ export default function CollapsibleSection({ title, children, defaultOpen = fals
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { borderBottomColor: themeColors.border }]}>
       <TouchableOpacity style={styles.header} onPress={toggle} activeOpacity={0.7}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.chevron}>{open ? '▴' : '▾'}</Text>
+        <Text style={[styles.title, { color: themeColors.text }]}>{title}</Text>
+        <Text style={[styles.chevron, { color: themeColors.textMuted }]}>{open ? '▴' : '▾'}</Text>
       </TouchableOpacity>
       {open && <View style={styles.body}>{children}</View>}
     </View>

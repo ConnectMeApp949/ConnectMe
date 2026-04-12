@@ -5,6 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as WebBrowser from 'expo-web-browser';
 import { CalendarIcon, XIcon, DollarIcon, UserIcon, AlertCircleIcon, AccessibilityIcon, SearchIcon, MessageIcon, MailIcon, ExternalLinkIcon, ChevronRightIcon, ChevronLeftIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'GetHelp'>;
 
@@ -20,64 +21,65 @@ const TOPICS: { Icon: IconComp; label: string }[] = [
 ];
 
 export default function GetHelpScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const [searchText, setSearchText] = useState('');
   const filteredTopics = TOPICS.filter(t => t.label.toLowerCase().includes(searchText.toLowerCase()));
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Get Help</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Get Help</Text>
         <View style={s.backBtn} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
-        <View style={s.searchBar}>
-          <SearchIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
-          <TextInput style={s.searchInput} placeholder="Search help topics" placeholderTextColor={colors.textMuted} value={searchText} onChangeText={setSearchText} accessibilityLabel="Search help topics" accessibilityRole="search" />
+        <View style={[s.searchBar, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <SearchIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
+          <TextInput style={[s.searchInput, { color: themeColors.text }]} placeholder="Search help topics" placeholderTextColor={themeColors.textMuted} value={searchText} onChangeText={setSearchText} accessibilityLabel="Search help topics" accessibilityRole="search" />
         </View>
 
-        <Text style={s.sectionTitle}>Common Topics</Text>
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Common Topics</Text>
         {filteredTopics.map(t => {
           const TopicIcon = t.Icon;
           return (
-            <TouchableOpacity key={t.label} style={s.topicRow} activeOpacity={0.6} onPress={() => navigation.navigate('HelpTopic', { topic: t.label })} accessibilityLabel={t.label} accessibilityRole="button" accessibilityHint={`View help for ${t.label}`}>
-              <View style={s.topicIconWrap}>
-                <TopicIcon size={20} color={colors.primary} strokeWidth={1.5} />
+            <TouchableOpacity key={t.label} style={[s.topicRow, { borderBottomColor: themeColors.border }]} activeOpacity={0.6} onPress={() => navigation.navigate('HelpTopic', { topic: t.label })} accessibilityLabel={t.label} accessibilityRole="button" accessibilityHint={`View help for ${t.label}`}>
+              <View style={[s.topicIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+                <TopicIcon size={20} color={themeColors.primary} strokeWidth={1.5} />
               </View>
-              <Text style={s.topicLabel}>{t.label}</Text>
-              <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+              <Text style={[s.topicLabel, { color: themeColors.text }]}>{t.label}</Text>
+              <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
             </TouchableOpacity>
           );
         })}
 
-        <Text style={[s.sectionTitle, { marginTop: 28 }]}>Contact Us</Text>
+        <Text style={[s.sectionTitle, { marginTop: 28, color: themeColors.text }]}>Contact Us</Text>
         <View style={s.contactRow}>
-          <TouchableOpacity style={s.contactCard} activeOpacity={0.7} onPress={() => Alert.alert('Live Chat', 'Connecting you to a support agent...\n\nOur team is available Monday–Friday, 9am–6pm CST.', [{ text: 'Start Chat', style: 'default' }, { text: 'Cancel', style: 'cancel' }])} accessibilityLabel="Live Chat" accessibilityRole="button" accessibilityHint="Start a live chat with support">
-            <View style={s.contactIconWrap}>
-              <MessageIcon size={24} color={colors.primary} strokeWidth={1.5} />
+          <TouchableOpacity style={[s.contactCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => Alert.alert('Live Chat', 'Connecting you to a support agent...\n\nOur team is available Monday–Friday, 9am–6pm CST.', [{ text: 'Start Chat', style: 'default' }, { text: 'Cancel', style: 'cancel' }])} accessibilityLabel="Live Chat" accessibilityRole="button" accessibilityHint="Start a live chat with support">
+            <View style={[s.contactIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <MessageIcon size={24} color={themeColors.primary} strokeWidth={1.5} />
             </View>
-            <Text style={s.contactTitle}>Live Chat</Text>
-            <Text style={s.contactSub}>Available 9am – 6pm</Text>
+            <Text style={[s.contactTitle, { color: themeColors.text }]}>Live Chat</Text>
+            <Text style={[s.contactSub, { color: themeColors.textMuted }]}>Available 9am – 6pm</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.contactCard} activeOpacity={0.7} onPress={() => Linking.openURL('mailto:support@connectmeapp.services?subject=Help Request')} accessibilityLabel="Email Us" accessibilityRole="button" accessibilityHint="Send an email to support">
-            <View style={s.contactIconWrap}>
-              <MailIcon size={24} color={colors.primary} strokeWidth={1.5} />
+          <TouchableOpacity style={[s.contactCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => Linking.openURL('mailto:support@connectmeapp.services?subject=Help Request')} accessibilityLabel="Email Us" accessibilityRole="button" accessibilityHint="Send an email to support">
+            <View style={[s.contactIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <MailIcon size={24} color={themeColors.primary} strokeWidth={1.5} />
             </View>
-            <Text style={s.contactTitle}>Email Us</Text>
-            <Text style={s.contactSub}>Response within 24 hours</Text>
+            <Text style={[s.contactTitle, { color: themeColors.text }]}>Email Us</Text>
+            <Text style={[s.contactSub, { color: themeColors.textMuted }]}>Response within 24 hours</Text>
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={s.helpCenterRow} activeOpacity={0.6} onPress={() => WebBrowser.openBrowserAsync('https://connectmeapp.services/contact')} accessibilityLabel="Visit Help Center" accessibilityRole="link" accessibilityHint="Opens the help center in a browser">
+        <TouchableOpacity style={[s.helpCenterRow, { borderTopColor: themeColors.border }]} activeOpacity={0.6} onPress={() => WebBrowser.openBrowserAsync('https://connectmeapp.services/contact')} accessibilityLabel="Visit Help Center" accessibilityRole="link" accessibilityHint="Opens the help center in a browser">
           <View style={s.helpCenterLeft}>
-            <View style={s.helpCenterIconWrap}>
-              <ExternalLinkIcon size={20} color={colors.primary} strokeWidth={1.5} />
+            <View style={[s.helpCenterIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <ExternalLinkIcon size={20} color={themeColors.primary} strokeWidth={1.5} />
             </View>
-            <Text style={s.helpCenterText}>Visit Help Center</Text>
+            <Text style={[s.helpCenterText, { color: themeColors.text }]}>Visit Help Center</Text>
           </View>
-          <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+          <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

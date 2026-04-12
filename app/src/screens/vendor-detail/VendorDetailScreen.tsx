@@ -16,6 +16,7 @@ import { useRecentlyViewed } from '../../hooks/useRecentlyViewed';
 import { useAuth } from '../../context/AuthContext';
 import { ChevronLeftIcon, FlagIcon, ShareIcon, HeartIcon, HeartFilledIcon, MapPinIcon, StarIcon, CalendarIcon, MessageIcon, CameraIcon, SparklesIcon, CheckIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HERO_HEIGHT = 300;
@@ -87,6 +88,7 @@ const statStyles = StyleSheet.create({
 type Props = NativeStackScreenProps<any, 'VendorDetail'>;
 
 export default function VendorDetailScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const auth = useAuth();
   const vendor = route.params!.vendor as any;
   const coverPhoto = vendor.coverPhoto ?? null;
@@ -183,7 +185,7 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
     : null;
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, { backgroundColor: themeColors.background }]}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
 
         {/* ─── Hero image ─── */}
@@ -224,49 +226,49 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
 
           {/* Top-right actions */}
           <SafeAreaView style={styles.heroActions} edges={['top']}>
-            <TouchableOpacity style={styles.heroActionButton} onPress={() => navigation.goBack()} accessibilityLabel="Go back" accessibilityRole="button">
-              <ChevronLeftIcon size={22} color={colors.text} strokeWidth={2} />
+            <TouchableOpacity style={[styles.heroActionButton, { backgroundColor: themeColors.background }]} onPress={() => navigation.goBack()} accessibilityLabel="Go back" accessibilityRole="button">
+              <ChevronLeftIcon size={22} color={themeColors.text} strokeWidth={2} />
             </TouchableOpacity>
             <View style={styles.heroActionsRight}>
               <TouchableOpacity
-                style={styles.heroActionButton}
+                style={[styles.heroActionButton, { backgroundColor: themeColors.background }]}
                 onPress={handleReport}
                 accessibilityLabel="Report this vendor"
                 accessibilityRole="button"
               >
-                <FlagIcon size={20} color={colors.text} strokeWidth={1.5} />
+                <FlagIcon size={20} color={themeColors.text} strokeWidth={1.5} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.heroActionButton} onPress={handleShare} accessibilityLabel="Share this vendor" accessibilityRole="button">
-                <ShareIcon size={20} color={colors.text} strokeWidth={1.5} />
+              <TouchableOpacity style={[styles.heroActionButton, { backgroundColor: themeColors.background }]} onPress={handleShare} accessibilityLabel="Share this vendor" accessibilityRole="button">
+                <ShareIcon size={20} color={themeColors.text} strokeWidth={1.5} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.heroActionButton} onPress={handleSaveToggle} accessibilityLabel={saved ? 'Remove from saved' : 'Save vendor'} accessibilityRole="button">
-                {saved ? <HeartFilledIcon size={20} color={colors.secondary} /> : <HeartIcon size={20} color={colors.text} strokeWidth={1.5} />}
+              <TouchableOpacity style={[styles.heroActionButton, { backgroundColor: themeColors.background }]} onPress={handleSaveToggle} accessibilityLabel={saved ? 'Remove from saved' : 'Save vendor'} accessibilityRole="button">
+                {saved ? <HeartFilledIcon size={20} color={themeColors.secondary} /> : <HeartIcon size={20} color={themeColors.text} strokeWidth={1.5} />}
               </TouchableOpacity>
             </View>
           </SafeAreaView>
         </View>
 
         {/* ─── Vendor info header ─── */}
-        <View style={styles.infoHeader}>
-          <Text style={styles.vendorName}>{vendor.businessName}</Text>
+        <View style={[styles.infoHeader, { borderBottomColor: themeColors.border }]}>
+          <Text style={[styles.vendorName, { color: themeColors.text }]}>{vendor.businessName}</Text>
           <VendorBadgesRow vendor={vendor} />
           <View style={styles.locationRow}>
-            <MapPinIcon size={16} color={colors.textSecondary} strokeWidth={1.5} />
-            <Text style={styles.location}>{vendor.city}, {vendor.state}</Text>
+            <MapPinIcon size={16} color={themeColors.textSecondary} strokeWidth={1.5} />
+            <Text style={[styles.location, { color: themeColors.textSecondary }]}>{vendor.city}, {vendor.state}</Text>
           </View>
           <View style={styles.ratingRow}>
-            <StarIcon size={16} color={colors.star} />
-            <Text style={styles.ratingText}>
+            <StarIcon size={16} color={themeColors.star} />
+            <Text style={[styles.ratingText, { color: themeColors.text }]}>
               {averageRating > 0 ? averageRating.toFixed(1) : 'New'}
             </Text>
             {totalReviews > 0 && (
-              <Text style={styles.reviewCountText}>({totalReviews} reviews)</Text>
+              <Text style={[styles.reviewCountText, { color: themeColors.textMuted }]}>({totalReviews} reviews)</Text>
             )}
           </View>
         </View>
 
         {/* ─── Quick stats ─── */}
-        <View style={styles.statsRow}>
+        <View style={[styles.statsRow, { borderBottomColor: themeColors.border }]}>
           <QuickStat Icon={SparklesIcon} label="Events" value={String(totalBookings)} />
           <View style={styles.statDivider} />
           <QuickStat Icon={CalendarIcon} label="Member since" value={String(memberYear)} />
@@ -283,24 +285,24 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
 
         <CollapsibleSection title="Services & Pricing" defaultOpen>
           <View style={styles.priceCard}>
-            <Text style={styles.priceAmount}>
+            <Text style={[styles.priceAmount, { color: themeColors.primary }]}>
               ${basePrice.toFixed(0)}
             </Text>
-            <Text style={styles.priceUnit}>
+            <Text style={[styles.priceUnit, { color: themeColors.textSecondary }]}>
               {UNIT_LABELS[vendor.priceUnit] ?? vendor.priceUnit}
             </Text>
           </View>
         </CollapsibleSection>
 
         <CollapsibleSection title="Service Area">
-          <Text style={styles.serviceAreaText}>
+          <Text style={[styles.serviceAreaText, { color: themeColors.textSecondary }]}>
             {vendor.city}, {vendor.state} · {vendor.serviceRadius} mile radius
           </Text>
           {mapUrl && !mapImgError ? (
             <Image source={{ uri: mapUrl }} style={styles.mapImage} resizeMode="cover" onError={() => setMapImgError(true)} />
           ) : (
-            <View style={styles.mapPlaceholder}>
-              <Text style={styles.emptyText}>Map preview unavailable</Text>
+            <View style={[styles.mapPlaceholder, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <Text style={[styles.emptyText, { color: themeColors.textMuted }]}>Map preview unavailable</Text>
             </View>
           )}
         </CollapsibleSection>
@@ -313,8 +315,8 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
                   {!portfolioImgErrors[i] ? (
                     <Image source={{ uri }} style={styles.portfolioImage} onError={() => setPortfolioImgErrors(prev => ({ ...prev, [i]: true }))} />
                   ) : (
-                    <View style={[styles.portfolioImage, styles.portfolioFallback]}>
-                      <CameraIcon size={24} color={colors.textMuted} strokeWidth={1.5} />
+                    <View style={[styles.portfolioImage, styles.portfolioFallback, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+                      <CameraIcon size={24} color={themeColors.textMuted} strokeWidth={1.5} />
                     </View>
                   )}
                 </TouchableOpacity>
@@ -351,12 +353,12 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
       </ScrollView>
 
       {/* ─── Sticky Book Now ─── */}
-      <View style={styles.stickyFooter}>
+      <View style={[styles.stickyFooter, { backgroundColor: themeColors.background, borderTopColor: themeColors.border }]}>
         <View style={styles.footerPrice}>
-          <Text style={styles.footerPriceAmount}>
+          <Text style={[styles.footerPriceAmount, { color: themeColors.text }]}>
             ${basePrice.toFixed(0)}
           </Text>
-          <Text style={styles.footerPriceUnit}>
+          <Text style={[styles.footerPriceUnit, { color: themeColors.textMuted }]}>
             {UNIT_LABELS[vendor.priceUnit] ?? ''}
           </Text>
         </View>

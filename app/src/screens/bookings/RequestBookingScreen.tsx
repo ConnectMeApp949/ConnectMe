@@ -5,6 +5,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon, ShieldIcon, CheckIcon, ClockIcon } from '../../components/Icons';
 
@@ -70,6 +71,7 @@ const PROMO_CODES: Record<string, { type: 'percent' | 'flat'; value: number; lab
 };
 
 export default function RequestBookingScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const { token } = useAuth();
   const vendor = (route.params as any)?.vendor;
   const instantBook = (route.params as any)?.instantBook === true;
@@ -216,42 +218,42 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>{instantBook ? 'Confirm and Pay' : 'Request to book'}</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>{instantBook ? 'Confirm and Pay' : 'Request to book'}</Text>
         <View style={s.backBtn} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
         {/* Vendor summary */}
-        <View style={s.vendorCard}>
-          <Text style={s.vendorName}>{vendorName}</Text>
-          <Text style={s.vendorPrice}>${basePrice.toFixed(0)} {vendor?.priceUnit?.replace(/_/g, ' ').toLowerCase()}</Text>
+        <View style={[s.vendorCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[s.vendorName, { color: themeColors.text }]}>{vendorName}</Text>
+          <Text style={[s.vendorPrice, { color: themeColors.textMuted }]}>${basePrice.toFixed(0)} {vendor?.priceUnit?.replace(/_/g, ' ').toLowerCase()}</Text>
         </View>
 
         {/* Event type */}
-        <Text style={s.label}>Event type</Text>
+        <Text style={[s.label, { color: themeColors.text }]}>Event type</Text>
         <View style={s.chipRow}>
           {EVENT_TYPES.map((t) => (
             <TouchableOpacity
               key={t}
-              style={[s.chip, eventType === t && s.chipActive]}
+              style={[s.chip, { borderColor: themeColors.border }, eventType === t && [s.chipActive, { backgroundColor: themeColors.text, borderColor: themeColors.text }]]}
               onPress={() => setEventType(t)}
               activeOpacity={0.7}
               accessibilityLabel={t}
               accessibilityRole="button"
               accessibilityState={{ selected: eventType === t }}
             >
-              <Text style={[s.chipText, eventType === t && s.chipTextActive]}>{t}</Text>
+              <Text style={[s.chipText, { color: themeColors.text }, eventType === t && s.chipTextActive]}>{t}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
         {/* Date — mini calendar */}
-        <Text style={s.label}>Event date</Text>
+        <Text style={[s.label, { color: themeColors.text }]}>Event date</Text>
         {(() => {
           const { year, month } = calendarMonth;
           const daysInMonth = getDaysInMonth(year, month);
@@ -265,7 +267,7 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
           for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
           return (
-            <View style={s.calendarCard}>
+            <View style={[s.calendarCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <View style={s.calendarHeader}>
                 <TouchableOpacity onPress={() => { const prev = month === 0 ? { year: year - 1, month: 11 } : { year, month: month - 1 }; if (canGoPrev) setCalendarMonth(prev); }} disabled={!canGoPrev} activeOpacity={0.6} accessibilityLabel="Previous month" accessibilityRole="button">
                   <ChevronLeftIcon size={20} color={canGoPrev ? colors.text : colors.border} strokeWidth={2} />
@@ -313,7 +315,7 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
         )}
 
         {/* Start Time */}
-        <Text style={s.label}>Start time</Text>
+        <Text style={[s.label, { color: themeColors.text }]}>Start time</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.timeSlotRow}>
           {TIME_SLOTS.map((slot) => (
             <TouchableOpacity
@@ -338,7 +340,7 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
         </ScrollView>
 
         {/* End Time */}
-        <Text style={s.label}>End time</Text>
+        <Text style={[s.label, { color: themeColors.text }]}>End time</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.timeSlotRow}>
           {TIME_SLOTS.filter((slot) => {
             if (!startTime) return true;
@@ -369,38 +371,38 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
         )}
 
         {/* Guest count */}
-        <Text style={s.label}>Guest count</Text>
+        <Text style={[s.label, { color: themeColors.text }]}>Guest count</Text>
         <TextInput
-          style={s.input}
+          style={[s.input, { color: themeColors.text, borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }]}
           value={guestCount}
           onChangeText={setGuestCount}
           placeholder="50"
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={themeColors.textMuted}
           keyboardType="number-pad"
           accessibilityLabel="Guest count"
           accessibilityHint="Enter the number of guests"
         />
 
         {/* Location */}
-        <Text style={s.label}>Event location</Text>
+        <Text style={[s.label, { color: themeColors.text }]}>Event location</Text>
         <TextInput
-          style={s.input}
+          style={[s.input, { color: themeColors.text, borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }]}
           value={location}
           onChangeText={setLocation}
           placeholder="Enter the event address"
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={themeColors.textMuted}
           accessibilityLabel="Event location"
           accessibilityHint="Enter the address where the event will take place"
         />
 
         {/* Notes */}
-        <Text style={s.label}>Special requests (optional)</Text>
+        <Text style={[s.label, { color: themeColors.text }]}>Special requests (optional)</Text>
         <TextInput
-          style={[s.input, s.inputMulti]}
+          style={[s.input, s.inputMulti, { color: themeColors.text, borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }]}
           value={notes}
           onChangeText={setNotes}
           placeholder="Anything the vendor should know?"
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={themeColors.textMuted}
           multiline
           textAlignVertical="top"
           accessibilityLabel="Special requests"
@@ -408,8 +410,8 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
         />
 
         {/* Price breakdown */}
-        <View style={s.priceCard}>
-          <Text style={s.priceTitle}>Price details</Text>
+        <View style={[s.priceCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[s.priceTitle, { color: themeColors.text }]}>Price details</Text>
           <View style={s.priceRow}>
             <Text style={s.priceLabel}>
               {vendorName}{priceUnit === 'PER_HOUR' && startTime && endTime ? ' ($' + basePrice.toFixed(0) + '/hr x ' + durationHours.toFixed(durationHours % 1 === 0 ? 0 : 1) + ' hrs)' : ''}
@@ -556,7 +558,7 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
         </Text>
       </ScrollView>
 
-      <View style={s.footer}>
+      <View style={[s.footer, { borderTopColor: themeColors.border }]}>
         <TouchableOpacity
           style={[s.submitBtn, (!isValid || loading) && s.submitBtnDisabled]}
           onPress={handleSubmit}

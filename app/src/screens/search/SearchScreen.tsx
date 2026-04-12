@@ -9,6 +9,7 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import VendorCard, { VendorCardSkeleton } from '../../components/VendorCard';
 import { useVendorSearch } from '../../hooks/useVendors';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 import { ChevronLeftIcon, ChevronRightIcon, StarIcon, XIcon, SearchIcon, ClockIcon, TrendingIcon, BookmarkIcon, BookmarkFilledIcon, HeartIcon, HeartFilledIcon } from '../../components/Icons';
 import { useSavedSearches } from '../../hooks/useSavedSearches';
 import { useSavedVendors } from '../../hooks/useSavedVendors';
@@ -105,6 +106,7 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
 }
 
 export default function SearchScreen({ navigation, route }: Props) {
+  const { colors: themeColors, isDark } = useTheme();
   const initialView = (route.params as any)?.initialView === 'map' ? 'map' : 'list';
   const prefilledSearch = (route.params as any)?.prefilledSearch;
   const inputRef = useRef<TextInput>(null);
@@ -215,18 +217,18 @@ export default function SearchScreen({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       {/* ---- Search header ---- */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} accessibilityLabel="Go back" accessibilityRole="button">
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <View style={styles.inputWrapper}>
+        <View style={[styles.inputWrapper, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           <TextInput
             ref={inputRef}
-            style={styles.input}
+            style={[styles.input, { color: themeColors.text }]}
             placeholder="Search by city or vendor..."
-            placeholderTextColor={colors.textMuted}
+            placeholderTextColor={themeColors.textMuted}
             value={searchText}
             onChangeText={setSearchText}
             onFocus={() => setInputFocused(true)}
@@ -242,12 +244,12 @@ export default function SearchScreen({ navigation, route }: Props) {
           />
           {searchText.length > 0 && (
             <TouchableOpacity onPress={() => { setSearchText(''); setCommittedSearch(''); }} style={styles.clearBtn} accessibilityLabel="Clear search" accessibilityRole="button">
-              <XIcon size={16} color={colors.textMuted} strokeWidth={2} />
+              <XIcon size={16} color={themeColors.textMuted} strokeWidth={2} />
             </TouchableOpacity>
           )}
         </View>
         <TouchableOpacity
-          style={[styles.filterBtn, filtersOpen && styles.filterBtnActive]}
+          style={[styles.filterBtn, { borderColor: themeColors.border }, filtersOpen && styles.filterBtnActive]}
           onPress={() => setFiltersOpen(!filtersOpen)}
           accessibilityLabel={filtersOpen ? 'Close filters' : 'Open filters'}
           accessibilityRole="button"
@@ -274,7 +276,7 @@ export default function SearchScreen({ navigation, route }: Props) {
 
       {/* ---- Suggestion panel ---- */}
       {showSuggestionPanel && (
-        <View style={suggestStyles.panel}>
+        <View style={[suggestStyles.panel, { backgroundColor: themeColors.background, borderBottomColor: themeColors.border }]}>
           {showRecentAndTrending && (
             <>
               {/* Recent searches */}
@@ -358,7 +360,7 @@ export default function SearchScreen({ navigation, route }: Props) {
 
       {/* ---- Filters panel ---- */}
       {filtersOpen && (
-        <View style={styles.filters}>
+        <View style={[styles.filters, { borderBottomColor: themeColors.border }]}>
           {/* Category */}
           <Text style={styles.filterLabel}>Category</Text>
           <FlatList
@@ -368,13 +370,13 @@ export default function SearchScreen({ navigation, route }: Props) {
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity
-                style={[styles.filterChip, category === item.id && styles.filterChipActive]}
+                style={[styles.filterChip, { borderColor: themeColors.border }, category === item.id && styles.filterChipActive]}
                 onPress={() => setCategory(item.id)}
                 accessibilityLabel={item.label}
                 accessibilityRole="tab"
                 accessibilityState={{ selected: category === item.id }}
               >
-                <Text style={[styles.filterChipText, category === item.id && styles.filterChipTextActive]}>
+                <Text style={[styles.filterChipText, { color: themeColors.text }, category === item.id && styles.filterChipTextActive]}>
                   {item.label}
                 </Text>
               </TouchableOpacity>
@@ -543,26 +545,26 @@ export default function SearchScreen({ navigation, route }: Props) {
 
       {/* ---- View toggle (always visible when vendors exist) ---- */}
       {!isLoading && vendors.length > 0 && (
-        <View style={styles.viewToggle}>
+        <View style={[styles.viewToggle, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           <TouchableOpacity
-            style={[styles.viewToggleBtn, viewMode === 'list' && styles.viewToggleBtnActive]}
+            style={[styles.viewToggleBtn, viewMode === 'list' && [styles.viewToggleBtnActive, { backgroundColor: themeColors.background }]]}
             onPress={() => { setViewMode('list'); setInputFocused(false); inputRef.current?.blur(); }}
             activeOpacity={0.7}
             accessibilityLabel="List view"
             accessibilityRole="tab"
             accessibilityState={{ selected: viewMode === 'list' }}
           >
-            <Text style={[styles.viewToggleText, viewMode === 'list' && styles.viewToggleTextActive]}>List</Text>
+            <Text style={[styles.viewToggleText, { color: themeColors.textMuted }, viewMode === 'list' && [styles.viewToggleTextActive, { color: themeColors.text }]]}>List</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.viewToggleBtn, viewMode === 'map' && styles.viewToggleBtnActive]}
+            style={[styles.viewToggleBtn, viewMode === 'map' && [styles.viewToggleBtnActive, { backgroundColor: themeColors.background }]]}
             onPress={() => { setViewMode('map'); setInputFocused(false); inputRef.current?.blur(); }}
             activeOpacity={0.7}
             accessibilityLabel="Map view"
             accessibilityRole="tab"
             accessibilityState={{ selected: viewMode === 'map' }}
           >
-            <Text style={[styles.viewToggleText, viewMode === 'map' && styles.viewToggleTextActive]}>Map</Text>
+            <Text style={[styles.viewToggleText, { color: themeColors.textMuted }, viewMode === 'map' && [styles.viewToggleTextActive, { color: themeColors.text }]]}>Map</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -578,11 +580,11 @@ export default function SearchScreen({ navigation, route }: Props) {
             </View>
           ) : vendors.length === 0 ? (
             <View style={styles.emptyState}>
-              <View style={styles.emptyIconWrap}>
-                <SearchIcon size={36} color={colors.textMuted} />
+              <View style={[styles.emptyIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+                <SearchIcon size={36} color={themeColors.textMuted} />
               </View>
-              <Text style={styles.emptyTitle}>No vendors found</Text>
-              <Text style={styles.emptySubtitle}>
+              <Text style={[styles.emptyTitle, { color: themeColors.text }]}>No vendors found</Text>
+              <Text style={[styles.emptySubtitle, { color: themeColors.textSecondary }]}>
                 Try adjusting your filters or search in a different area
               </Text>
             </View>
@@ -628,10 +630,10 @@ export default function SearchScreen({ navigation, route }: Props) {
                 })}
               </MapView>
               {/* Vendor cards overlay at bottom */}
-              <View style={styles.mapCardsOverlay}>
+              <View style={[styles.mapCardsOverlay, { backgroundColor: isDark ? 'rgba(15,26,26,0.95)' : 'rgba(255,255,255,0.95)' }]}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.mapCardsScroll}>
                   {vendors.map((v: any) => (
-                    <TouchableOpacity key={v.id} style={styles.mapVendorCard} activeOpacity={0.8} onPress={() => navigateToVendor(v)} accessibilityLabel={v.businessName + ', $' + Number(v.basePrice).toFixed(0)} accessibilityRole="button">
+                    <TouchableOpacity key={v.id} style={[styles.mapVendorCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.8} onPress={() => navigateToVendor(v)} accessibilityLabel={v.businessName + ', $' + Number(v.basePrice).toFixed(0)} accessibilityRole="button">
                       <View>
                         <Image source={{ uri: v.coverPhoto }} style={styles.mapVendorImage} />
                         <TouchableOpacity
@@ -645,13 +647,13 @@ export default function SearchScreen({ navigation, route }: Props) {
                         </TouchableOpacity>
                       </View>
                       <View style={styles.mapVendorInfo}>
-                        <Text style={styles.mapVendorName} numberOfLines={1}>{v.businessName}</Text>
+                        <Text style={[styles.mapVendorName, { color: themeColors.text }]} numberOfLines={1}>{v.businessName}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                          <StarIcon size={12} color={colors.star} />
-                          <Text style={styles.mapVendorRating}>{Number(v.averageRating).toFixed(1)}</Text>
-                          <Text style={styles.mapVendorCity}>· {v.city}</Text>
+                          <StarIcon size={12} color={themeColors.star} />
+                          <Text style={[styles.mapVendorRating, { color: themeColors.text }]}>{Number(v.averageRating).toFixed(1)}</Text>
+                          <Text style={[styles.mapVendorCity, { color: themeColors.textMuted }]}>· {v.city}</Text>
                         </View>
-                        <Text style={styles.mapVendorPrice}>${Number(v.basePrice).toFixed(0)}</Text>
+                        <Text style={[styles.mapVendorPrice, { color: themeColors.primary }]}>${Number(v.basePrice).toFixed(0)}</Text>
                       </View>
                     </TouchableOpacity>
                   ))}

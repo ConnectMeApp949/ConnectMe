@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CalendarIcon, StarOutlineIcon, MessageIcon, SparklesIcon, BellIcon, ChevronLeftIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
@@ -40,6 +41,7 @@ function formatNotifTime(iso: string): string {
 }
 
 export default function NotificationsScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const { token } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -88,12 +90,12 @@ export default function NotificationsScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Notifications</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Notifications</Text>
         <View style={s.backBtn} />
       </View>
 
@@ -109,14 +111,14 @@ export default function NotificationsScreen({ navigation }: Props) {
             const NotifIcon = iconInfo.Icon;
             const displayTime = item.time ? formatNotifTime(item.time) : '';
             return (
-              <TouchableOpacity style={[s.notifRow, !item.read && s.notifUnread]} activeOpacity={0.7} onPress={() => handleNotificationPress(item)} accessibilityLabel={`${item.title}, ${item.body}, ${displayTime}${!item.read ? ', unread' : ''}`} accessibilityRole="button" accessibilityHint="Opens notification details">
-                <View style={[s.notifIconWrap, { backgroundColor: iconInfo.iconBg }]}>
+              <TouchableOpacity style={[s.notifRow, { borderBottomColor: themeColors.border }, !item.read && [s.notifUnread, { backgroundColor: themeColors.cardBackground }]]} activeOpacity={0.7} onPress={() => handleNotificationPress(item)} accessibilityLabel={`${item.title}, ${item.body}, ${displayTime}${!item.read ? ', unread' : ''}`} accessibilityRole="button" accessibilityHint="Opens notification details">
+                <View style={[s.notifIconWrap, { backgroundColor: iconInfo.iconBg, borderColor: themeColors.border }]}>
                   <NotifIcon size={22} color={iconInfo.iconColor} strokeWidth={1.5} />
                 </View>
                 <View style={s.notifContent}>
-                  <Text style={[s.notifTitle, !item.read && s.notifTitleBold]}>{item.title}</Text>
-                  <Text style={s.notifBody} numberOfLines={2}>{item.body}</Text>
-                  <Text style={s.notifTime}>{displayTime}</Text>
+                  <Text style={[s.notifTitle, { color: themeColors.text }, !item.read && s.notifTitleBold]}>{item.title}</Text>
+                  <Text style={[s.notifBody, { color: themeColors.textMuted }]} numberOfLines={2}>{item.body}</Text>
+                  <Text style={[s.notifTime, { color: themeColors.textMuted }]}>{displayTime}</Text>
                 </View>
                 {!item.read && <View style={s.unreadDot} />}
               </TouchableOpacity>
@@ -124,11 +126,11 @@ export default function NotificationsScreen({ navigation }: Props) {
           }}
           ListEmptyComponent={
             <View style={s.empty}>
-              <View style={s.emptyIconWrap}>
-                <BellIcon size={36} color={colors.textMuted} strokeWidth={1.5} />
+              <View style={[s.emptyIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+                <BellIcon size={36} color={themeColors.textMuted} strokeWidth={1.5} />
               </View>
-              <Text style={s.emptyTitle}>No notifications</Text>
-              <Text style={s.emptySub}>You're all caught up!</Text>
+              <Text style={[s.emptyTitle, { color: themeColors.text }]}>No notifications</Text>
+              <Text style={[s.emptySub, { color: themeColors.textMuted }]}>You're all caught up!</Text>
             </View>
           }
         />
