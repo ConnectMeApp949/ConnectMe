@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { ChevronLeftIcon } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'CancelBooking'>;
@@ -49,6 +50,7 @@ function getApplicableTierIndex(eventDate: string | undefined): number {
 }
 
 export default function CancelBookingScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const { token } = useAuth();
   const booking = route.params?.booking as any;
   const vendorName = booking?.vendor?.businessName ?? 'Unknown Vendor';
@@ -159,7 +161,7 @@ export default function CancelBookingScreen({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={s.header}>
@@ -170,9 +172,9 @@ export default function CancelBookingScreen({ navigation, route }: Props) {
             accessibilityLabel="Go back"
             accessibilityRole="button"
           >
-            <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+            <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
           </TouchableOpacity>
-          <Text style={s.headerTitle}>Cancel Booking</Text>
+          <Text style={[s.headerTitle, { color: themeColors.text }]}>Cancel Booking</Text>
           <View style={s.headerSpacer} />
         </View>
 

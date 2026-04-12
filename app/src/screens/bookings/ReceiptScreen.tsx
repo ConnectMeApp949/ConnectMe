@@ -12,11 +12,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { ChevronLeftIcon } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'Receipt'>;
 
 export default function ReceiptScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const { token } = useAuth();
   const booking = route.params?.booking as any;
   const vendor = booking?.vendor;
@@ -116,10 +118,10 @@ export default function ReceiptScreen({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={s.header}>
+        <View style={[s.header, { borderBottomColor: themeColors.border }]}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={s.backBtn}
@@ -127,9 +129,9 @@ export default function ReceiptScreen({ navigation, route }: Props) {
             accessibilityLabel="Go back"
             accessibilityRole="button"
           >
-            <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+            <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
           </TouchableOpacity>
-          <Text style={s.headerTitle}>Receipt</Text>
+          <Text style={[s.headerTitle, { color: themeColors.text }]}>Receipt</Text>
           <View style={s.backBtn} />
         </View>
 

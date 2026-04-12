@@ -8,6 +8,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, StarIcon, StarOutlineIcon } from '../../components/Icons';
 import Skeleton from '../../components/Skeleton';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -30,6 +31,7 @@ interface ReviewItem {
 }
 
 export default function MyReviewsScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const { token } = useAuth();
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -153,12 +155,12 @@ export default function MyReviewsScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>My Reviews</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>My Reviews</Text>
         <View style={s.backBtn} />
       </View>
 

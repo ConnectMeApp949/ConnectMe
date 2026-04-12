@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 import {
   ChevronLeftIcon,
   PlusIcon,
@@ -186,6 +187,7 @@ function searchCategoryFor(icon: string): string {
 type Props = NativeStackScreenProps<any, 'EventPlanner'>;
 
 export default function EventPlannerScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const [events, setEvents] = useState<PlannerEvent[]>(INITIAL_EVENTS);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingBudgetEventId, setEditingBudgetEventId] = useState<string | null>(null);

@@ -18,10 +18,12 @@ import { OnboardingStackParamList } from '../../navigation/types';
 import { login } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { getBiometricPreference, saveCredentials } from '../../util/biometrics';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'SignIn'>;
 
 export default function SignInScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const auth = useAuth();
   const passedEmail = (route.params as any)?.email ?? '';
   const hasEmail = passedEmail.length > 0;

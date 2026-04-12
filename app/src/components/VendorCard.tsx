@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, fonts, spacing, borderRadius } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { StarIcon, HeartFilledIcon, HeartIcon, CheckIcon } from './Icons';
 import { useSavedVendors } from '../hooks/useSavedVendors';
 import { getVendorBadges } from '../constants/badges';
@@ -42,6 +43,7 @@ interface VendorCardProps {
 }
 
 export default function VendorCard({ vendor, onPress, variant = 'grid' }: VendorCardProps) {
+  const { colors: themeColors } = useTheme();
   const { isSaved, toggle } = useSavedVendors();
   const saved = isSaved(vendor.id);
   const isFeatured = variant === 'featured';
@@ -112,19 +114,19 @@ export default function VendorCard({ vendor, onPress, variant = 'grid' }: Vendor
       {/* Info */}
       <View style={styles.info}>
         <View style={styles.nameRow}>
-          <Text style={styles.name} numberOfLines={1}>{vendor.businessName}</Text>
+          <Text style={[styles.name, { color: themeColors.text }]} numberOfLines={1}>{vendor.businessName}</Text>
         </View>
         <VendorBadgesInline vendor={vendor} />
-        <Text style={styles.category}>
+        <Text style={[styles.category, { color: themeColors.textSecondary }]}>
           {CATEGORY_LABELS[vendor.category] ?? vendor.category}
         </Text>
         <View style={styles.ratingRow}>
-          <StarIcon size={14} color={colors.star} />
-          <Text style={styles.rating}>
+          <StarIcon size={14} color={themeColors.star} />
+          <Text style={[styles.rating, { color: themeColors.text }]}>
             {vendor.averageRating > 0 ? Number(vendor.averageRating).toFixed(1) : 'New'}
           </Text>
           {vendor.totalReviews > 0 && (
-            <Text style={styles.reviews}> · {vendor.totalReviews} reviews</Text>
+            <Text style={[styles.reviews, { color: themeColors.textMuted }]}> · {vendor.totalReviews} reviews</Text>
           )}
           {vendor.priceUnit && UNIT_SHORT[vendor.priceUnit] ? (
             <Text style={styles.unitText}> · {UNIT_SHORT[vendor.priceUnit].replace('/', 'per ')}</Text>

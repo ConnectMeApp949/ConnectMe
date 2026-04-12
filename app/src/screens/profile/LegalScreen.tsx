@@ -4,17 +4,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts } from '../../theme';
 import { ChevronLeftIcon } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'Legal'>;
 
 const ITEMS = ['Terms of Service', 'Privacy Policy', 'Cookie Policy', 'Open Source Licenses', 'Accessibility Statement'];
 
 export default function LegalScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} /></TouchableOpacity>
-        <Text style={s.headerTitle}>Legal</Text>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} /></TouchableOpacity>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Legal</Text>
         <View style={s.backBtn} />
       </View>
       <View style={s.list}>

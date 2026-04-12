@@ -5,6 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Calendar from 'expo-calendar';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { StarIcon, CalendarIcon, CheckIcon, ClockIcon, XIcon } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'BookingDetail'>;
 
@@ -212,6 +213,7 @@ function BookingTimeline({ booking }: { booking: any }) {
 }
 
 export default function BookingDetailScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const booking = route.params?.booking as any;
   const vendor = booking?.vendor;
   const vendorName = vendor?.businessName ?? 'Unknown Vendor';
@@ -296,12 +298,12 @@ export default function BookingDetailScreen({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
-            <Text style={s.backText}>{'\u2190'}</Text>
+            <Text style={[s.backText, { color: themeColors.text }]}>{'\u2190'}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleShare} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Share this booking" accessibilityRole="button">
             <Text style={s.backText}>{'\u2197'}</Text>

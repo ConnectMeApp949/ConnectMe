@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { PlusIcon } from '../../components/Icons';
 
 // ─── Quick reply defaults ──────────────────────────────
@@ -155,6 +156,7 @@ type ListItem =
 // ─── ChatScreen ─────────────────────────────────────────
 
 export default function ChatScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const conversation = route.params?.conversation;
   const contactName: string =
     conversation?.otherParty?.name ?? 'Contact';
@@ -380,7 +382,7 @@ export default function ChatScreen({ navigation, route }: Props) {
   const canSend = inputText.trim().length > 0;
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       {/* ── Header ─────────────────────────────────────── */}
       <View style={s.header}>
         <TouchableOpacity

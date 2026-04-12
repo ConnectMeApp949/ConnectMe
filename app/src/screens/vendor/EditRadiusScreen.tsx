@@ -4,19 +4,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, borderRadius } from '../../theme';
 import { ChevronLeftIcon } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'EditRadius'>;
 
 const RADIUS_OPTIONS = [10, 25, 50, 75, 100];
 
 export default function EditRadiusScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const [radius, setRadius] = useState(25);
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} /></TouchableOpacity>
-        <Text style={s.headerTitle}>Service Radius</Text>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} /></TouchableOpacity>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Service Radius</Text>
         <TouchableOpacity onPress={() => { Alert.alert('Saved', `Service radius set to ${radius} miles!`); navigation.goBack(); }} activeOpacity={0.6} accessibilityLabel="Save changes" accessibilityRole="button"><Text style={s.saveText}>Save</Text></TouchableOpacity>
       </View>
       <View style={s.content}>

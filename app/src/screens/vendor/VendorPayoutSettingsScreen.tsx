@@ -4,10 +4,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, ChevronRightIcon, CheckIcon, DollarIcon, ClockIcon, CameraIcon, XIcon } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'VendorPayoutSettings'>;
 
 export default function VendorPayoutSettingsScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const [autoPayouts, setAutoPayouts] = useState(true);
   const [payoutSchedule, setPayoutSchedule] = useState<'daily' | 'weekly' | 'monthly'>('weekly');
 
@@ -45,12 +47,12 @@ export default function VendorPayoutSettingsScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Payout Settings</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Payout Settings</Text>
         <View style={s.backBtn} />
       </View>
 

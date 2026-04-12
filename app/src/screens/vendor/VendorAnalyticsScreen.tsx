@@ -10,6 +10,7 @@ import {
   ClockIcon, TrendingUpIcon, TrendingDownIcon, BarChartIcon,
   SparklesIcon, AwardIcon,
 } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'VendorAnalytics'>;
 
@@ -66,6 +67,7 @@ function formatNumber(n: number): string {
 }
 
 export default function VendorAnalyticsScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const [period, setPeriod] = useState<Period>('week');
   const data = METRICS[period];
 
@@ -99,9 +101,9 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
   const maxFunnel = data.funnelViews;
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={s.header}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={s.backBtn}
@@ -109,9 +111,9 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Analytics</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Analytics</Text>
         <View style={s.backBtn} />
       </View>
 

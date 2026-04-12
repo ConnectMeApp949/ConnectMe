@@ -213,7 +213,7 @@ export default function HomeScreen({ navigation }: Props) {
                     accessibilityLabel="See all featured vendors"
                     accessibilityRole="link"
                   >
-                    <Text style={styles.seeAll}>See all</Text>
+                    <Text style={[styles.seeAll, { color: themeColors.primary }]}>See all</Text>
                   </TouchableOpacity>
                 </View>
               );
@@ -250,7 +250,7 @@ export default function HomeScreen({ navigation }: Props) {
                     accessibilityLabel="See all recently viewed"
                     accessibilityRole="link"
                   >
-                    <Text style={styles.seeAll}>See all</Text>
+                    <Text style={[styles.seeAll, { color: themeColors.primary }]}>See all</Text>
                   </TouchableOpacity>
                 </View>
               );
@@ -281,7 +281,7 @@ export default function HomeScreen({ navigation }: Props) {
                     accessibilityLabel="See all recently added"
                     accessibilityRole="link"
                   >
-                    <Text style={styles.seeAll}>See all</Text>
+                    <Text style={[styles.seeAll, { color: themeColors.primary }]}>See all</Text>
                   </TouchableOpacity>
                 </View>
               );

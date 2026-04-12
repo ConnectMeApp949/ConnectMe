@@ -7,12 +7,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, MailIcon } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
 type Props = NativeStackScreenProps<any, 'ForgotPassword'>;
 
 export default function ForgotPasswordScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const passedEmail = (route.params as any)?.email ?? '';
   const [email, setEmail] = useState(passedEmail);
   const [loading, setLoading] = useState(false);

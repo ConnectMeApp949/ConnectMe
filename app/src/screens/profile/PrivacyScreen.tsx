@@ -5,10 +5,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAuth } from '../../context/AuthContext';
 import { colors, fonts } from '../../theme';
 import { ChevronLeftIcon, AlertCircleIcon, XIcon } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'Privacy'>;
 
 export default function PrivacyScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const { logout, token } = useAuth();
   const [showProfile, setShowProfile] = useState(true);
   const [dataImprove, setDataImprove] = useState(true);
@@ -76,10 +78,10 @@ export default function PrivacyScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} /></TouchableOpacity>
-        <Text style={s.headerTitle}>Privacy</Text>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} /></TouchableOpacity>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Privacy</Text>
         <View style={s.backBtn} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>

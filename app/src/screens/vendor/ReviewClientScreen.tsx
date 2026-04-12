@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 const MAX_COMMENT_LENGTH = 300;
@@ -32,6 +33,7 @@ const CATEGORY_RATINGS = ['Communication', 'Punctuality', 'Respect'] as const;
 type Props = NativeStackScreenProps<any, 'ReviewClient'>;
 
 export default function ReviewClientScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const { token } = useAuth();
   const client = route.params?.client as any;
   const bookingDate = route.params?.bookingDate as string | undefined;
@@ -151,9 +153,9 @@ export default function ReviewClientScreen({ navigation, route }: Props) {
   const canSubmit = overallRating > 0 && !submitting;
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={s.header}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={s.backBtn}
@@ -161,9 +163,9 @@ export default function ReviewClientScreen({ navigation, route }: Props) {
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <Text style={s.backText}>{'\u2190'}</Text>
+          <Text style={[s.backText, { color: themeColors.text }]}>{'\u2190'}</Text>
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Review Client</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Review Client</Text>
         <View style={s.backBtn} />
       </View>
 

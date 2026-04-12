@@ -18,6 +18,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 // ─── Constants ──────────────────────────────────────────
 
@@ -42,6 +43,7 @@ type ReportReason = (typeof REPORT_REASONS)[number];
 type Props = NativeStackScreenProps<any, 'Report'>;
 
 export default function ReportScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const { token } = useAuth();
   const { name, photo, vendorId } = route.params as {
     name: string;
@@ -148,18 +150,18 @@ export default function ReportScreen({ navigation, route }: Props) {
   // ─── Report form ──────────────────────────────────────
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.screen, { backgroundColor: themeColors.background }]} edges={['top', 'bottom']}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <Text style={styles.backIcon}>{'\u2190'}</Text>
+          <Text style={[styles.backIcon, { color: themeColors.text }]}>{'\u2190'}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Report</Text>
+        <Text style={[styles.headerTitle, { color: themeColors.text }]}>Report</Text>
         <View style={styles.headerSpacer} />
       </View>
 

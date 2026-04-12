@@ -5,6 +5,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import {
   CalendarIcon, CheckIcon, DollarIcon, StarIcon, SettingsIcon, SparklesIcon,
@@ -14,6 +15,7 @@ import {
 type Props = NativeStackScreenProps<any, 'VendorDashboard'>;
 
 export default function VendorDashboardScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const auth = useAuth();
   const firstName = auth.user?.firstName ?? 'Vendor';
   const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening';
@@ -29,7 +31,7 @@ export default function VendorDashboardScreen({ navigation }: Props) {
   ];
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}

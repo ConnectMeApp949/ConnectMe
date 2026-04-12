@@ -5,6 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, DollarIcon, CheckIcon, ClockIcon, ChevronRightIcon } from '../../components/Icons';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -25,6 +26,7 @@ interface BreakdownItem {
 }
 
 export default function VendorEarningsScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const { token } = useAuth();
   const [payoutLoading, setPayoutLoading] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
@@ -117,12 +119,12 @@ export default function VendorEarningsScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Earnings</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Earnings</Text>
         <View style={s.backBtn} />
       </View>
 

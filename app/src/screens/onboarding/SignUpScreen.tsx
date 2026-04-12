@@ -12,10 +12,12 @@ import { ChevronLeftIcon } from '../../components/Icons';
 import { OnboardingStackParamList } from '../../navigation/types';
 import { register } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'SignUp'>;
 
 export default function SignUpScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const auth = useAuth();
   const passedEmail = (route.params as any)?.email ?? '';
 

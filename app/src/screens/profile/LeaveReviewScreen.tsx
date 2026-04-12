@@ -16,6 +16,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 const MAX_COMMENT_LENGTH = 500;
@@ -34,6 +35,7 @@ const CATEGORY_RATINGS = ['Communication', 'Quality', 'Value', 'Punctuality'] as
 type Props = NativeStackScreenProps<any, 'LeaveReview'>;
 
 export default function LeaveReviewScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const { token } = useAuth();
   const vendor = route.params?.vendor as any;
   const bookingDate = route.params?.bookingDate as string | undefined;
@@ -182,9 +184,9 @@ export default function LeaveReviewScreen({ navigation, route }: Props) {
   const canSubmit = overallRating > 0 && !submitting;
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={s.header}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={s.backBtn}
@@ -192,9 +194,9 @@ export default function LeaveReviewScreen({ navigation, route }: Props) {
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <Text style={s.backText}>{'\u2190'}</Text>
+          <Text style={[s.backText, { color: themeColors.text }]}>{'\u2190'}</Text>
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Leave a Review</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Leave a Review</Text>
         <View style={s.backBtn} />
       </View>
 

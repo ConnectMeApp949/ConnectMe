@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts } from '../../theme';
 import { ChevronLeftIcon } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'LegalDoc'>;
 
@@ -76,27 +77,28 @@ const DOCS: Record<string, { title: string; lastUpdated: string; sections: { hea
 };
 
 export default function LegalDocScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const docName = (route.params as any)?.doc ?? '';
   const doc = DOCS[docName];
 
   if (!doc) {
     return (
-      <SafeAreaView style={s.container} edges={['top']}>
-        <View style={s.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} /></TouchableOpacity>
-          <Text style={s.headerTitle}>Legal</Text>
+      <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+        <View style={[s.header, { borderBottomColor: themeColors.border }]}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} /></TouchableOpacity>
+          <Text style={[s.headerTitle, { color: themeColors.text }]}>Legal</Text>
           <View style={s.backBtn} />
         </View>
-        <View style={s.empty}><Text style={s.emptyText}>Document not found</Text></View>
+        <View style={s.empty}><Text style={[s.emptyText, { color: themeColors.textMuted }]}>Document not found</Text></View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6}><ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} /></TouchableOpacity>
-        <Text style={s.headerTitle}>{doc.title}</Text>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6}><ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} /></TouchableOpacity>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>{doc.title}</Text>
         <View style={s.backBtn} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>

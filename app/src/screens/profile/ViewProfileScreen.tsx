@@ -9,12 +9,14 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../context/AuthContext';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, StarIcon, XIcon } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'ViewProfile'>;
 
 const MAX_BIO = 500;
 
 export default function ViewProfileScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const auth = useAuth();
   const user = auth.user;
   const firstName = user?.firstName ?? 'User';
@@ -47,12 +49,12 @@ export default function ViewProfileScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>My Profile</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>My Profile</Text>
         <View style={s.backBtn} />
       </View>
 

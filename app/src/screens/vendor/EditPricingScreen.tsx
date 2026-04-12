@@ -8,6 +8,7 @@ import { colors, fonts, borderRadius } from '../../theme';
 import {
   ChevronLeftIcon, PlusIcon, TrashIcon, EditPencilIcon, XIcon,
 } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'EditPricing'>;
 
@@ -40,6 +41,7 @@ function generateId(): string {
 }
 
 export default function EditPricingScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const [price, setPrice] = useState('');
   const [unit, setUnit] = useState('PER_EVENT');
 
@@ -152,8 +154,8 @@ export default function EditPricingScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={s.backBtn}
@@ -161,9 +163,9 @@ export default function EditPricingScreen({ navigation }: Props) {
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Edit Pricing</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Edit Pricing</Text>
         <TouchableOpacity
           onPress={handleSaveAll}
           activeOpacity={0.6}

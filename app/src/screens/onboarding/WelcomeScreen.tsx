@@ -10,6 +10,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { OnboardingStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
 import {
   isBiometricAvailable,
   getBiometricType,
@@ -29,6 +30,7 @@ const SOCIAL_FALLBACKS: Record<string, { label: string; color: string }> = {
 };
 
 export default function WelcomeScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const auth = useAuth();
   const { t } = useLanguage();
   const [input, setInput] = useState('');

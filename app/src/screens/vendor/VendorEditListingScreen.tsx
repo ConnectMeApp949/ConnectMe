@@ -7,6 +7,7 @@ import {
   ChevronLeftIcon, CameraIcon, FileTextIcon, DollarIcon, MapPinIcon, SettingsIcon, ClockIcon,
   ChevronRightIcon, MessageIcon,
 } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'VendorEditListing'>;
 
@@ -21,11 +22,12 @@ const SECTIONS = [
 ];
 
 export default function VendorEditListingScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <View style={s.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} /></TouchableOpacity>
-        <Text style={s.headerTitle}>Edit listing</Text>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} /></TouchableOpacity>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Edit listing</Text>
         <View style={s.backBtn} />
       </View>
       <ScrollView contentContainerStyle={s.scroll}>

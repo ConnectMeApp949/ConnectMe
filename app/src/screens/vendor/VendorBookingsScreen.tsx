@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { CalendarIcon, CheckIcon, ClockIcon } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'VendorBookings'>;
 
@@ -13,6 +14,7 @@ const TABS = ['Pending', 'Confirmed', 'Completed'] as const;
 const DEMO_BOOKINGS: any[] = [];
 
 export default function VendorBookingsScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('Pending');
 
   const filteredBookings = DEMO_BOOKINGS.filter(
@@ -60,8 +62,8 @@ export default function VendorBookingsScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
-      <Text style={s.header}>Bookings</Text>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
+      <Text style={[s.header, { color: themeColors.text }]}>Bookings</Text>
       <View style={s.tabRow}>
         {TABS.map((tab) => (
           <TouchableOpacity key={tab} style={[s.tab, activeTab === tab && s.tabActive]} onPress={() => setActiveTab(tab)} activeOpacity={0.7} accessibilityLabel={`${tab} bookings`} accessibilityRole="button" accessibilityState={{ selected: activeTab === tab }}>

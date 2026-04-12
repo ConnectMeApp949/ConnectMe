@@ -10,6 +10,7 @@ import {
   MapPinIcon,
 } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const MAX_VENDORS = 3;
@@ -23,6 +24,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 type Props = NativeStackScreenProps<any, 'CompareVendors'>;
 
 export default function CompareVendorsScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const initialVendors = (route.params as any)?.vendors ?? [];
   const [vendors, setVendors] = useState<any[]>(initialVendors.slice(0, MAX_VENDORS));
 
@@ -178,18 +180,18 @@ export default function CompareVendorsScreen({ navigation, route }: Props) {
   const placeholders = Array.from({ length: placeholdersNeeded }, (_, i) => i);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backBtn}
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Compare Vendors</Text>
+        <Text style={[styles.headerTitle, { color: themeColors.text }]}>Compare Vendors</Text>
         <View style={styles.headerSpacer} />
       </View>
 

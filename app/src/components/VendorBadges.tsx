@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { fonts, spacing, borderRadius } from '../theme';
 import { BadgeDefinition, getVendorBadges } from '../constants/badges';
+import { useTheme } from '../context/ThemeContext';
 
 // ─── Full badge row (for VendorDetailScreen) ───────────────
 
@@ -10,6 +11,7 @@ interface VendorBadgesProps {
 }
 
 export function VendorBadgesRow({ vendor }: VendorBadgesProps) {
+  const { colors: themeColors } = useTheme();
   const badges = getVendorBadges(vendor);
   if (badges.length === 0) return null;
 
@@ -69,6 +71,7 @@ interface VendorBadgesOverlayProps {
 }
 
 export function VendorBadgesOverlay({ vendor, maxBadges = 1 }: VendorBadgesOverlayProps) {
+  const { colors: themeColors } = useTheme();
   const badges = getVendorBadges(vendor).slice(0, maxBadges);
   if (badges.length === 0) return null;
 

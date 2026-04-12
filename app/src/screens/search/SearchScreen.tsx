@@ -362,7 +362,7 @@ export default function SearchScreen({ navigation, route }: Props) {
       {filtersOpen && (
         <View style={[styles.filters, { borderBottomColor: themeColors.border }]}>
           {/* Category */}
-          <Text style={styles.filterLabel}>Category</Text>
+          <Text style={[styles.filterLabel, { color: themeColors.text }]}>Category</Text>
           <FlatList
             data={CATEGORIES}
             horizontal
@@ -392,7 +392,7 @@ export default function SearchScreen({ navigation, route }: Props) {
             accessibilityRole="button"
             accessibilityHint="Opens a date picker"
           >
-            <Text style={styles.whenLabel}>When</Text>
+            <Text style={[styles.whenLabel, { color: themeColors.text }]}>When</Text>
             <Text style={styles.whenValue}>
               {eventDate
                 ? eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -469,39 +469,39 @@ export default function SearchScreen({ navigation, route }: Props) {
           })()}
 
           {/* Price range */}
-          <Text style={styles.filterLabel}>Max price</Text>
+          <Text style={[styles.filterLabel, { color: themeColors.text }]}>Max price</Text>
           <View style={styles.ratingRow}>
             {[100, 250, 500].map((p) => (
               <TouchableOpacity
                 key={p}
-                style={[styles.ratingChip, maxPrice === p && !showCustomPrice && styles.ratingChipActive]}
+                style={[styles.ratingChip, { borderColor: themeColors.border }, maxPrice === p && !showCustomPrice && styles.ratingChipActive]}
                 onPress={() => { setMaxPrice(p); setShowCustomPrice(false); setCustomPrice(''); }}
                 accessibilityLabel={`Max price $${p}`}
                 accessibilityRole="button"
                 accessibilityState={{ selected: maxPrice === p && !showCustomPrice }}
               >
-                <Text style={[styles.ratingChipText, maxPrice === p && !showCustomPrice && styles.ratingChipTextActive]}>
+                <Text style={[styles.ratingChipText, { color: themeColors.textSecondary }, maxPrice === p && !showCustomPrice && styles.ratingChipTextActive]}>
                   ${p}
                 </Text>
               </TouchableOpacity>
             ))}
             <TouchableOpacity
-              style={[styles.ratingChip, showCustomPrice && styles.ratingChipActive]}
+              style={[styles.ratingChip, { borderColor: themeColors.border }, showCustomPrice && styles.ratingChipActive]}
               onPress={() => setShowCustomPrice(true)}
               accessibilityLabel="Custom max price"
               accessibilityRole="button"
               accessibilityState={{ selected: showCustomPrice }}
             >
-              <Text style={[styles.ratingChipText, showCustomPrice && styles.ratingChipTextActive]}>
+              <Text style={[styles.ratingChipText, { color: themeColors.textSecondary }, showCustomPrice && styles.ratingChipTextActive]}>
                 Other
               </Text>
             </TouchableOpacity>
           </View>
           {showCustomPrice && (
             <View style={styles.customPriceRow}>
-              <Text style={styles.customPriceDollar}>$</Text>
+              <Text style={[styles.customPriceDollar, { color: themeColors.text }]}>$</Text>
               <TextInput
-                style={styles.customPriceInput}
+                style={[styles.customPriceInput, { color: themeColors.text, borderBottomColor: themeColors.border }]}
                 value={customPrice}
                 onChangeText={(t) => {
                   const cleaned = t.replace(/[^0-9]/g, '');
@@ -520,19 +520,19 @@ export default function SearchScreen({ navigation, route }: Props) {
           )}
 
           {/* Rating */}
-          <Text style={styles.filterLabel}>Minimum rating</Text>
+          <Text style={[styles.filterLabel, { color: themeColors.text }]}>Minimum rating</Text>
           <View style={styles.ratingRow}>
             {RATINGS.map((r) => (
               <TouchableOpacity
                 key={r}
-                style={[styles.ratingChip, minRating === r && styles.ratingChipActive]}
+                style={[styles.ratingChip, { borderColor: themeColors.border }, minRating === r && styles.ratingChipActive]}
                 onPress={() => setMinRating(r)}
                 accessibilityLabel={r === 0 ? 'Any rating' : `Minimum ${r} stars`}
                 accessibilityRole="button"
                 accessibilityState={{ selected: minRating === r }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={[styles.ratingChipText, minRating === r && styles.ratingChipTextActive]}>
+                  <Text style={[styles.ratingChipText, { color: themeColors.textSecondary }, minRating === r && styles.ratingChipTextActive]}>
                     {r === 0 ? 'Any' : `${r}+`}
                   </Text>
                   {r > 0 && <StarIcon size={12} color={minRating === r ? colors.white : colors.star} />}

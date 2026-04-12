@@ -8,12 +8,14 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, CalendarIcon } from '../../components/Icons';
 import Skeleton from '../../components/Skeleton';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
 type Props = NativeStackScreenProps<any, 'PastBookings'>;
 
 export default function PastBookingsScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const { token } = useAuth();
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,7 +58,7 @@ export default function PastBookingsScreen({ navigation }: Props) {
 
     return (
       <TouchableOpacity
-        style={styles.card}
+        style={[styles.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
         activeOpacity={0.7}
         onPress={() => navigation.navigate('BookingDetail', { booking: item })}
         accessibilityLabel={`Booking with ${vendorName}, ${item.eventType}, $${amount}`}
@@ -74,25 +76,25 @@ export default function PastBookingsScreen({ navigation }: Props) {
 
         {/* Booking info */}
         <View style={styles.cardContent}>
-          <Text style={styles.vendorName} numberOfLines={1}>{vendorName}</Text>
-          <Text style={styles.serviceType}>{item.eventType}</Text>
-          <Text style={styles.bookingDate}>{formatDate(item.eventDate)}</Text>
+          <Text style={[styles.vendorName, { color: themeColors.text }]} numberOfLines={1}>{vendorName}</Text>
+          <Text style={[styles.serviceType, { color: themeColors.textMuted }]}>{item.eventType}</Text>
+          <Text style={[styles.bookingDate, { color: themeColors.textMuted }]}>{formatDate(item.eventDate)}</Text>
         </View>
 
         {/* Amount */}
-        <Text style={styles.amount}>${amount}</Text>
+        <Text style={[styles.amount, { color: themeColors.text }]}>${amount}</Text>
       </TouchableOpacity>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Past Bookings</Text>
+        <Text style={[styles.headerTitle, { color: themeColors.text }]}>Past Bookings</Text>
         <View style={styles.backBtn} />
       </View>
 
@@ -113,10 +115,10 @@ export default function PastBookingsScreen({ navigation }: Props) {
       ) : bookings.length === 0 ? (
         <View style={styles.emptyState}>
           <View style={styles.emptyIconWrap}>
-            <CalendarIcon size={36} color={colors.textMuted} strokeWidth={1.5} />
+            <CalendarIcon size={36} color={themeColors.textMuted} strokeWidth={1.5} />
           </View>
-          <Text style={styles.emptyTitle}>No past bookings yet</Text>
-          <Text style={styles.emptySub}>Start discovering vendors on ConnectMe</Text>
+          <Text style={[styles.emptyTitle, { color: themeColors.text }]}>No past bookings yet</Text>
+          <Text style={[styles.emptySub, { color: themeColors.textMuted }]}>Start discovering vendors on ConnectMe</Text>
         </View>
       ) : (
         <FlatList

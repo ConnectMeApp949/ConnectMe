@@ -9,6 +9,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import {
   CheckIcon, MessageIcon, CalendarIcon, ShareIcon, ChevronRightIcon, MapPinIcon, UserIcon, ClockIcon,
 } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'BookingConfirmation'>;
 
@@ -55,6 +56,7 @@ function getRequestSteps(): TimelineStep[] {
 // ─── Component ──────────────────────────────────────────
 
 export default function BookingConfirmationScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const params = route.params as any;
   const instantBook: boolean = params?.instantBook === true;
   const vendor = params?.vendor;
@@ -185,7 +187,7 @@ export default function BookingConfirmationScreen({ navigation, route }: Props) 
   // ─── Render ─────────────────────────────────────────
 
   return (
-    <SafeAreaView style={s.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top', 'bottom']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
