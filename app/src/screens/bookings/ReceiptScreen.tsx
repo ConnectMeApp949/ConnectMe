@@ -136,85 +136,85 @@ export default function ReceiptScreen({ navigation, route }: Props) {
         </View>
 
         {/* Branding area */}
-        <View style={s.brandingArea}>
-          <Text style={s.brandName}>ConnectMe</Text>
-          <Text style={s.brandSubtitle}>Receipt</Text>
-          <Text style={s.receiptNumber}>{receiptNumber}</Text>
+        <View style={[s.brandingArea, { backgroundColor: themeColors.cardBackground }]}>
+          <Text style={[s.brandName, { color: themeColors.primary }]}>ConnectMe</Text>
+          <Text style={[s.brandSubtitle, { color: themeColors.textSecondary }]}>Receipt</Text>
+          <Text style={[s.receiptNumber, { color: themeColors.textMuted }]}>{receiptNumber}</Text>
         </View>
 
         {/* Booking info card */}
-        <View style={s.card}>
-          <Text style={s.cardTitle}>Booking Information</Text>
-          <View style={s.detailRow}>
-            <Text style={s.detailLabel}>Vendor</Text>
-            <Text style={s.detailValue}>{vendorName}</Text>
+        <View style={[s.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[s.cardTitle, { color: themeColors.text }]}>Booking Information</Text>
+          <View style={[s.detailRow, { borderBottomColor: themeColors.border }]}>
+            <Text style={[s.detailLabel, { color: themeColors.textMuted }]}>Vendor</Text>
+            <Text style={[s.detailValue, { color: themeColors.text }]}>{vendorName}</Text>
           </View>
           {category ? (
-            <View style={s.detailRow}>
-              <Text style={s.detailLabel}>Business Type</Text>
-              <Text style={s.detailValue}>{category}</Text>
+            <View style={[s.detailRow, { borderBottomColor: themeColors.border }]}>
+              <Text style={[s.detailLabel, { color: themeColors.textMuted }]}>Business Type</Text>
+              <Text style={[s.detailValue, { color: themeColors.text }]}>{category}</Text>
             </View>
           ) : null}
-          <View style={s.detailRow}>
-            <Text style={s.detailLabel}>Event Date</Text>
-            <Text style={s.detailValue}>{eventDate}</Text>
+          <View style={[s.detailRow, { borderBottomColor: themeColors.border }]}>
+            <Text style={[s.detailLabel, { color: themeColors.textMuted }]}>Event Date</Text>
+            <Text style={[s.detailValue, { color: themeColors.text }]}>{eventDate}</Text>
           </View>
-          <View style={s.detailRow}>
-            <Text style={s.detailLabel}>Time</Text>
-            <Text style={s.detailValue}>
+          <View style={[s.detailRow, { borderBottomColor: themeColors.border }]}>
+            <Text style={[s.detailLabel, { color: themeColors.textMuted }]}>Time</Text>
+            <Text style={[s.detailValue, { color: themeColors.text }]}>
               {startTime && endTime ? `${startTime} - ${endTime}` : 'N/A'}
             </Text>
           </View>
-          <View style={s.detailRow}>
-            <Text style={s.detailLabel}>Location</Text>
-            <Text style={s.detailValue} numberOfLines={2}>
+          <View style={[s.detailRow, { borderBottomColor: themeColors.border }]}>
+            <Text style={[s.detailLabel, { color: themeColors.textMuted }]}>Location</Text>
+            <Text style={[s.detailValue, { color: themeColors.text }]} numberOfLines={2}>
               {location}
             </Text>
           </View>
           <View style={[s.detailRow, { borderBottomWidth: 0 }]}>
-            <Text style={s.detailLabel}>Booking ID</Text>
-            <Text style={s.detailValue}>{bookingId}</Text>
+            <Text style={[s.detailLabel, { color: themeColors.textMuted }]}>Booking ID</Text>
+            <Text style={[s.detailValue, { color: themeColors.text }]}>{bookingId}</Text>
           </View>
         </View>
 
         {/* Price breakdown card */}
-        <View style={s.card}>
-          <Text style={s.cardTitle}>Price Breakdown</Text>
-          <View style={s.detailRow}>
-            <Text style={s.detailLabel}>Base price</Text>
-            <Text style={s.detailValue}>${basePrice.toFixed(2)}</Text>
+        <View style={[s.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[s.cardTitle, { color: themeColors.text }]}>Price Breakdown</Text>
+          <View style={[s.detailRow, { borderBottomColor: themeColors.border }]}>
+            <Text style={[s.detailLabel, { color: themeColors.textMuted }]}>Base price</Text>
+            <Text style={[s.detailValue, { color: themeColors.text }]}>${basePrice.toFixed(2)}</Text>
           </View>
-          <View style={s.detailRow}>
-            <Text style={s.detailLabel}>Service fee (5%)</Text>
-            <Text style={s.detailValue}>${serviceFee.toFixed(2)}</Text>
+          <View style={[s.detailRow, { borderBottomColor: themeColors.border }]}>
+            <Text style={[s.detailLabel, { color: themeColors.textMuted }]}>Service fee (5%)</Text>
+            <Text style={[s.detailValue, { color: themeColors.text }]}>${serviceFee.toFixed(2)}</Text>
           </View>
           {promoDiscount > 0 && (
-            <View style={s.detailRow}>
-              <Text style={s.detailLabel}>Promo discount</Text>
+            <View style={[s.detailRow, { borderBottomColor: themeColors.border }]}>
+              <Text style={[s.detailLabel, { color: themeColors.textMuted }]}>Promo discount</Text>
               <Text style={[s.detailValue, { color: colors.success }]}>
                 -${promoDiscount.toFixed(2)}
               </Text>
             </View>
           )}
           <View style={s.totalRow}>
-            <Text style={s.totalLabel}>Total</Text>
-            <Text style={s.totalValue}>${computedTotal.toFixed(2)}</Text>
+            <Text style={[s.totalLabel, { color: themeColors.text }]}>Total</Text>
+            <Text style={[s.totalValue, { color: themeColors.primary }]}>${computedTotal.toFixed(2)}</Text>
           </View>
         </View>
 
         {/* Payment info card */}
-        <View style={s.card}>
-          <Text style={s.cardTitle}>Payment Information</Text>
-          <View style={s.detailRow}>
-            <Text style={s.detailLabel}>Payment method</Text>
-            <Text style={s.detailValue}>{booking?.paymentMethodLabel ?? 'Card on file'}</Text>
+        <View style={[s.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[s.cardTitle, { color: themeColors.text }]}>Payment Information</Text>
+          <View style={[s.detailRow, { borderBottomColor: themeColors.border }]}>
+            <Text style={[s.detailLabel, { color: themeColors.textMuted }]}>Payment method</Text>
+            <Text style={[s.detailValue, { color: themeColors.text }]}>{booking?.paymentMethodLabel ?? 'Card on file'}</Text>
           </View>
-          <View style={s.detailRow}>
-            <Text style={s.detailLabel}>Payment date</Text>
-            <Text style={s.detailValue}>{paymentDate}</Text>
+          <View style={[s.detailRow, { borderBottomColor: themeColors.border }]}>
+            <Text style={[s.detailLabel, { color: themeColors.textMuted }]}>Payment date</Text>
+            <Text style={[s.detailValue, { color: themeColors.text }]}>{paymentDate}</Text>
           </View>
           <View style={[s.detailRow, { borderBottomWidth: 0 }]}>
-            <Text style={s.detailLabel}>Status</Text>
+            <Text style={[s.detailLabel, { color: themeColors.textMuted }]}>Status</Text>
             <View style={s.paidBadge}>
               <Text style={s.paidBadgeText}>Paid</Text>
             </View>
@@ -222,29 +222,29 @@ export default function ReceiptScreen({ navigation, route }: Props) {
         </View>
 
         {/* Divider */}
-        <View style={s.divider} />
+        <View style={[s.divider, { backgroundColor: themeColors.border }]} />
 
         {/* Action buttons */}
         <View style={s.actionsContainer}>
           <TouchableOpacity
-            style={s.actionBtn}
+            style={[s.actionBtn, { borderColor: themeColors.border }]}
             onPress={handleDownloadPdf}
             activeOpacity={0.7}
             accessibilityLabel="Download PDF receipt"
             accessibilityRole="button"
             accessibilityHint="Downloads a PDF copy of this receipt"
           >
-            <Text style={s.actionBtnText}>Download PDF</Text>
+            <Text style={[s.actionBtnText, { color: themeColors.text }]}>Download PDF</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={s.actionBtn}
+            style={[s.actionBtn, { borderColor: themeColors.border }]}
             onPress={handleEmailReceipt}
             activeOpacity={0.7}
             accessibilityLabel="Email receipt"
             accessibilityRole="button"
             accessibilityHint="Sends this receipt to your email address"
           >
-            <Text style={s.actionBtnText}>Email Receipt</Text>
+            <Text style={[s.actionBtnText, { color: themeColors.text }]}>Email Receipt</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[s.actionBtn, s.actionBtnPrimary]}
@@ -256,10 +256,20 @@ export default function ReceiptScreen({ navigation, route }: Props) {
           >
             <Text style={s.actionBtnPrimaryText}>Share</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[s.actionBtn, { borderColor: themeColors.border }]}
+            onPress={() => navigation.navigate('RequestBooking', { vendor: booking?.vendor })}
+            activeOpacity={0.7}
+            accessibilityLabel="Book again"
+            accessibilityRole="button"
+            accessibilityHint="Navigate to book this vendor again"
+          >
+            <Text style={[s.actionBtnText, { color: themeColors.text }]}>Book Again</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Footer text */}
-        <Text style={s.footerText}>
+        <Text style={[s.footerText, { color: themeColors.textSecondary }]}>
           Thank you for using ConnectMe! If you have questions about this charge, contact support.
         </Text>
 

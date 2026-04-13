@@ -66,15 +66,15 @@ export default function ConnectionsScreen({ navigation }: Props) {
       </View>
       <View style={s.tabs}>
         {(['all', 'favorites'] as const).map(t => (
-          <TouchableOpacity key={t} style={[s.tab, filter === t && s.tabActive]} onPress={() => setFilter(t)} activeOpacity={0.7} accessibilityLabel={t === 'all' ? 'All connections' : 'Favorite connections'} accessibilityRole="button" accessibilityState={{ selected: filter === t }}>
-            <Text style={[s.tabText, filter === t && s.tabTextActive]}>{t === 'all' ? 'All' : 'Favorites'}</Text>
+          <TouchableOpacity key={t} style={[s.tab, { borderColor: themeColors.border }, filter === t && s.tabActive]} onPress={() => setFilter(t)} activeOpacity={0.7} accessibilityLabel={t === 'all' ? 'All connections' : 'Favorite connections'} accessibilityRole="button" accessibilityState={{ selected: filter === t }}>
+            <Text style={[s.tabText, { color: themeColors.text }, filter === t && s.tabTextActive]}>{t === 'all' ? 'All' : 'Favorites'}</Text>
           </TouchableOpacity>
         ))}
       </View>
       {loading ? (
         <View style={{ padding: 20 }}>
           {Array.from({ length: 4 }).map((_, i) => (
-            <View key={i} style={s.card}>
+            <View key={i} style={[s.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <Skeleton width={60} height={60} borderRadius={30} />
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Skeleton width="60%" height={14} />
@@ -85,17 +85,17 @@ export default function ConnectionsScreen({ navigation }: Props) {
           ))}
         </View>
       ) : filtered.length === 0 ? (
-        <View style={s.empty}><View style={s.emptyIconWrap}><UsersIcon size={36} color={colors.textMuted} strokeWidth={1.5} /></View><Text style={s.emptyTitle}>No connections yet</Text><Text style={s.emptySub}>Book a vendor to start building your network</Text></View>
+        <View style={s.empty}><View style={[s.emptyIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}><UsersIcon size={36} color={themeColors.textMuted} strokeWidth={1.5} /></View><Text style={[s.emptyTitle, { color: themeColors.text }]}>No connections yet</Text><Text style={[s.emptySub, { color: themeColors.textMuted }]}>Book a vendor to start building your network</Text></View>
       ) : (
         <FlatList data={filtered} keyExtractor={i => i.id} contentContainerStyle={s.list} showsVerticalScrollIndicator={false} renderItem={({ item }) => (
-          <TouchableOpacity style={s.card} activeOpacity={0.7} onPress={() => navigation.navigate('VendorDetail', { vendor: item })} accessibilityLabel={`${item.businessName}, ${item.category?.replace(/_/g, ' ')}`} accessibilityRole="button" accessibilityHint="View vendor profile">
+          <TouchableOpacity style={[s.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('VendorDetail', { vendor: item })} accessibilityLabel={`${item.businessName}, ${item.category?.replace(/_/g, ' ')}`} accessibilityRole="button" accessibilityHint="View vendor profile">
             {item.coverPhoto ? <Image source={{ uri: item.coverPhoto }} style={s.vendorPhoto} accessibilityLabel={`${item.businessName} photo`} accessibilityRole="image" /> : <View style={s.vendorPhotoFb}><Text style={s.vendorPhotoText}>{item.businessName?.[0]}</Text></View>}
             <View style={s.cardContent}>
-              <Text style={s.vendorName}>{item.businessName}</Text>
-              <Text style={s.category}>{item.category?.replace(/_/g, ' ')}</Text>
-              <Text style={s.bookCount}>Booked {item.bookCount} time{item.bookCount > 1 ? 's' : ''}</Text>
+              <Text style={[s.vendorName, { color: themeColors.text }]}>{item.businessName}</Text>
+              <Text style={[s.category, { color: themeColors.textMuted }]}>{item.category?.replace(/_/g, ' ')}</Text>
+              <Text style={[s.bookCount, { color: themeColors.textMuted }]}>Booked {item.bookCount} time{item.bookCount > 1 ? 's' : ''}</Text>
             </View>
-            <TouchableOpacity onPress={() => toggleFav(item.id)} activeOpacity={0.6} accessibilityLabel={favorites.has(item.id) ? `Remove ${item.businessName} from favorites` : `Add ${item.businessName} to favorites`} accessibilityRole="button">{favorites.has(item.id) ? <HeartFilledIcon size={22} color={colors.error} /> : <HeartIcon size={22} color={colors.textMuted} strokeWidth={1.5} />}</TouchableOpacity>
+            <TouchableOpacity onPress={() => toggleFav(item.id)} activeOpacity={0.6} accessibilityLabel={favorites.has(item.id) ? `Remove ${item.businessName} from favorites` : `Add ${item.businessName} to favorites`} accessibilityRole="button">{favorites.has(item.id) ? <HeartFilledIcon size={22} color={colors.error} /> : <HeartIcon size={22} color={themeColors.textMuted} strokeWidth={1.5} />}</TouchableOpacity>
           </TouchableOpacity>
         )} />
       )}

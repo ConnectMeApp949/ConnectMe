@@ -35,102 +35,102 @@ export default function VendorDashboardScreen({ navigation }: Props) {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={async () => { setRefreshing(true); /* Re-fetch dashboard data when API is connected */ setRefreshing(false); }} tintColor={colors.primary} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={async () => { setRefreshing(true); /* Re-fetch dashboard data when API is connected */ setRefreshing(false); }} tintColor={themeColors.primary} />}
       >
-        <Text style={s.greeting}>{greeting}, {firstName}</Text>
-        <Text style={s.date}>{today}</Text>
+        <Text style={[s.greeting, { color: themeColors.text }]}>{greeting}, {firstName}</Text>
+        <Text style={[s.date, { color: themeColors.textMuted }]}>{today}</Text>
 
         {/* Stats grid */}
         <View style={s.statsGrid}>
           {stats.map((stat) => {
             const StatIcon = stat.Icon;
             return (
-              <View key={stat.label} style={s.statCard}>
-                <View style={s.statIconBox}>
-                  <StatIcon size={20} color={colors.text} />
+              <View key={stat.label} style={[s.statCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+                <View style={[s.statIconBox, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+                  <StatIcon size={20} color={themeColors.primary} />
                 </View>
-                <Text style={s.statValue}>{stat.value}</Text>
-                <Text style={s.statLabel}>{stat.label}</Text>
+                <Text style={[s.statValue, { color: themeColors.text }]}>{stat.value}</Text>
+                <Text style={[s.statLabel, { color: themeColors.textMuted }]}>{stat.label}</Text>
               </View>
             );
           })}
         </View>
 
         {/* Quick actions */}
-        <Text style={s.sectionTitle}>Quick actions</Text>
-        <TouchableOpacity style={s.actionCard} activeOpacity={0.7} onPress={() => navigation.navigate('VendorBookings')} accessibilityLabel="Manage bookings" accessibilityRole="button" accessibilityHint="View and respond to booking requests">
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Quick actions</Text>
+        <TouchableOpacity style={[s.actionCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('VendorBookings')} accessibilityLabel="Manage bookings" accessibilityRole="button" accessibilityHint="View and respond to booking requests">
           <View style={s.actionLeft}>
-            <View style={s.actionIconBox}>
-              <CalendarIcon size={20} color={colors.text} />
+            <View style={[s.actionIconBox, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <CalendarIcon size={20} color={themeColors.primary} />
             </View>
             <View>
-              <Text style={s.actionTitle}>Manage bookings</Text>
-              <Text style={s.actionSub}>View and respond to booking requests</Text>
+              <Text style={[s.actionTitle, { color: themeColors.text }]}>Manage bookings</Text>
+              <Text style={[s.actionSub, { color: themeColors.textSecondary }]}>View and respond to booking requests</Text>
             </View>
           </View>
-          <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+          <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={s.actionCard} activeOpacity={0.7} onPress={() => navigation.navigate('VendorEarnings')} accessibilityLabel="Earnings" accessibilityRole="button" accessibilityHint="View your revenue and payouts">
+        <TouchableOpacity style={[s.actionCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('VendorEarnings')} accessibilityLabel="Earnings" accessibilityRole="button" accessibilityHint="View your revenue and payouts">
           <View style={s.actionLeft}>
-            <View style={s.actionIconBox}>
-              <DollarIcon size={20} color={colors.text} />
+            <View style={[s.actionIconBox, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <DollarIcon size={20} color={themeColors.primary} />
             </View>
             <View>
-              <Text style={s.actionTitle}>Earnings</Text>
-              <Text style={s.actionSub}>View your revenue and payouts</Text>
+              <Text style={[s.actionTitle, { color: themeColors.text }]}>Earnings</Text>
+              <Text style={[s.actionSub, { color: themeColors.textSecondary }]}>View your revenue and payouts</Text>
             </View>
           </View>
-          <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+          <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={s.actionCard} activeOpacity={0.7} onPress={() => navigation.navigate('VendorEditListing')} accessibilityLabel="Edit listing" accessibilityRole="button" accessibilityHint="Update photos, pricing, and description">
+        <TouchableOpacity style={[s.actionCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('VendorEditListing')} accessibilityLabel="Edit listing" accessibilityRole="button" accessibilityHint="Update photos, pricing, and description">
           <View style={s.actionLeft}>
-            <View style={s.actionIconBox}>
-              <SettingsIcon size={20} color={colors.text} />
+            <View style={[s.actionIconBox, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <SettingsIcon size={20} color={themeColors.primary} />
             </View>
             <View>
-              <Text style={s.actionTitle}>Edit listing</Text>
-              <Text style={s.actionSub}>Update photos, pricing, and description</Text>
+              <Text style={[s.actionTitle, { color: themeColors.text }]}>Edit listing</Text>
+              <Text style={[s.actionSub, { color: themeColors.textSecondary }]}>Update photos, pricing, and description</Text>
             </View>
           </View>
-          <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+          <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={s.actionCard} activeOpacity={0.7} onPress={() => navigation.navigate('VendorCalendar')} accessibilityLabel="Availability" accessibilityRole="button" accessibilityHint="Set your schedule and block dates">
+        <TouchableOpacity style={[s.actionCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('VendorCalendar')} accessibilityLabel="Availability" accessibilityRole="button" accessibilityHint="Set your schedule and block dates">
           <View style={s.actionLeft}>
-            <View style={s.actionIconBox}>
-              <CalendarIcon size={20} color={colors.text} />
+            <View style={[s.actionIconBox, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <CalendarIcon size={20} color={themeColors.primary} />
             </View>
             <View>
-              <Text style={s.actionTitle}>Availability</Text>
-              <Text style={s.actionSub}>Set your schedule and block dates</Text>
+              <Text style={[s.actionTitle, { color: themeColors.text }]}>Availability</Text>
+              <Text style={[s.actionSub, { color: themeColors.textSecondary }]}>Set your schedule and block dates</Text>
             </View>
           </View>
-          <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+          <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={s.actionCard} activeOpacity={0.7} onPress={() => navigation.navigate('VendorAnalytics')} accessibilityLabel="Analytics" accessibilityRole="button" accessibilityHint="View your performance insights and metrics">
+        <TouchableOpacity style={[s.actionCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('VendorAnalytics')} accessibilityLabel="Analytics" accessibilityRole="button" accessibilityHint="View your performance insights and metrics">
           <View style={s.actionLeft}>
-            <View style={s.actionIconBox}>
-              <BarChartIcon size={20} color={colors.text} />
+            <View style={[s.actionIconBox, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <BarChartIcon size={20} color={themeColors.primary} />
             </View>
             <View>
-              <Text style={s.actionTitle}>Analytics</Text>
-              <Text style={s.actionSub}>View your performance insights</Text>
+              <Text style={[s.actionTitle, { color: themeColors.text }]}>Analytics</Text>
+              <Text style={[s.actionSub, { color: themeColors.textSecondary }]}>View your performance insights</Text>
             </View>
           </View>
-          <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+          <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>
 
         {/* Tips */}
-        <View style={s.tipCard}>
-          <View style={s.tipIconBox}>
-            <SparklesIcon size={18} color={colors.text} />
+        <View style={[s.tipCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.primary }]}>
+          <View style={[s.tipIconBox, { backgroundColor: themeColors.background }]}>
+            <SparklesIcon size={18} color={themeColors.primary} />
           </View>
           <View style={s.tipContent}>
-            <Text style={s.tipTitle}>Tip: Complete your profile</Text>
-            <Text style={s.tipText}>Vendors with complete profiles and photos get 3x more bookings. Make sure to add at least 5 photos!</Text>
+            <Text style={[s.tipTitle, { color: themeColors.text }]}>Tip: Complete your profile</Text>
+            <Text style={[s.tipText, { color: themeColors.textSecondary }]}>Vendors with complete profiles and photos get 3x more bookings. Make sure to add at least 5 photos!</Text>
           </View>
         </View>
 
