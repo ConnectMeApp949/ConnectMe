@@ -297,23 +297,23 @@ export default function EventPlannerScreen({ navigation }: Props) {
     return (
       <View style={styles.budgetSection} accessibilityRole="summary" accessibilityLabel={`Budget tracker: $${spent} spent of $${event.totalBudget} total`}>
         <View style={styles.budgetHeader}>
-          <DollarIcon size={18} color={colors.primary} />
-          <Text style={styles.budgetTitle}>Budget</Text>
+          <DollarIcon size={18} color={themeColors.primary} />
+          <Text style={[styles.budgetTitle, { color: themeColors.text }]}>Budget</Text>
         </View>
 
         <View style={styles.budgetRow}>
           <View style={styles.budgetItem}>
-            <Text style={styles.budgetLabel}>Total</Text>
+            <Text style={[styles.budgetLabel, { color: themeColors.textMuted }]}>Total</Text>
             {isEditing ? (
               <View style={styles.budgetEditRow}>
-                <Text style={styles.budgetCurrency}>$</Text>
+                <Text style={[styles.budgetCurrency, { color: themeColors.text }]}>$</Text>
                 <TextInput
-                  style={styles.budgetInput}
+                  style={[styles.budgetInput, { color: themeColors.text, borderBottomColor: themeColors.primary }]}
                   value={budgetText}
                   onChangeText={setBudgetText}
                   keyboardType="number-pad"
                   placeholder="0"
-                  placeholderTextColor={colors.textMuted}
+                  placeholderTextColor={themeColors.textMuted}
                   autoFocus
                   accessibilityLabel="Enter total budget"
                   onSubmitEditing={() => saveBudget(event.id)}
@@ -338,7 +338,7 @@ export default function EventPlannerScreen({ navigation }: Props) {
                 accessibilityRole="button"
                 accessibilityHint="Tap to set your total event budget"
               >
-                <Text style={styles.budgetValue}>
+                <Text style={[styles.budgetValue, { color: themeColors.text }]}>
                   ${event.totalBudget.toLocaleString()}
                 </Text>
               </TouchableOpacity>
@@ -346,14 +346,14 @@ export default function EventPlannerScreen({ navigation }: Props) {
           </View>
 
           <View style={styles.budgetItem}>
-            <Text style={styles.budgetLabel}>Spent</Text>
-            <Text style={[styles.budgetValue, { color: colors.primary }]}>
+            <Text style={[styles.budgetLabel, { color: themeColors.textMuted }]}>Spent</Text>
+            <Text style={[styles.budgetValue, { color: themeColors.primary }]}>
               ${spent.toLocaleString()}
             </Text>
           </View>
 
           <View style={styles.budgetItem}>
-            <Text style={styles.budgetLabel}>Remaining</Text>
+            <Text style={[styles.budgetLabel, { color: themeColors.textMuted }]}>Remaining</Text>
             <Text style={[styles.budgetValue, { color: colors.success }]}>
               ${remaining.toLocaleString()}
             </Text>
@@ -361,19 +361,19 @@ export default function EventPlannerScreen({ navigation }: Props) {
         </View>
 
         {/* Progress bar */}
-        <View style={styles.progressTrack} accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: Math.round(progress * 100) }}>
+        <View style={[styles.progressTrack, { backgroundColor: themeColors.border }]} accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: Math.round(progress * 100) }}>
           <View
             style={[
               styles.progressFill,
               {
                 width: `${Math.round(progress * 100)}%`,
-                backgroundColor: progress > 0.9 ? colors.error : progress > 0.7 ? colors.warning : colors.primary,
+                backgroundColor: progress > 0.9 ? colors.error : progress > 0.7 ? colors.warning : themeColors.primary,
               },
             ]}
           />
         </View>
         {event.totalBudget > 0 && (
-          <Text style={styles.progressText}>
+          <Text style={[styles.progressText, { color: themeColors.textMuted }]}>
             {Math.round(progress * 100)}% of budget used
           </Text>
         )}
@@ -383,10 +383,10 @@ export default function EventPlannerScreen({ navigation }: Props) {
 
   function renderChecklistItem(event: PlannerEvent, item: ChecklistItem) {
     return (
-      <View key={item.id} style={[styles.checklistItem, item.completed && styles.checklistItemCompleted]}>
+      <View key={item.id} style={[styles.checklistItem, { backgroundColor: themeColors.background }, item.completed && styles.checklistItemCompleted]}>
         {/* Checkbox */}
         <TouchableOpacity
-          style={[styles.checkbox, item.completed && styles.checkboxChecked]}
+          style={[styles.checkbox, { borderColor: themeColors.border }, item.completed && styles.checkboxChecked]}
           onPress={() => toggleChecklistItem(event.id, item.id)}
           accessibilityLabel={`${item.category}, ${item.completed ? 'completed' : 'not completed'}`}
           accessibilityRole="checkbox"
@@ -396,20 +396,20 @@ export default function EventPlannerScreen({ navigation }: Props) {
         </TouchableOpacity>
 
         {/* Icon + content */}
-        <View style={styles.checklistIcon}>
-          <CategoryIcon icon={item.icon} size={18} color={item.completed ? colors.textMuted : colors.primary} />
+        <View style={[styles.checklistIcon, { backgroundColor: `${themeColors.primary}12` }]}>
+          <CategoryIcon icon={item.icon} size={18} color={item.completed ? themeColors.textMuted : themeColors.primary} />
         </View>
 
         <View style={styles.checklistContent}>
-          <Text style={[styles.checklistCategory, item.completed && styles.checklistCategoryDone]}>
+          <Text style={[styles.checklistCategory, { color: themeColors.text }, item.completed && { textDecorationLine: 'line-through', color: themeColors.textMuted }]}>
             {item.category}
           </Text>
           {item.vendorName ? (
-            <Text style={styles.checklistVendor}>{item.vendorName}</Text>
+            <Text style={[styles.checklistVendor, { color: themeColors.textSecondary }]}>{item.vendorName}</Text>
           ) : null}
           <View style={styles.checklistMeta}>
             {item.budget > 0 && (
-              <Text style={styles.checklistBudget}>${item.budget.toLocaleString()}</Text>
+              <Text style={[styles.checklistBudget, { color: themeColors.text }]}>${item.budget.toLocaleString()}</Text>
             )}
             <View style={[styles.statusBadge, { backgroundColor: `${statusColor(item.status)}18` }]}>
               <Text style={[styles.statusText, { color: statusColor(item.status) }]}>
@@ -422,14 +422,14 @@ export default function EventPlannerScreen({ navigation }: Props) {
         {/* Add vendor button */}
         {!item.vendorName && !item.completed && (
           <TouchableOpacity
-            style={styles.addVendorBtn}
+            style={[styles.addVendorBtn, { borderColor: themeColors.primary }]}
             onPress={() => handleAddVendor(item.icon)}
             accessibilityLabel={`Find vendor for ${item.category}`}
             accessibilityRole="button"
             accessibilityHint={`Searches for ${item.category} vendors`}
           >
-            <PlusIcon size={14} color={colors.primary} strokeWidth={2.5} />
-            <Text style={styles.addVendorText}>Find</Text>
+            <PlusIcon size={14} color={themeColors.primary} strokeWidth={2.5} />
+            <Text style={[styles.addVendorText, { color: themeColors.primary }]}>Find</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -441,7 +441,7 @@ export default function EventPlannerScreen({ navigation }: Props) {
     const totalCount = event.checklist.length;
 
     return (
-      <View key={event.id} style={styles.eventCard}>
+      <View key={event.id} style={[styles.eventCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
         {/* Card header (tappable to expand) */}
         <TouchableOpacity
           style={styles.eventHeader}
@@ -452,54 +452,54 @@ export default function EventPlannerScreen({ navigation }: Props) {
           accessibilityState={{ expanded: event.expanded }}
         >
           <View style={styles.eventHeaderLeft}>
-            <Text style={styles.eventName}>{event.name}</Text>
+            <Text style={[styles.eventName, { color: themeColors.text }]}>{event.name}</Text>
             <View style={styles.eventMetaRow}>
-              <CalendarIcon size={13} color={colors.textSecondary} />
-              <Text style={styles.eventMetaText}>{formatDate(event.date)}</Text>
+              <CalendarIcon size={13} color={themeColors.textSecondary} />
+              <Text style={[styles.eventMetaText, { color: themeColors.textSecondary }]}>{formatDate(event.date)}</Text>
               {event.location ? (
                 <>
-                  <MapPinIcon size={13} color={colors.textSecondary} />
-                  <Text style={styles.eventMetaText}>{event.location}</Text>
+                  <MapPinIcon size={13} color={themeColors.textSecondary} />
+                  <Text style={[styles.eventMetaText, { color: themeColors.textSecondary }]}>{event.location}</Text>
                 </>
               ) : null}
               {event.guestCount > 0 && (
                 <>
-                  <UserIcon size={13} color={colors.textSecondary} />
-                  <Text style={styles.eventMetaText}>{event.guestCount} guests</Text>
+                  <UserIcon size={13} color={themeColors.textSecondary} />
+                  <Text style={[styles.eventMetaText, { color: themeColors.textSecondary }]}>{event.guestCount} guests</Text>
                 </>
               )}
             </View>
-            <Text style={styles.eventProgress}>
+            <Text style={[styles.eventProgress, { color: themeColors.textMuted }]}>
               {completedCount}/{totalCount} vendors confirmed
             </Text>
           </View>
           <View style={[styles.expandArrow, event.expanded && styles.expandArrowRotated]}>
-            <ChevronRightIcon size={20} color={colors.textMuted} />
+            <ChevronRightIcon size={20} color={themeColors.textMuted} />
           </View>
         </TouchableOpacity>
 
         {/* Expanded content */}
         {event.expanded && (
-          <View style={styles.eventBody}>
+          <View style={[styles.eventBody, { borderTopColor: themeColors.border }]}>
             {/* Budget tracker */}
             {renderBudgetTracker(event)}
 
             {/* Vendor checklist */}
             <View style={styles.checklistSection}>
-              <Text style={styles.sectionLabel} accessibilityRole="header">Vendor Checklist</Text>
+              <Text style={[styles.sectionLabel, { color: themeColors.text }]} accessibilityRole="header">Vendor Checklist</Text>
               {event.checklist.map((item) => renderChecklistItem(event, item))}
             </View>
 
             {/* Notes */}
             <View style={styles.notesSection}>
-              <Text style={styles.sectionLabel} accessibilityRole="header">Notes</Text>
+              <Text style={[styles.sectionLabel, { color: themeColors.text }]} accessibilityRole="header">Notes</Text>
               <TextInput
-                style={styles.notesInput}
+                style={[styles.notesInput, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
                 multiline
                 value={event.notes}
                 onChangeText={(text) => updateNotes(event.id, text)}
                 placeholder="Add notes about your event..."
-                placeholderTextColor={colors.textMuted}
+                placeholderTextColor={themeColors.textMuted}
                 textAlignVertical="top"
                 accessibilityLabel="Event notes"
                 accessibilityHint="Enter any notes about your event"
@@ -508,7 +508,7 @@ export default function EventPlannerScreen({ navigation }: Props) {
 
             {/* Share button */}
             <TouchableOpacity
-              style={styles.shareBtn}
+              style={[styles.shareBtn, { backgroundColor: themeColors.primary }]}
               onPress={handleShare}
               activeOpacity={0.7}
               accessibilityLabel="Share plan with co-planner"
@@ -526,9 +526,9 @@ export default function EventPlannerScreen({ navigation }: Props) {
   // ─── Main render ───────────────────────────────────────
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: themeColors.background, borderBottomColor: themeColors.border }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backBtn}
@@ -536,12 +536,12 @@ export default function EventPlannerScreen({ navigation }: Props) {
           accessibilityRole="button"
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <ChevronLeftIcon size={24} color={colors.text} />
+          <ChevronLeftIcon size={24} color={themeColors.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Event Planner</Text>
+        <Text style={[styles.headerTitle, { color: themeColors.text }]}>Event Planner</Text>
         <TouchableOpacity
           onPress={() => setShowCreateModal(true)}
-          style={styles.addBtn}
+          style={[styles.addBtn, { backgroundColor: themeColors.primary }]}
           accessibilityLabel="Create new event"
           accessibilityRole="button"
           accessibilityHint="Opens a form to create a new event plan"
@@ -569,77 +569,77 @@ export default function EventPlannerScreen({ navigation }: Props) {
         onRequestClose={() => setShowCreateModal(false)}
       >
         <KeyboardAvoidingView
-          style={styles.modalContainer}
+          style={[styles.modalContainer, { backgroundColor: themeColors.background }]}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <SafeAreaView style={styles.modalSafe}>
             {/* Modal header */}
-            <View style={styles.modalHeader}>
+            <View style={[styles.modalHeader, { borderBottomColor: themeColors.border }]}>
               <TouchableOpacity
                 onPress={() => setShowCreateModal(false)}
                 accessibilityLabel="Close"
                 accessibilityRole="button"
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <XIcon size={24} color={colors.text} />
+                <XIcon size={24} color={themeColors.text} />
               </TouchableOpacity>
-              <Text style={styles.modalTitle}>New Event</Text>
+              <Text style={[styles.modalTitle, { color: themeColors.text }]}>New Event</Text>
               <View style={{ width: 24 }} />
             </View>
 
             <ScrollView style={styles.modalBody} keyboardShouldPersistTaps="handled">
               {/* Event name */}
-              <Text style={styles.inputLabel}>Event Name</Text>
+              <Text style={[styles.inputLabel, { color: themeColors.text }]}>Event Name</Text>
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: themeColors.text, backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
                 value={newName}
                 onChangeText={setNewName}
                 placeholder="e.g. Birthday Party, Wedding, Corporate Event"
-                placeholderTextColor={colors.textMuted}
+                placeholderTextColor={themeColors.textMuted}
                 accessibilityLabel="Event name"
                 returnKeyType="next"
               />
 
               {/* Date */}
-              <Text style={styles.inputLabel}>Date</Text>
-              <View style={styles.inputWithIcon}>
-                <CalendarIcon size={18} color={colors.textMuted} />
+              <Text style={[styles.inputLabel, { color: themeColors.text }]}>Date</Text>
+              <View style={[styles.inputWithIcon, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+                <CalendarIcon size={18} color={themeColors.textMuted} />
                 <TextInput
-                  style={styles.inputInner}
+                  style={[styles.inputInner, { color: themeColors.text }]}
                   value={newDate}
                   onChangeText={setNewDate}
                   placeholder="YYYY-MM-DD"
-                  placeholderTextColor={colors.textMuted}
+                  placeholderTextColor={themeColors.textMuted}
                   accessibilityLabel="Event date"
                   returnKeyType="next"
                 />
               </View>
 
               {/* Location */}
-              <Text style={styles.inputLabel}>Location</Text>
-              <View style={styles.inputWithIcon}>
-                <MapPinIcon size={18} color={colors.textMuted} />
+              <Text style={[styles.inputLabel, { color: themeColors.text }]}>Location</Text>
+              <View style={[styles.inputWithIcon, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+                <MapPinIcon size={18} color={themeColors.textMuted} />
                 <TextInput
-                  style={styles.inputInner}
+                  style={[styles.inputInner, { color: themeColors.text }]}
                   value={newLocation}
                   onChangeText={setNewLocation}
                   placeholder="City, State or Venue Name"
-                  placeholderTextColor={colors.textMuted}
+                  placeholderTextColor={themeColors.textMuted}
                   accessibilityLabel="Event location"
                   returnKeyType="next"
                 />
               </View>
 
               {/* Guest count */}
-              <Text style={styles.inputLabel}>Guest Count</Text>
-              <View style={styles.inputWithIcon}>
-                <UserIcon size={18} color={colors.textMuted} />
+              <Text style={[styles.inputLabel, { color: themeColors.text }]}>Guest Count</Text>
+              <View style={[styles.inputWithIcon, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+                <UserIcon size={18} color={themeColors.textMuted} />
                 <TextInput
-                  style={styles.inputInner}
+                  style={[styles.inputInner, { color: themeColors.text }]}
                   value={newGuests}
                   onChangeText={setNewGuests}
                   placeholder="0"
-                  placeholderTextColor={colors.textMuted}
+                  placeholderTextColor={themeColors.textMuted}
                   keyboardType="number-pad"
                   accessibilityLabel="Number of guests"
                   returnKeyType="done"
@@ -648,7 +648,7 @@ export default function EventPlannerScreen({ navigation }: Props) {
 
               {/* Create button */}
               <TouchableOpacity
-                style={styles.createBtn}
+                style={[styles.createBtn, { backgroundColor: themeColors.primary }]}
                 onPress={createEvent}
                 activeOpacity={0.8}
                 accessibilityLabel="Create event"

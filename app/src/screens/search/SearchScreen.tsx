@@ -84,22 +84,23 @@ type Props = NativeStackScreenProps<any, 'Search'>;
 
 // Renders matched text with the matching portion in bold
 function HighlightedText({ text, query }: { text: string; query: string }) {
+  const { colors: themeColors } = useTheme();
   if (!query) {
-    return <Text style={suggestStyles.itemText}>{text}</Text>;
+    return <Text style={[suggestStyles.itemText, { color: themeColors.textSecondary }]}>{text}</Text>;
   }
   const lowerText = text.toLowerCase();
   const lowerQuery = query.toLowerCase();
   const idx = lowerText.indexOf(lowerQuery);
   if (idx === -1) {
-    return <Text style={suggestStyles.itemText}>{text}</Text>;
+    return <Text style={[suggestStyles.itemText, { color: themeColors.textSecondary }]}>{text}</Text>;
   }
   const before = text.slice(0, idx);
   const match = text.slice(idx, idx + query.length);
   const after = text.slice(idx + query.length);
   return (
-    <Text style={suggestStyles.itemText}>
+    <Text style={[suggestStyles.itemText, { color: themeColors.textSecondary }]}>
       {before}
-      <Text style={suggestStyles.itemTextBold}>{match}</Text>
+      <Text style={[suggestStyles.itemTextBold, { color: themeColors.text }]}>{match}</Text>
       {after}
     </Text>
   );
@@ -283,26 +284,26 @@ export default function SearchScreen({ navigation, route }: Props) {
               {recentSearches.length > 0 && (
                 <View style={suggestStyles.section}>
                   <View style={suggestStyles.sectionHeaderRow}>
-                    <Text style={suggestStyles.sectionHeader} accessibilityRole="header">Recent</Text>
+                    <Text style={[suggestStyles.sectionHeader, { color: themeColors.text }]} accessibilityRole="header">Recent</Text>
                     <TouchableOpacity
                       onPress={clearAllRecent}
                       accessibilityLabel="Clear all recent searches"
                       accessibilityRole="button"
                     >
-                      <Text style={suggestStyles.clearAllText}>Clear all</Text>
+                      <Text style={[suggestStyles.clearAllText, { color: themeColors.primary }]}>Clear all</Text>
                     </TouchableOpacity>
                   </View>
                   {recentSearches.map((term) => (
                     <TouchableOpacity
                       key={term}
-                      style={suggestStyles.row}
+                      style={[suggestStyles.row, { borderBottomColor: themeColors.border }]}
                       onPress={() => executeSearch(term)}
                       activeOpacity={0.6}
                       accessibilityLabel={`Recent search: ${term}`}
                       accessibilityRole="button"
                     >
-                      <ClockIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
-                      <Text style={suggestStyles.itemText} numberOfLines={1}>{term}</Text>
+                      <ClockIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
+                      <Text style={[suggestStyles.itemText, { color: themeColors.textSecondary }]} numberOfLines={1}>{term}</Text>
                       <TouchableOpacity
                         onPress={() => removeRecentSearch(term)}
                         style={suggestStyles.removeBtn}
@@ -310,7 +311,7 @@ export default function SearchScreen({ navigation, route }: Props) {
                         accessibilityLabel={`Remove ${term} from recent searches`}
                         accessibilityRole="button"
                       >
-                        <XIcon size={14} color={colors.textMuted} strokeWidth={2} />
+                        <XIcon size={14} color={themeColors.textMuted} strokeWidth={2} />
                       </TouchableOpacity>
                     </TouchableOpacity>
                   ))}
@@ -319,18 +320,18 @@ export default function SearchScreen({ navigation, route }: Props) {
 
               {/* Trending searches */}
               <View style={suggestStyles.section}>
-                <Text style={suggestStyles.sectionHeader} accessibilityRole="header">Trending</Text>
+                <Text style={[suggestStyles.sectionHeader, { color: themeColors.text }]} accessibilityRole="header">Trending</Text>
                 {TRENDING_SEARCHES.map((term) => (
                   <TouchableOpacity
                     key={term}
-                    style={suggestStyles.row}
+                    style={[suggestStyles.row, { borderBottomColor: themeColors.border }]}
                     onPress={() => executeSearch(term)}
                     activeOpacity={0.6}
                     accessibilityLabel={`Trending search: ${term}`}
                     accessibilityRole="button"
                   >
-                    <TrendingIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
-                    <Text style={suggestStyles.itemText} numberOfLines={1}>{term}</Text>
+                    <TrendingIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
+                    <Text style={[suggestStyles.itemText, { color: themeColors.textSecondary }]} numberOfLines={1}>{term}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -339,17 +340,17 @@ export default function SearchScreen({ navigation, route }: Props) {
 
           {showAutocomplete && (
             <View style={suggestStyles.section}>
-              <Text style={suggestStyles.sectionHeader} accessibilityRole="header">Suggestions</Text>
+              <Text style={[suggestStyles.sectionHeader, { color: themeColors.text }]} accessibilityRole="header">Suggestions</Text>
               {autocompleteSuggestions.map((term) => (
                 <TouchableOpacity
                   key={term}
-                  style={suggestStyles.row}
+                  style={[suggestStyles.row, { borderBottomColor: themeColors.border }]}
                   onPress={() => executeSearch(term)}
                   activeOpacity={0.6}
                   accessibilityLabel={`Search suggestion: ${term}`}
                   accessibilityRole="button"
                 >
-                  <SearchIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+                  <SearchIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
                   <HighlightedText text={term} query={searchText.trim()} />
                 </TouchableOpacity>
               ))}
