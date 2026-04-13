@@ -85,41 +85,41 @@ export default function PrivacyScreen({ navigation }: Props) {
         <View style={s.backBtn} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
-        <Text style={s.intro}>ConnectMe takes your privacy seriously. You can control how your information is used and shared below.</Text>
+        <Text style={[s.intro, { color: themeColors.textSecondary }]}>ConnectMe takes your privacy seriously. You can control how your information is used and shared below.</Text>
 
-        <Text style={s.sectionTitle}>Data and Visibility</Text>
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Data and Visibility</Text>
         {[
           { label: 'Show Profile to Vendors', desc: 'Allow vendors to see your profile when browsing', value: showProfile, set: setShowProfile },
           { label: 'Improve Services', desc: 'Allow ConnectMe to use your data to improve services', value: dataImprove, set: setDataImprove },
           { label: 'Share Booking History', desc: 'Share your booking history with vendors', value: shareHistory, set: setShareHistory },
           { label: 'Location Services', desc: 'Allow access to your location for nearby vendors', value: locationServices, set: setLocationServices },
         ].map(item => (
-          <View key={item.label} style={s.toggleRow}>
-            <View style={s.toggleLeft}><Text style={s.toggleLabel}>{item.label}</Text><Text style={s.toggleDesc}>{item.desc}</Text></View>
+          <View key={item.label} style={[s.toggleRow, { borderBottomColor: themeColors.border }]}>
+            <View style={s.toggleLeft}><Text style={[s.toggleLabel, { color: themeColors.text }]}>{item.label}</Text><Text style={[s.toggleDesc, { color: themeColors.textMuted }]}>{item.desc}</Text></View>
             <Switch value={item.value} onValueChange={item.set} trackColor={{ true: colors.primary }} accessibilityLabel={item.label} accessibilityRole="switch" />
           </View>
         ))}
 
-        <Text style={[s.sectionTitle, { marginTop: 24 }]}>Account Data</Text>
-        <TouchableOpacity style={s.row} activeOpacity={0.6} onPress={handleDownloadData} accessibilityLabel="Download My Data" accessibilityRole="button" accessibilityHint="Request a copy of your personal data">
-          <Text style={s.rowLabel}>Download My Data</Text>
-          {downloadLoading ? <ActivityIndicator size="small" color={colors.primary} /> : <Text style={s.chevron}>›</Text>}
+        <Text style={[s.sectionTitle, { marginTop: 24, color: themeColors.text }]}>Account Data</Text>
+        <TouchableOpacity style={[s.row, { borderBottomColor: themeColors.border }]} activeOpacity={0.6} onPress={handleDownloadData} accessibilityLabel="Download My Data" accessibilityRole="button" accessibilityHint="Request a copy of your personal data">
+          <Text style={[s.rowLabel, { color: themeColors.text }]}>Download My Data</Text>
+          {downloadLoading ? <ActivityIndicator size="small" color={colors.primary} /> : <Text style={[s.chevron, { color: themeColors.textMuted }]}>›</Text>}
         </TouchableOpacity>
-        <TouchableOpacity style={s.row} activeOpacity={0.6} onPress={handleDeleteAccount} accessibilityLabel="Delete My Account" accessibilityRole="button" accessibilityHint="Permanently delete your account and all data">
+        <TouchableOpacity style={[s.row, { borderBottomColor: themeColors.border }]} activeOpacity={0.6} onPress={handleDeleteAccount} accessibilityLabel="Delete My Account" accessibilityRole="button" accessibilityHint="Permanently delete your account and all data">
           <Text style={[s.rowLabel, { color: colors.error }]}>Delete My Account</Text>
           <Text style={[s.chevron, { color: colors.error }]}>›</Text>
         </TouchableOpacity>
 
-        <Text style={[s.sectionTitle, { marginTop: 24 }]}>Legal Links</Text>
-        <TouchableOpacity style={s.row} activeOpacity={0.6} onPress={() => navigation.navigate('LegalDoc', { doc: 'Privacy Policy' })} accessibilityLabel="Privacy Policy" accessibilityRole="link"><Text style={s.rowLabel}>Privacy Policy</Text><Text style={s.chevron}>›</Text></TouchableOpacity>
-        <TouchableOpacity style={s.row} activeOpacity={0.6} onPress={() => navigation.navigate('LegalDoc', { doc: 'Terms of Service' })} accessibilityLabel="Terms of Service" accessibilityRole="link"><Text style={s.rowLabel}>Terms of Service</Text><Text style={s.chevron}>›</Text></TouchableOpacity>
+        <Text style={[s.sectionTitle, { marginTop: 24, color: themeColors.text }]}>Legal Links</Text>
+        <TouchableOpacity style={[s.row, { borderBottomColor: themeColors.border }]} activeOpacity={0.6} onPress={() => navigation.navigate('LegalDoc', { doc: 'Privacy Policy' })} accessibilityLabel="Privacy Policy" accessibilityRole="link"><Text style={[s.rowLabel, { color: themeColors.text }]}>Privacy Policy</Text><Text style={[s.chevron, { color: themeColors.textMuted }]}>›</Text></TouchableOpacity>
+        <TouchableOpacity style={[s.row, { borderBottomColor: themeColors.border }]} activeOpacity={0.6} onPress={() => navigation.navigate('LegalDoc', { doc: 'Terms of Service' })} accessibilityLabel="Terms of Service" accessibilityRole="link"><Text style={[s.rowLabel, { color: themeColors.text }]}>Terms of Service</Text><Text style={[s.chevron, { color: themeColors.textMuted }]}>›</Text></TouchableOpacity>
       </ScrollView>
 
       {/* Delete Account Modal — Airbnb/Thumbtack style multi-step confirmation */}
       <Modal visible={deleteStep > 0} animationType="slide" presentationStyle="pageSheet" accessibilityViewIsModal={true}>
-        <SafeAreaView style={s.modalContainer}>
-          <View style={s.modalHeader}>
-            <TouchableOpacity onPress={() => setDeleteStep(0)} activeOpacity={0.6} accessibilityLabel="Cancel" accessibilityRole="button"><Text style={s.modalClose}>Cancel</Text></TouchableOpacity>
+        <SafeAreaView style={[s.modalContainer, { backgroundColor: themeColors.background }]}>
+          <View style={[s.modalHeader, { borderBottomColor: themeColors.border }]}>
+            <TouchableOpacity onPress={() => setDeleteStep(0)} activeOpacity={0.6} accessibilityLabel="Cancel" accessibilityRole="button"><Text style={[s.modalClose, { color: themeColors.primary }]}>Cancel</Text></TouchableOpacity>
           </View>
 
           {deleteStep === 1 && (
@@ -127,39 +127,39 @@ export default function PrivacyScreen({ navigation }: Props) {
               <View style={s.deleteIconWrap}>
                 <AlertCircleIcon size={36} color={colors.error} />
               </View>
-              <Text style={s.deleteTitle}>Delete your account?</Text>
-              <Text style={s.deleteDesc}>Before you go, here's what will happen:</Text>
+              <Text style={[s.deleteTitle, { color: themeColors.text }]}>Delete your account?</Text>
+              <Text style={[s.deleteDesc, { color: themeColors.textSecondary }]}>Before you go, here's what will happen:</Text>
 
               <View style={s.deleteList}>
                 <View style={s.deleteItem}>
-                  <Text style={s.deleteBullet}>•</Text>
-                  <Text style={s.deleteItemText}>Your profile, photos, and bio will be permanently removed</Text>
+                  <Text style={[s.deleteBullet, { color: themeColors.textSecondary }]}>•</Text>
+                  <Text style={[s.deleteItemText, { color: themeColors.textSecondary }]}>Your profile, photos, and bio will be permanently removed</Text>
                 </View>
                 <View style={s.deleteItem}>
-                  <Text style={s.deleteBullet}>•</Text>
-                  <Text style={s.deleteItemText}>All your reviews (given and received) will be deleted</Text>
+                  <Text style={[s.deleteBullet, { color: themeColors.textSecondary }]}>•</Text>
+                  <Text style={[s.deleteItemText, { color: themeColors.textSecondary }]}>All your reviews (given and received) will be deleted</Text>
                 </View>
                 <View style={s.deleteItem}>
-                  <Text style={s.deleteBullet}>•</Text>
-                  <Text style={s.deleteItemText}>Any upcoming bookings will be automatically cancelled</Text>
+                  <Text style={[s.deleteBullet, { color: themeColors.textSecondary }]}>•</Text>
+                  <Text style={[s.deleteItemText, { color: themeColors.textSecondary }]}>Any upcoming bookings will be automatically cancelled</Text>
                 </View>
                 <View style={s.deleteItem}>
-                  <Text style={s.deleteBullet}>•</Text>
-                  <Text style={s.deleteItemText}>Your message history will be erased</Text>
+                  <Text style={[s.deleteBullet, { color: themeColors.textSecondary }]}>•</Text>
+                  <Text style={[s.deleteItemText, { color: themeColors.textSecondary }]}>Your message history will be erased</Text>
                 </View>
                 <View style={s.deleteItem}>
-                  <Text style={s.deleteBullet}>•</Text>
-                  <Text style={s.deleteItemText}>If you're a vendor, your listing will be removed from search</Text>
+                  <Text style={[s.deleteBullet, { color: themeColors.textSecondary }]}>•</Text>
+                  <Text style={[s.deleteItemText, { color: themeColors.textSecondary }]}>If you're a vendor, your listing will be removed from search</Text>
                 </View>
               </View>
 
-              <Text style={s.deleteNote}>You have 14 days to contact support to recover your account after deletion.</Text>
+              <Text style={[s.deleteNote, { color: themeColors.textMuted }]}>You have 14 days to contact support to recover your account after deletion.</Text>
 
               <TouchableOpacity style={s.deleteBtn} activeOpacity={0.7} onPress={handleDeleteConfirm} accessibilityLabel="Continue with account deletion" accessibilityRole="button">
                 <Text style={s.deleteBtnText}>Continue</Text>
               </TouchableOpacity>
               <TouchableOpacity style={s.keepBtn} activeOpacity={0.7} onPress={() => setDeleteStep(0)} accessibilityLabel="Keep my account" accessibilityRole="button">
-                <Text style={s.keepBtnText}>Keep my account</Text>
+                <Text style={[s.keepBtnText, { color: themeColors.primary }]}>Keep my account</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -169,8 +169,8 @@ export default function PrivacyScreen({ navigation }: Props) {
               <View style={s.deleteIconWrap}>
                 <XIcon size={36} color={colors.error} />
               </View>
-              <Text style={s.deleteTitle}>Are you sure?</Text>
-              <Text style={s.deleteDesc}>This action cannot be undone. All your data will be permanently deleted within 30 days.</Text>
+              <Text style={[s.deleteTitle, { color: themeColors.text }]}>Are you sure?</Text>
+              <Text style={[s.deleteDesc, { color: themeColors.textSecondary }]}>This action cannot be undone. All your data will be permanently deleted within 30 days.</Text>
 
               <View style={s.finalCard}>
                 <Text style={s.finalCardTitle}>What we'll delete:</Text>
@@ -181,7 +181,7 @@ export default function PrivacyScreen({ navigation }: Props) {
                 <Text style={s.deleteBtnText}>Yes, delete my account</Text>
               </TouchableOpacity>
               <TouchableOpacity style={s.keepBtn} activeOpacity={0.7} onPress={() => setDeleteStep(0)} accessibilityLabel="Go back" accessibilityRole="button">
-                <Text style={s.keepBtnText}>Go back</Text>
+                <Text style={[s.keepBtnText, { color: themeColors.primary }]}>Go back</Text>
               </TouchableOpacity>
             </View>
           )}

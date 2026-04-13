@@ -69,31 +69,31 @@ export default function ViewProfileScreen({ navigation }: Props) {
             </View>
           )}
           <TouchableOpacity onPress={handleEditPhoto} activeOpacity={0.6} accessibilityLabel="Edit Photo" accessibilityRole="button" accessibilityHint="Choose a new profile photo">
-            <Text style={s.editPhotoLink}>Edit Photo</Text>
+            <Text style={[s.editPhotoLink, { color: themeColors.primary }]}>Edit Photo</Text>
           </TouchableOpacity>
         </View>
 
-        <Text style={s.fullName}>{firstName} {lastName}</Text>
-        <Text style={s.memberSince}>Member since 2024</Text>
+        <Text style={[s.fullName, { color: themeColors.text }]}>{firstName} {lastName}</Text>
+        <Text style={[s.memberSince, { color: themeColors.textMuted }]}>Member since 2024</Text>
 
         {/* Stats */}
-        <View style={s.statsCard}>
-          <View style={s.statCol}><Text style={s.statNum}>3</Text><Text style={s.statLabel}>Bookings</Text></View>
-          <View style={s.statDiv} />
-          <View style={s.statCol}><Text style={s.statNum}>2</Text><Text style={s.statLabel}>Reviews</Text></View>
-          <View style={s.statDiv} />
-          <View style={s.statCol}><Text style={s.statNum}>1</Text><Text style={s.statLabel}>Years on ConnectMe</Text></View>
+        <View style={[s.statsCard, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}>
+          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>3</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Bookings</Text></View>
+          <View style={[s.statDiv, { backgroundColor: themeColors.border }]} />
+          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>2</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Reviews</Text></View>
+          <View style={[s.statDiv, { backgroundColor: themeColors.border }]} />
+          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>1</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Years on ConnectMe</Text></View>
         </View>
 
         {/* About */}
         <View style={s.section}>
           <View style={s.sectionHeader}>
-            <Text style={s.sectionTitle}>About</Text>
+            <Text style={[s.sectionTitle, { color: themeColors.text }]}>About</Text>
             <TouchableOpacity onPress={() => { setEditBio(bio); setBioModalVisible(true); }} activeOpacity={0.6} accessibilityLabel="Edit bio" accessibilityRole="button">
-              <Text style={s.editLink}>Edit</Text>
+              <Text style={[s.editLink, { color: themeColors.primary }]}>Edit</Text>
             </TouchableOpacity>
           </View>
-          <Text style={s.bioText}>
+          <Text style={[s.bioText, { color: themeColors.textSecondary }]}>
             {bio || 'No bio added yet. Tell vendors about yourself and the types of events you love planning!'}
           </Text>
         </View>
@@ -101,24 +101,24 @@ export default function ViewProfileScreen({ navigation }: Props) {
         {/* Reviews */}
         <View style={s.section}>
           <View style={s.sectionHeader}>
-            <Text style={s.sectionTitle}>Reviews</Text>
+            <Text style={[s.sectionTitle, { color: themeColors.text }]}>Reviews</Text>
             <TouchableOpacity onPress={() => navigation.navigate('MyReviews')} activeOpacity={0.6} accessibilityLabel="See all reviews" accessibilityRole="button">
-              <Text style={s.editLink}>See all</Text>
+              <Text style={[s.editLink, { color: themeColors.primary }]}>See all</Text>
             </TouchableOpacity>
           </View>
           <View style={s.reviewSummary}>
-            <Text style={s.reviewBigNum}>4.8</Text>
+            <Text style={[s.reviewBigNum, { color: themeColors.text }]}>4.8</Text>
             <View style={{ flexDirection: 'row' }}>{[1,2,3,4,5].map(i => <StarIcon key={i} size={16} color={colors.star} />)}</View>
-            <Text style={s.reviewCount}>2 reviews</Text>
+            <Text style={[s.reviewCount, { color: themeColors.textMuted }]}>2 reviews</Text>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 12 }}>
             {[1, 2].map(i => (
-              <TouchableOpacity key={i} style={s.reviewCard} activeOpacity={0.7} onPress={() => navigation.navigate('MyReviews')} accessibilityLabel={`Review from Vendor ${i}`} accessibilityRole="button" accessibilityHint="View full review details">
+              <TouchableOpacity key={i} style={[s.reviewCard, { backgroundColor: themeColors.card, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('MyReviews')} accessibilityLabel={`Review from Vendor ${i}`} accessibilityRole="button" accessibilityHint="View full review details">
                 <View style={s.reviewCardHeader}>
                   <View style={s.reviewerAvatar}><Text style={{ color: '#fff', fontWeight: '700' }}>V</Text></View>
-                  <View><Text style={s.reviewerName}>Vendor {i}</Text><View style={{ flexDirection: 'row' }}>{[1,2,3,4,5].map(i => <StarIcon key={i} size={12} color={colors.star} />)}</View></View>
+                  <View><Text style={[s.reviewerName, { color: themeColors.text }]}>Vendor {i}</Text><View style={{ flexDirection: 'row' }}>{[1,2,3,4,5].map(i => <StarIcon key={i} size={12} color={colors.star} />)}</View></View>
                 </View>
-                <Text style={s.reviewText} numberOfLines={2}>Great client to work with! Very organized and communicative throughout the process.</Text>
+                <Text style={[s.reviewText, { color: themeColors.textSecondary }]} numberOfLines={2}>Great client to work with! Very organized and communicative throughout the process.</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -128,25 +128,25 @@ export default function ViewProfileScreen({ navigation }: Props) {
       {/* ─── Edit Bio Modal ─── */}
       <Modal visible={bioModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
         <View style={s.modalOverlay}>
-          <View style={s.modalSheet}>
+          <View style={[s.modalSheet, { backgroundColor: themeColors.card }]}>
             <View style={s.modalHeader}>
-              <Text style={s.modalTitle}>Edit About</Text>
+              <Text style={[s.modalTitle, { color: themeColors.text }]}>Edit About</Text>
               <TouchableOpacity onPress={() => setBioModalVisible(false)} accessibilityLabel="Close" accessibilityRole="button">
-                <XIcon size={18} color={colors.textMuted} strokeWidth={2} />
+                <XIcon size={18} color={themeColors.textMuted} strokeWidth={2} />
               </TouchableOpacity>
             </View>
 
-            <Text style={s.modalSub}>
+            <Text style={[s.modalSub, { color: themeColors.textMuted }]}>
               Tell vendors about yourself — what types of events you enjoy, your planning style, or anything else you'd like them to know.
             </Text>
 
-            <View style={s.bioInputWrapper}>
+            <View style={[s.bioInputWrapper, { borderColor: themeColors.border, backgroundColor: themeColors.background }]}>
               <TextInput
-                style={s.bioInput}
+                style={[s.bioInput, { color: themeColors.text }]}
                 value={editBio}
                 onChangeText={(t) => t.length <= MAX_BIO && setEditBio(t)}
                 placeholder="Write something about yourself..."
-                placeholderTextColor={colors.textMuted}
+                placeholderTextColor={themeColors.textMuted}
                 multiline
                 textAlignVertical="top"
                 maxLength={MAX_BIO}
@@ -156,7 +156,7 @@ export default function ViewProfileScreen({ navigation }: Props) {
                 accessibilityHint="Write something about yourself"
               />
             </View>
-            <Text style={[s.bioCounter, editBio.length >= MAX_BIO && s.bioCounterMax]}>
+            <Text style={[s.bioCounter, { color: themeColors.textMuted }, editBio.length >= MAX_BIO && s.bioCounterMax]}>
               {editBio.length}/{MAX_BIO}
             </Text>
 

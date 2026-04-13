@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Share, Alert } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, borderRadius, spacing } from '../../theme';
-import { ChevronLeftIcon, ShareIcon, CheckIcon } from '../../components/Icons';
+import { ChevronLeftIcon, ShareIcon, CheckIcon, SparklesIcon } from '../../components/Icons';
 import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'ReferVendor'>;
@@ -55,45 +55,47 @@ export default function ReferVendorScreen({ navigation }: Props) {
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
         <View style={s.heroSection}>
-          <Text style={s.heroIcon}>🎁</Text>
-          <Text style={s.heroTitle}>Know a great vendor?</Text>
-          <Text style={s.heroSub}>Refer them to ConnectMe and earn rewards when they complete their first booking</Text>
+          <View style={[s.heroIconWrap, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}>
+            <SparklesIcon size={36} color={themeColors.primary} strokeWidth={1.5} />
+          </View>
+          <Text style={[s.heroTitle, { color: themeColors.text }]}>Know a great vendor?</Text>
+          <Text style={[s.heroSub, { color: themeColors.textMuted }]}>Refer them to ConnectMe and earn rewards when they complete their first booking</Text>
         </View>
 
-        <View style={s.codeCard}>
-          <Text style={s.codeLabel}>Your referral code</Text>
-          <Text style={s.codeText}>{REFERRAL_CODE}</Text>
+        <View style={[s.codeCard, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}>
+          <Text style={[s.codeLabel, { color: themeColors.textMuted }]}>Your referral code</Text>
+          <Text style={[s.codeText, { color: themeColors.primary }]}>{REFERRAL_CODE}</Text>
           <View style={s.codeButtons}>
-            <TouchableOpacity style={s.copyBtn} onPress={copyCode} activeOpacity={0.7} accessibilityLabel="Copy referral code" accessibilityRole="button"><Text style={s.copyBtnText}>Copy Code</Text></TouchableOpacity>
+            <TouchableOpacity style={[s.copyBtn, { borderColor: themeColors.primary }]} onPress={copyCode} activeOpacity={0.7} accessibilityLabel="Copy referral code" accessibilityRole="button"><Text style={[s.copyBtnText, { color: themeColors.primary }]}>Copy Code</Text></TouchableOpacity>
             <TouchableOpacity style={s.shareBtn} onPress={shareCode} activeOpacity={0.7} accessibilityLabel="Share referral code" accessibilityRole="button" accessibilityHint="Opens the share dialog"><Text style={s.shareBtnText}>Share</Text></TouchableOpacity>
           </View>
         </View>
 
-        <Text style={s.sectionTitle}>How It Works</Text>
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>How It Works</Text>
         {STEPS.map(step => (
           <View key={step.num} style={s.stepRow}>
             <View style={s.stepCircle}><Text style={s.stepNum}>{step.num}</Text></View>
-            <View style={s.stepContent}><Text style={s.stepTitle}>{step.title}</Text><Text style={s.stepDesc}>{step.desc}</Text></View>
+            <View style={s.stepContent}><Text style={[s.stepTitle, { color: themeColors.text }]}>{step.title}</Text><Text style={[s.stepDesc, { color: themeColors.textMuted }]}>{step.desc}</Text></View>
           </View>
         ))}
 
-        <Text style={[s.sectionTitle, { marginTop: 24 }]}>Your Referrals</Text>
+        <Text style={[s.sectionTitle, { marginTop: 24, color: themeColors.text }]}>Your Referrals</Text>
         <View style={s.statRow}>
-          <View style={s.statBox}><Text style={s.statNum}>0</Text><Text style={s.statLabel}>Total Referrals</Text></View>
-          <View style={s.statBox}><Text style={s.statNum}>$0</Text><Text style={s.statLabel}>Rewards Earned</Text></View>
+          <View style={[s.statBox, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}><Text style={[s.statNum, { color: themeColors.text }]}>0</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Total Referrals</Text></View>
+          <View style={[s.statBox, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}><Text style={[s.statNum, { color: themeColors.text }]}>$0</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Rewards Earned</Text></View>
         </View>
-        <Text style={s.emptyText}>No referrals yet. Share your code to get started!</Text>
+        <Text style={[s.emptyText, { color: themeColors.textMuted }]}>No referrals yet. Share your code to get started!</Text>
 
         {/* ─── Invite Friends section ─── */}
-        <View style={s.divider} />
+        <View style={[s.divider, { backgroundColor: themeColors.border }]} />
 
-        <Text style={s.sectionTitle}>Invite Friends</Text>
-        <View style={s.inviteCard}>
-          <View style={s.inviteIconWrap}>
-            <ShareIcon size={28} color={colors.primary} strokeWidth={1.5} />
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Invite Friends</Text>
+        <View style={[s.inviteCard, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}>
+          <View style={[s.inviteIconWrap, { backgroundColor: themeColors.background, borderColor: themeColors.border }]}>
+            <ShareIcon size={28} color={themeColors.primary} strokeWidth={1.5} />
           </View>
-          <Text style={s.inviteTitle}>Share ConnectMe with friends and family</Text>
-          <Text style={s.inviteSubtitle}>
+          <Text style={[s.inviteTitle, { color: themeColors.text }]}>Share ConnectMe with friends and family</Text>
+          <Text style={[s.inviteSubtitle, { color: themeColors.textMuted }]}>
             Help your friends and family discover the best event vendors in San Antonio.
           </Text>
 
@@ -109,18 +111,18 @@ export default function ReferVendorScreen({ navigation }: Props) {
             <Text style={s.shareAppBtnText}>Share ConnectMe</Text>
           </TouchableOpacity>
 
-          <View style={s.inviteCodeSection}>
-            <Text style={s.inviteCodeLabel}>Your invite code</Text>
-            <Text style={s.inviteCodeText}>{inviteCode}</Text>
+          <View style={[s.inviteCodeSection, { borderTopColor: themeColors.border }]}>
+            <Text style={[s.inviteCodeLabel, { color: themeColors.textMuted }]}>Your invite code</Text>
+            <Text style={[s.inviteCodeText, { color: themeColors.primary }]}>{inviteCode}</Text>
             <TouchableOpacity
-              style={s.copyInviteBtn}
+              style={[s.copyInviteBtn, { borderColor: themeColors.primary }]}
               onPress={copyInviteCode}
               activeOpacity={0.7}
               accessibilityLabel="Copy invite code"
               accessibilityRole="button"
             >
-              <CheckIcon size={16} color={colors.primary} strokeWidth={2} />
-              <Text style={s.copyInviteBtnText}>Copy code</Text>
+              <CheckIcon size={16} color={themeColors.primary} strokeWidth={2} />
+              <Text style={[s.copyInviteBtnText, { color: themeColors.primary }]}>Copy code</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -136,7 +138,7 @@ const s = StyleSheet.create({
   backText: { fontSize: 24, color: colors.text },
   headerTitle: { fontFamily: fonts.semiBold, fontSize: 17, color: colors.text },
   heroSection: { alignItems: 'center', paddingVertical: 24 },
-  heroIcon: { fontSize: 48, marginBottom: 12 },
+  heroIconWrap: { width: 72, height: 72, borderRadius: 36, alignItems: 'center' as const, justifyContent: 'center' as const, marginBottom: 12, borderWidth: 1 },
   heroTitle: { fontFamily: fonts.bold, fontSize: 22, color: colors.text },
   heroSub: { fontFamily: fonts.regular, fontSize: 14, color: colors.textMuted, textAlign: 'center', marginTop: 8, lineHeight: 20 },
   codeCard: { backgroundColor: colors.cardBackground, borderRadius: 16, padding: 20, alignItems: 'center', borderWidth: 1, borderColor: colors.border, marginBottom: 24 },
