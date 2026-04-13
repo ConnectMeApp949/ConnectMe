@@ -225,7 +225,7 @@ export default function VendorEarningsScreen({ navigation }: Props) {
         </View>
 
         {/* ─── Payout History ─── */}
-        <TouchableOpacity onPress={() => navigation.navigate('VendorPayoutSettings')} style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <TouchableOpacity onPress={() => navigation.navigate('PayoutHistory')} style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={[s.sectionTitle, { color: themeColors.text }]}>Payout History</Text>
           <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>

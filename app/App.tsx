@@ -55,6 +55,7 @@ import VendorBookingsScreen from './src/screens/vendor/VendorBookingsScreen';
 import VendorEarningsScreen from './src/screens/vendor/VendorEarningsScreen';
 import VendorEditListingScreen from './src/screens/vendor/VendorEditListingScreen';
 import VendorPayoutSettingsScreen from './src/screens/vendor/VendorPayoutSettingsScreen';
+import PayoutHistoryScreen from './src/screens/vendor/PayoutHistoryScreen';
 import VendorCalendarScreen from './src/screens/vendor/VendorCalendarScreen';
 import EditPhotosScreen from './src/screens/vendor/EditPhotosScreen';
 import EditDescriptionScreen from './src/screens/vendor/EditDescriptionScreen';
@@ -236,6 +237,7 @@ function VendorDashNavigator() {
       <VendorDashStack.Screen name="EditRadius" component={EditRadiusScreen} options={slide} />
       <VendorDashStack.Screen name="EditBookingQuestions" component={EditBookingQuestionsScreen} options={slide} />
       <VendorDashStack.Screen name="ReviewClient" component={ReviewClientScreen} options={slide} />
+      <VendorDashStack.Screen name="PayoutHistory" component={PayoutHistoryScreen} options={slide} />
       <VendorDashStack.Screen name="VendorPayoutSettings" component={VendorPayoutSettingsScreen} options={slide} />
       <VendorDashStack.Screen name="BookingManagement" component={BookingManagementScreen} options={slide} />
       <VendorDashStack.Screen name="Reviews" component={ReviewsScreen} options={slide} />
