@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -26,10 +27,11 @@ const TABS = [
 ];
 
 function Stars({ rating }: { rating: number }) {
+  const { colors: themeColors } = useTheme();
   return (
     <Text style={starStyles.row}>
       {[1, 2, 3, 4, 5].map((i) => (
-        <Text key={i} style={{ color: i <= rating ? colors.star : colors.border }}>★</Text>
+        <Text key={i} style={{ color: i <= rating ? themeColors.star : themeColors.border }}>★</Text>
       ))}
     </Text>
   );
@@ -37,14 +39,15 @@ function Stars({ rating }: { rating: number }) {
 const starStyles = StyleSheet.create({ row: { fontSize: 14 } });
 
 function RatingBar({ stars, count, total }: { stars: number; count: number; total: number }) {
+  const { colors: themeColors } = useTheme();
   const pct = total > 0 ? (count / total) * 100 : 0;
   return (
     <View style={barStyles.row}>
-      <Text style={barStyles.label}>{stars}</Text>
-      <View style={barStyles.track}>
+      <Text style={[barStyles.label, { color: themeColors.textSecondary }]}>{stars}</Text>
+      <View style={[barStyles.track, { backgroundColor: themeColors.border }]}>
         <View style={[barStyles.fill, { width: `${pct}%` }]} />
       </View>
-      <Text style={barStyles.count}>{count}</Text>
+      <Text style={[barStyles.count, { color: themeColors.textMuted }]}>{count}</Text>
     </View>
   );
 }
@@ -59,6 +62,7 @@ const barStyles = StyleSheet.create({
 type Props = NativeStackScreenProps<any, 'Reviews'>;
 
 export default function ReviewsScreen({ navigation, route }: Props) {
+  const { colors: themeColors } = useTheme();
   const { vendorId } = route.params as { vendorId: string };
   const [reviews, setReviews] = useState<Review[]>([]);
   const [breakdown, setBreakdown] = useState<Record<number, number>>({});
@@ -104,7 +108,7 @@ export default function ReviewsScreen({ navigation, route }: Props) {
   function renderReview({ item }: { item: Review }) {
     const date = new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     return (
-      <View style={styles.reviewCard}>
+      <View style={[styles.reviewCard, { borderBottomColor: themeColors.border }]}>
         <View style={styles.reviewHeader}>
           {item.client.profilePhoto ? (
             <Image source={{ uri: item.client.profilePhoto }} style={styles.reviewAvatar} />
@@ -114,18 +118,18 @@ export default function ReviewsScreen({ navigation, route }: Props) {
             </View>
           )}
           <View style={styles.reviewMeta}>
-            <Text style={styles.reviewName}>{item.client.firstName}</Text>
-            <Text style={styles.reviewDate}>{date}</Text>
+            <Text style={[styles.reviewName, { color: themeColors.text }]}>{item.client.firstName}</Text>
+            <Text style={[styles.reviewDate, { color: themeColors.textMuted }]}>{date}</Text>
           </View>
           <Stars rating={item.rating} />
         </View>
 
-        {item.comment && <Text style={styles.reviewComment}>{item.comment}</Text>}
+        {item.comment && <Text style={[styles.reviewComment, { color: themeColors.text }]}>{item.comment}</Text>}
 
         {item.vendorResponse && (
-          <View style={styles.response}>
+          <View style={[styles.response, { backgroundColor: themeColors.cardBackground }]}>
             <Text style={styles.responseLabel}>Vendor response</Text>
-            <Text style={styles.responseText}>{item.vendorResponse}</Text>
+            <Text style={[styles.responseText, { color: themeColors.textSecondary }]}>{item.vendorResponse}</Text>
           </View>
         )}
       </View>
@@ -133,13 +137,13 @@ export default function ReviewsScreen({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Reviews</Text>
+        <Text style={[styles.headerTitle, { color: themeColors.text }]}>Reviews</Text>
         <View style={styles.backBtn} />
       </View>
 
@@ -156,9 +160,9 @@ export default function ReviewsScreen({ navigation, route }: Props) {
             {/* Rating summary */}
             <View style={styles.summary}>
               <View style={styles.summaryLeft}>
-                <Text style={styles.avgRating}>{avgRating.toFixed(1)}</Text>
+                <Text style={[styles.avgRating, { color: themeColors.text }]}>{avgRating.toFixed(1)}</Text>
                 <Stars rating={Math.round(avgRating)} />
-                <Text style={styles.totalText}>{totalReviews} reviews</Text>
+                <Text style={[styles.totalText, { color: themeColors.textMuted }]}>{totalReviews} reviews</Text>
               </View>
               <View style={styles.summaryRight}>
                 {[5, 4, 3, 2, 1].map((s) => (
@@ -172,10 +176,10 @@ export default function ReviewsScreen({ navigation, route }: Props) {
               {TABS.map((tab) => (
                 <TouchableOpacity
                   key={tab.label}
-                  style={[styles.tab, activeTab === tab.value && styles.tabActive]}
+                  style={[styles.tab, { borderColor: themeColors.border }, activeTab === tab.value && styles.tabActive]}
                   onPress={() => setActiveTab(tab.value)}
                 >
-                  <Text style={[styles.tabText, activeTab === tab.value && styles.tabTextActive]}>
+                  <Text style={[styles.tabText, { color: themeColors.text }, activeTab === tab.value && styles.tabTextActive]}>
                     {tab.label}
                   </Text>
                 </TouchableOpacity>
@@ -183,9 +187,9 @@ export default function ReviewsScreen({ navigation, route }: Props) {
             </View>
           </>
         }
-        ListFooterComponent={loading ? <ActivityIndicator color={colors.primary} style={styles.loader} /> : null}
+        ListFooterComponent={loading ? <ActivityIndicator color={themeColors.primary} style={styles.loader} /> : null}
         ListEmptyComponent={!loading ? (
-          <Text style={styles.emptyText}>No reviews match this filter</Text>
+          <Text style={[styles.emptyText, { color: themeColors.textMuted }]}>No reviews match this filter</Text>
         ) : null}
       />
     </SafeAreaView>

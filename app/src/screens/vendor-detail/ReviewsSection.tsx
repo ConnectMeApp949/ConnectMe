@@ -3,16 +3,18 @@ import { View, Text, Image, ScrollView, StyleSheet } from 'react-native';
 import { VendorReview } from './types';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { StarIcon, StarOutlineIcon } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 // ─── Star display ────────────────────────────────────────
 
 function Stars({ rating, size = 14 }: { rating: number; size?: number }) {
+  const { colors: themeColors } = useTheme();
   return (
     <View style={{ flexDirection: 'row' }}>
       {[1, 2, 3, 4, 5].map((i) =>
         i <= Math.round(rating)
-          ? <StarIcon key={i} size={size} color={colors.star} />
-          : <StarOutlineIcon key={i} size={size} color={colors.border} strokeWidth={1.5} />
+          ? <StarIcon key={i} size={size} color={themeColors.star} />
+          : <StarOutlineIcon key={i} size={size} color={themeColors.border} strokeWidth={1.5} />
       )}
     </View>
   );
@@ -21,13 +23,14 @@ function Stars({ rating, size = 14 }: { rating: number; size?: number }) {
 // ─── Rating breakdown bar ────────────────────────────────
 
 function RatingBar({ stars, percent }: { stars: number; percent: number }) {
+  const { colors: themeColors } = useTheme();
   return (
     <View style={barStyles.row}>
-      <Text style={barStyles.label}>{stars}</Text>
-      <View style={barStyles.track}>
+      <Text style={[barStyles.label, { color: themeColors.textSecondary }]}>{stars}</Text>
+      <View style={[barStyles.track, { backgroundColor: themeColors.border }]}>
         <View style={[barStyles.fill, { width: `${percent}%` }]} />
       </View>
-      <Text style={barStyles.percent}>{percent}%</Text>
+      <Text style={[barStyles.percent, { color: themeColors.textMuted }]}>{percent}%</Text>
     </View>
   );
 }
@@ -43,6 +46,7 @@ const barStyles = StyleSheet.create({
 // ─── Individual review card ──────────────────────────────
 
 function ReviewCard({ review }: { review: VendorReview }) {
+  const { colors: themeColors } = useTheme();
   const date = new Date(review.createdAt);
   const dateStr = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 
@@ -59,13 +63,13 @@ function ReviewCard({ review }: { review: VendorReview }) {
           )}
         </View>
         <View style={cardStyles.meta}>
-          <Text style={cardStyles.name}>{review.client.firstName}</Text>
-          <Text style={cardStyles.date}>{dateStr}</Text>
+          <Text style={[cardStyles.name, { color: themeColors.text }]}>{review.client.firstName}</Text>
+          <Text style={[cardStyles.date, { color: themeColors.textMuted }]}>{dateStr}</Text>
         </View>
         <Stars rating={review.rating} />
       </View>
 
-      {review.comment && <Text style={cardStyles.comment}>{review.comment}</Text>}
+      {review.comment && <Text style={[cardStyles.comment, { color: themeColors.textSecondary }]}>{review.comment}</Text>}
 
       {review.photos && review.photos.length > 0 && (
         <ScrollView
@@ -89,9 +93,9 @@ function ReviewCard({ review }: { review: VendorReview }) {
       )}
 
       {review.vendorResponse && (
-        <View style={cardStyles.response}>
+        <View style={[cardStyles.response, { backgroundColor: themeColors.cardBackground }]}>
           <Text style={cardStyles.responseLabel}>Vendor response</Text>
-          <Text style={cardStyles.responseText}>{review.vendorResponse}</Text>
+          <Text style={[cardStyles.responseText, { color: themeColors.textSecondary }]}>{review.vendorResponse}</Text>
         </View>
       )}
     </View>
@@ -140,14 +144,15 @@ export default function ReviewsSection({
   ratingBreakdown = [80, 12, 5, 2, 1],
   onSeeAll,
 }: ReviewsSectionProps) {
+  const { colors: themeColors } = useTheme();
   return (
     <View>
       {/* Summary */}
       <View style={styles.summary}>
         <View style={styles.ratingBig}>
-          <Text style={styles.ratingNumber}>{averageRating.toFixed(1)}</Text>
+          <Text style={[styles.ratingNumber, { color: themeColors.text }]}>{averageRating.toFixed(1)}</Text>
           <Stars rating={averageRating} size={20} />
-          <Text style={styles.reviewCount}>{totalReviews} reviews</Text>
+          <Text style={[styles.reviewCount, { color: themeColors.textMuted }]}>{totalReviews} reviews</Text>
         </View>
         <View style={styles.breakdown}>
           {[5, 4, 3, 2, 1].map((star, i) => (
@@ -162,7 +167,7 @@ export default function ReviewsSection({
       ))}
 
       {totalReviews > 3 && onSeeAll && (
-        <Text style={styles.seeAll} onPress={onSeeAll}>
+        <Text style={[styles.seeAll, { color: themeColors.primary }]} onPress={onSeeAll}>
           See all {totalReviews} reviews →
         </Text>
       )}

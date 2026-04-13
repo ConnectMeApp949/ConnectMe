@@ -39,16 +39,17 @@ const CANCELLATION_POLICY = `Free cancellation up to 48 hours before the event. 
 // ─── Bio with read more ──────────────────────────────────
 
 function BioText({ text }: { text: string }) {
+  const { colors: themeColors } = useTheme();
   const [expanded, setExpanded] = useState(false);
   const isLong = text.length > 150;
   const display = isLong && !expanded ? text.slice(0, 150) + '...' : text;
 
   return (
     <View>
-      <Text style={bioStyles.text}>{display}</Text>
+      <Text style={[bioStyles.text, { color: themeColors.textSecondary }]}>{display}</Text>
       {isLong && (
         <TouchableOpacity onPress={() => setExpanded(!expanded)}>
-          <Text style={bioStyles.toggle}>{expanded ? 'Read less' : 'Read more'}</Text>
+          <Text style={[bioStyles.toggle, { color: themeColors.accent }]}>{expanded ? 'Read less' : 'Read more'}</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -65,13 +66,14 @@ const bioStyles = StyleSheet.create({
 type IconComp = React.FC<{ size?: number; color?: string; strokeWidth?: number }>;
 
 function QuickStat({ Icon, label, value }: { Icon: IconComp; label: string; value: string }) {
+  const { colors: themeColors } = useTheme();
   return (
     <View style={statStyles.container}>
-      <View style={statStyles.iconWrap}>
-        <Icon size={18} color={colors.primary} strokeWidth={1.5} />
+      <View style={[statStyles.iconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+        <Icon size={18} color={themeColors.primary} strokeWidth={1.5} />
       </View>
-      <Text style={statStyles.value}>{value}</Text>
-      <Text style={statStyles.label}>{label}</Text>
+      <Text style={[statStyles.value, { color: themeColors.text }]}>{value}</Text>
+      <Text style={[statStyles.label, { color: themeColors.textMuted }]}>{label}</Text>
     </View>
   );
 }
@@ -270,16 +272,16 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
         {/* ─── Quick stats ─── */}
         <View style={[styles.statsRow, { borderBottomColor: themeColors.border }]}>
           <QuickStat Icon={SparklesIcon} label="Events" value={String(totalBookings)} />
-          <View style={styles.statDivider} />
+          <View style={[styles.statDivider, { backgroundColor: themeColors.border }]} />
           <QuickStat Icon={CalendarIcon} label="Member since" value={String(memberYear)} />
-          <View style={styles.statDivider} />
+          <View style={[styles.statDivider, { backgroundColor: themeColors.border }]} />
           <QuickStat Icon={MessageIcon} label="Response" value="98%" />
         </View>
 
         {/* ─── Collapsible sections ─── */}
         <CollapsibleSection title={`About ${vendor.businessName}`} defaultOpen>
           {vendor.bio ? <BioText text={vendor.bio} /> : (
-            <Text style={styles.emptyText}>No bio yet.</Text>
+            <Text style={[styles.emptyText, { color: themeColors.textMuted }]}>No bio yet.</Text>
           )}
         </CollapsibleSection>
 
@@ -323,7 +325,7 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
               ))}
             </ScrollView>
           ) : (
-            <Text style={styles.emptyText}>No portfolio photos yet.</Text>
+            <Text style={[styles.emptyText, { color: themeColors.textMuted }]}>No portfolio photos yet.</Text>
           )}
         </CollapsibleSection>
 
@@ -336,7 +338,7 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
               onSeeAll={() => navigation.navigate('VendorReviews', { vendorId: vendor.id, businessName: vendor.businessName })}
             />
           ) : (
-            <Text style={styles.emptyText}>No reviews yet. Be the first!</Text>
+            <Text style={[styles.emptyText, { color: themeColors.textMuted }]}>No reviews yet. Be the first!</Text>
           )}
         </CollapsibleSection>
 
@@ -345,7 +347,7 @@ export default function VendorDetailScreen({ navigation, route }: Props) {
         </CollapsibleSection>
 
         <CollapsibleSection title="Cancellation Policy">
-          <Text style={styles.policyText}>{CANCELLATION_POLICY}</Text>
+          <Text style={[styles.policyText, { color: themeColors.textSecondary }]}>{CANCELLATION_POLICY}</Text>
         </CollapsibleSection>
 
         {/* Bottom padding for sticky button */}
