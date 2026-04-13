@@ -34,15 +34,15 @@ export default function VendorEditListingScreen({ navigation }: Props) {
         {SECTIONS.map((item) => {
           const RowIcon = item.Icon;
           return (
-          <TouchableOpacity key={item.label} style={s.row} activeOpacity={0.6} onPress={() => navigation.navigate(item.screen)} accessibilityLabel={`${item.label}: ${item.sub}`} accessibilityRole="button">
-            <View style={s.rowIconBox}>
-              <RowIcon size={20} color={colors.text} />
+          <TouchableOpacity key={item.label} style={[s.row, { borderBottomColor: themeColors.border }]} activeOpacity={0.6} onPress={() => navigation.navigate(item.screen)} accessibilityLabel={`${item.label}: ${item.sub}`} accessibilityRole="button">
+            <View style={[s.rowIconBox, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <RowIcon size={20} color={themeColors.text} />
             </View>
             <View style={s.rowContent}>
-              <Text style={s.rowLabel}>{item.label}</Text>
-              <Text style={s.rowSub}>{item.sub}</Text>
+              <Text style={[s.rowLabel, { color: themeColors.text }]}>{item.label}</Text>
+              <Text style={[s.rowSub, { color: themeColors.textMuted }]}>{item.sub}</Text>
             </View>
-            <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+            <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
           </TouchableOpacity>
           );
         })}

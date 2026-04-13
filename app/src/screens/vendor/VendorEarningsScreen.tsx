@@ -172,17 +172,17 @@ export default function VendorEarningsScreen({ navigation }: Props) {
         </View>
 
         {/* ─── Fast Pay Banner ─── */}
-        <TouchableOpacity style={s.fastPayBanner} activeOpacity={0.7} onPress={handleSetupFastPay} accessibilityLabel="Set up Fast Pay" accessibilityRole="button">
+        <TouchableOpacity style={[s.fastPayBanner, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={handleSetupFastPay} accessibilityLabel="Set up Fast Pay" accessibilityRole="button">
           <View style={s.fastPayLeft}>
             <View style={s.fastPayIconWrap}>
               <ClockIcon size={18} color={colors.success} strokeWidth={2} />
             </View>
             <View>
-              <Text style={s.fastPayTitle}>Fast Pay</Text>
-              <Text style={s.fastPaySub}>Get paid in 30 minutes · $1.99 fee</Text>
+              <Text style={[s.fastPayTitle, { color: themeColors.text }]}>Fast Pay</Text>
+              <Text style={[s.fastPaySub, { color: themeColors.textMuted }]}>Get paid in 30 minutes · $1.99 fee</Text>
             </View>
           </View>
-          <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+          <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>
 
         {/* ─── Period Toggle ─── */}
@@ -190,14 +190,14 @@ export default function VendorEarningsScreen({ navigation }: Props) {
           {(['week', 'month', 'year'] as const).map((p) => (
             <TouchableOpacity
               key={p}
-              style={[s.periodBtn, selectedPeriod === p && s.periodBtnActive]}
+              style={[s.periodBtn, { borderColor: themeColors.border }, selectedPeriod === p && s.periodBtnActive]}
               onPress={() => setSelectedPeriod(p)}
               activeOpacity={0.7}
               accessibilityLabel={`View ${p}ly earnings`}
               accessibilityRole="button"
               accessibilityState={{ selected: selectedPeriod === p }}
             >
-              <Text style={[s.periodText, selectedPeriod === p && s.periodTextActive]}>
+              <Text style={[s.periodText, { color: themeColors.textMuted }, selectedPeriod === p && s.periodTextActive]}>
                 {p === 'week' ? 'This Week' : p === 'month' ? 'This Month' : 'This Year'}
               </Text>
             </TouchableOpacity>
@@ -205,44 +205,44 @@ export default function VendorEarningsScreen({ navigation }: Props) {
         </View>
 
         {/* ─── Earnings Breakdown ─── */}
-        <Text style={s.sectionTitle}>Earnings Breakdown</Text>
-        <View style={s.breakdownCard}>
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Earnings Breakdown</Text>
+        <View style={[s.breakdownCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           {earningsBreakdown.map((item, i) => (
-            <View key={item.label} style={[s.breakdownRow, i < earningsBreakdown.length - 1 && s.breakdownRowBorder]}>
+            <View key={item.label} style={[s.breakdownRow, i < earningsBreakdown.length - 1 && [s.breakdownRowBorder, { borderBottomColor: themeColors.border }]]}>
               <View style={s.breakdownLeft}>
-                <Text style={s.breakdownLabel}>{item.label}</Text>
-                {item.count !== null && <Text style={s.breakdownCount}>{item.count} transactions</Text>}
+                <Text style={[s.breakdownLabel, { color: themeColors.text }]}>{item.label}</Text>
+                {item.count !== null && <Text style={[s.breakdownCount, { color: themeColors.textMuted }]}>{item.count} transactions</Text>}
               </View>
-              <Text style={[s.breakdownAmount, item.amount < 0 && s.breakdownAmountNeg]}>
+              <Text style={[s.breakdownAmount, { color: themeColors.text }, item.amount < 0 && s.breakdownAmountNeg]}>
                 {item.amount < 0 ? '-' : ''}${Math.abs(item.amount).toFixed(2)}
               </Text>
             </View>
           ))}
-          <View style={s.breakdownTotal}>
-            <Text style={s.breakdownTotalLabel}>Net earnings</Text>
+          <View style={[s.breakdownTotal, { borderTopColor: themeColors.text }]}>
+            <Text style={[s.breakdownTotalLabel, { color: themeColors.text }]}>Net earnings</Text>
             <Text style={s.breakdownTotalAmount}>${totalEarnings.toFixed(2)}</Text>
           </View>
         </View>
 
         {/* ─── Payout History ─── */}
-        <Text style={s.sectionTitle}>Payout History</Text>
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Payout History</Text>
         {payoutHistory.map((payout) => (
-          <TouchableOpacity key={payout.id} style={s.payoutRow} activeOpacity={0.6} onPress={() => Alert.alert('Payout Details', `Amount: $${payout.amount.toFixed(2)}\nDate: ${payout.date}\nMethod: ${payout.method}\nStatus: Completed\n\nTransaction ID: TXN-${payout.id.padStart(6, '0')}`)}>
+          <TouchableOpacity key={payout.id} style={[s.payoutRow, { borderBottomColor: themeColors.border }]} activeOpacity={0.6} onPress={() => Alert.alert('Payout Details', `Amount: $${payout.amount.toFixed(2)}\nDate: ${payout.date}\nMethod: ${payout.method}\nStatus: Completed\n\nTransaction ID: TXN-${payout.id.padStart(6, '0')}`)}>
             <View style={s.payoutIconWrap}>
               <CheckIcon size={18} color={colors.success} strokeWidth={2} />
             </View>
             <View style={s.payoutInfo}>
-              <Text style={s.payoutAmount}>${payout.amount.toFixed(2)}</Text>
-              <Text style={s.payoutDate}>{payout.date} · {payout.method}</Text>
+              <Text style={[s.payoutAmount, { color: themeColors.text }]}>${payout.amount.toFixed(2)}</Text>
+              <Text style={[s.payoutDate, { color: themeColors.textMuted }]}>{payout.date} · {payout.method}</Text>
             </View>
-            <ChevronRightIcon size={16} color={colors.textMuted} strokeWidth={1.5} />
+            <ChevronRightIcon size={16} color={themeColors.textMuted} strokeWidth={1.5} />
           </TouchableOpacity>
         ))}
 
         {/* ─── Payout Settings ─── */}
-        <TouchableOpacity style={s.settingsRow} activeOpacity={0.6} onPress={() => navigation.navigate('VendorPayoutSettings')} accessibilityLabel="Payout settings" accessibilityRole="button">
-          <Text style={s.settingsText}>Payout Settings</Text>
-          <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+        <TouchableOpacity style={[s.settingsRow, { borderTopColor: themeColors.border }]} activeOpacity={0.6} onPress={() => navigation.navigate('VendorPayoutSettings')} accessibilityLabel="Payout settings" accessibilityRole="button">
+          <Text style={[s.settingsText, { color: themeColors.text }]}>Payout Settings</Text>
+          <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>
 
         <View style={{ height: 40 }} />

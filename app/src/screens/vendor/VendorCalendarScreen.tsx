@@ -220,7 +220,7 @@ export default function VendorCalendarScreen({ navigation }: Props) {
         {/* Sync status indicator */}
         {lastSyncTime && (
           <View style={s.syncStatusRow}>
-            <Text style={s.syncStatusText}>Last synced: {formatSyncTime(lastSyncTime)}</Text>
+            <Text style={[s.syncStatusText, { color: themeColors.textMuted }]}>Last synced: {formatSyncTime(lastSyncTime)}</Text>
             <TouchableOpacity
               onPress={handleImportFromCalendar}
               activeOpacity={0.6}
@@ -237,12 +237,12 @@ export default function VendorCalendarScreen({ navigation }: Props) {
 
         <View style={s.monthRow}>
           <TouchableOpacity onPress={() => setCurrentMonth(new Date(year, month - 1, 1))} accessibilityLabel="Previous month" accessibilityRole="button"><ChevronLeftIcon size={28} color={colors.primary} strokeWidth={1.5} /></TouchableOpacity>
-          <Text style={s.monthLabel}>{monthLabel}</Text>
+          <Text style={[s.monthLabel, { color: themeColors.text }]}>{monthLabel}</Text>
           <TouchableOpacity onPress={() => setCurrentMonth(new Date(year, month + 1, 1))} accessibilityLabel="Next month" accessibilityRole="button"><ChevronRightIcon size={28} color={colors.primary} strokeWidth={1.5} /></TouchableOpacity>
         </View>
 
         <View style={s.weekRow}>
-          {WEEKDAYS.map((d) => <Text key={d} style={s.weekDay}>{d}</Text>)}
+          {WEEKDAYS.map((d) => <Text key={d} style={[s.weekDay, { color: themeColors.textMuted }]}>{d}</Text>)}
         </View>
 
         <View style={s.grid}>
@@ -262,18 +262,18 @@ export default function VendorCalendarScreen({ navigation }: Props) {
                 accessibilityRole="button"
                 accessibilityHint={isPast ? 'Past date, cannot be changed' : blocked ? 'Double tap to unblock this date' : 'Double tap to block this date'}
               >
-                <Text style={[s.dayText, isPast && s.dayPast, blocked && s.dayBlocked, busy && s.dayBusy, isToday(day) && !blocked && !busy && s.dayToday]}>{day}</Text>
+                <Text style={[s.dayText, { color: themeColors.text }, isPast && s.dayPast, blocked && s.dayBlocked, busy && s.dayBusy, isToday(day) && !blocked && !busy && s.dayToday]}>{day}</Text>
               </TouchableOpacity>
             );
           })}
         </View>
 
         <View style={s.legend}>
-          <View style={s.legendItem}><View style={[s.legendDot, { backgroundColor: colors.error }]} /><Text style={s.legendText}>Blocked</Text></View>
-          <View style={s.legendItem}><View style={[s.legendDot, { backgroundColor: colors.warning }]} /><Text style={s.legendText}>Calendar busy</Text></View>
-          <View style={s.legendItem}><View style={[s.legendDot, { borderWidth: 1.5, borderColor: colors.primary }]} /><Text style={s.legendText}>Today</Text></View>
+          <View style={s.legendItem}><View style={[s.legendDot, { backgroundColor: colors.error }]} /><Text style={[s.legendText, { color: themeColors.textSecondary }]}>Blocked</Text></View>
+          <View style={s.legendItem}><View style={[s.legendDot, { backgroundColor: colors.warning }]} /><Text style={[s.legendText, { color: themeColors.textSecondary }]}>Calendar busy</Text></View>
+          <View style={s.legendItem}><View style={[s.legendDot, { borderWidth: 1.5, borderColor: colors.primary }]} /><Text style={[s.legendText, { color: themeColors.textSecondary }]}>Today</Text></View>
         </View>
-        <Text style={s.hint}>Tap any future date to block/unblock</Text>
+        <Text style={[s.hint, { color: themeColors.textMuted }]}>Tap any future date to block/unblock</Text>
       </View>
     </SafeAreaView>
   );

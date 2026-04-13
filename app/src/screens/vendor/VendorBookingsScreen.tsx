@@ -30,7 +30,7 @@ export default function VendorBookingsScreen({ navigation }: Props) {
     const isCompleted = activeTab === 'Completed';
 
     return (
-      <View style={s.card}>
+      <View style={[s.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
         <View style={s.cardRow}>
           {clientAvatar ? (
             <Image source={{ uri: clientAvatar }} style={s.avatar} accessibilityLabel={`${clientName} photo`} accessibilityRole="image" />
@@ -40,9 +40,9 @@ export default function VendorBookingsScreen({ navigation }: Props) {
             </View>
           )}
           <View style={s.cardInfo}>
-            <Text style={s.cardName}>{clientName}</Text>
-            {eventDate !== '' && <Text style={s.cardDate}>{eventDate}</Text>}
-            {booking.eventType && <Text style={s.cardService}>{booking.eventType}</Text>}
+            <Text style={[s.cardName, { color: themeColors.text }]}>{clientName}</Text>
+            {eventDate !== '' && <Text style={[s.cardDate, { color: themeColors.textSecondary }]}>{eventDate}</Text>}
+            {booking.eventType && <Text style={[s.cardService, { color: themeColors.textMuted }]}>{booking.eventType}</Text>}
           </View>
         </View>
         {isCompleted && (
@@ -54,7 +54,7 @@ export default function VendorBookingsScreen({ navigation }: Props) {
             accessibilityRole="button"
             accessibilityHint={`Leave a review for ${clientName}`}
           >
-            <Text style={s.reviewBtnText}>Review Client</Text>
+            <Text style={[s.reviewBtnText]}>Review Client</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -66,8 +66,8 @@ export default function VendorBookingsScreen({ navigation }: Props) {
       <Text style={[s.header, { color: themeColors.text }]}>Bookings</Text>
       <View style={s.tabRow}>
         {TABS.map((tab) => (
-          <TouchableOpacity key={tab} style={[s.tab, activeTab === tab && s.tabActive]} onPress={() => setActiveTab(tab)} activeOpacity={0.7} accessibilityLabel={`${tab} bookings`} accessibilityRole="button" accessibilityState={{ selected: activeTab === tab }}>
-            <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>{tab}</Text>
+          <TouchableOpacity key={tab} style={[s.tab, activeTab === tab && s.tabActive, activeTab !== tab && { borderColor: themeColors.border }]} onPress={() => setActiveTab(tab)} activeOpacity={0.7} accessibilityLabel={`${tab} bookings`} accessibilityRole="button" accessibilityState={{ selected: activeTab === tab }}>
+            <Text style={[s.tabText, { color: themeColors.text }, activeTab === tab && s.tabTextActive]}>{tab}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -81,11 +81,11 @@ export default function VendorBookingsScreen({ navigation }: Props) {
         />
       ) : (
         <View style={s.empty}>
-          <View style={s.emptyIconWrap}>
-            {activeTab === 'Pending' ? <ClockIcon size={36} color={colors.textMuted} strokeWidth={1.5} /> : activeTab === 'Confirmed' ? <CalendarIcon size={36} color={colors.textMuted} strokeWidth={1.5} /> : <CheckIcon size={36} color={colors.textMuted} strokeWidth={1.5} />}
+          <View style={[s.emptyIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            {activeTab === 'Pending' ? <ClockIcon size={36} color={themeColors.textMuted} strokeWidth={1.5} /> : activeTab === 'Confirmed' ? <CalendarIcon size={36} color={themeColors.textMuted} strokeWidth={1.5} /> : <CheckIcon size={36} color={themeColors.textMuted} strokeWidth={1.5} />}
           </View>
-          <Text style={s.emptyTitle}>No {activeTab.toLowerCase()} bookings</Text>
-          <Text style={s.emptySub}>When clients book your services, they'll appear here</Text>
+          <Text style={[s.emptyTitle, { color: themeColors.text }]}>No {activeTab.toLowerCase()} bookings</Text>
+          <Text style={[s.emptySub, { color: themeColors.textMuted }]}>When clients book your services, they'll appear here</Text>
         </View>
       )}
     </SafeAreaView>
@@ -102,7 +102,7 @@ const s = StyleSheet.create({
   tabTextActive: { color: colors.white },
   listContent: { paddingHorizontal: 20, paddingBottom: spacing.xl },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 },
-  emptyIconWrap: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.cardBackground, alignItems: 'center', justifyContent: 'center', marginBottom: 16, borderWidth: 1, borderColor: colors.border },
+  emptyIconWrap: { width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center', marginBottom: 16, borderWidth: 1, borderColor: colors.border },
   emptyTitle: { fontFamily: fonts.bold, fontSize: 18, color: colors.text, marginBottom: 8 },
   emptySub: { fontFamily: fonts.regular, fontSize: 14, color: colors.textMuted, textAlign: 'center', lineHeight: 20 },
 

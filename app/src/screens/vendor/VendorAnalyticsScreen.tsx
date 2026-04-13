@@ -123,14 +123,14 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
           {PERIODS.map((p) => (
             <TouchableOpacity
               key={p.id}
-              style={[s.periodBtn, period === p.id && s.periodBtnActive]}
+              style={[s.periodBtn, { borderColor: themeColors.border }, period === p.id && s.periodBtnActive]}
               onPress={() => setPeriod(p.id)}
               activeOpacity={0.7}
               accessibilityLabel={`${p.label} period`}
               accessibilityRole="button"
               accessibilityState={{ selected: period === p.id }}
             >
-              <Text style={[s.periodText, period === p.id && s.periodTextActive]}>
+              <Text style={[s.periodText, { color: themeColors.textMuted }, period === p.id && [s.periodTextActive, { color: themeColors.text }]]}>
                 {p.label}
               </Text>
             </TouchableOpacity>
@@ -143,10 +143,10 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
             const MetricIcon = metric.Icon;
             const isPositive = metric.trend >= 0;
             return (
-              <View key={metric.label} style={s.metricCard}>
+              <View key={metric.label} style={[s.metricCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
                 <View style={s.metricHeader}>
-                  <View style={s.metricIconBox}>
-                    <MetricIcon size={16} color={colors.text} />
+                  <View style={[s.metricIconBox, { borderColor: themeColors.border }]}>
+                    <MetricIcon size={16} color={themeColors.text} />
                   </View>
                   <View style={[s.trendBadge, isPositive ? s.trendBadgeUp : s.trendBadgeDown]}>
                     {isPositive ? (
@@ -159,22 +159,22 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
                     </Text>
                   </View>
                 </View>
-                <Text style={s.metricValue}>{metric.value}</Text>
-                <Text style={s.metricLabel}>{metric.label}</Text>
+                <Text style={[s.metricValue, { color: themeColors.text }]}>{metric.value}</Text>
+                <Text style={[s.metricLabel, { color: themeColors.textMuted }]}>{metric.label}</Text>
               </View>
             );
           })}
         </View>
 
         {/* Response metrics section */}
-        <Text style={s.sectionTitle}>Response Metrics</Text>
-        <View style={s.responseCard}>
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Response Metrics</Text>
+        <View style={[s.responseCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           <View style={s.responseRow}>
             <View style={s.responseLeft}>
-              <ClockIcon size={18} color={colors.text} />
+              <ClockIcon size={18} color={themeColors.text} />
               <View style={s.responseInfo}>
-                <Text style={s.responseLabel}>Average Response Time</Text>
-                <Text style={s.responseValue}>{data.avgResponseTime}</Text>
+                <Text style={[s.responseLabel, { color: themeColors.textMuted }]}>Average Response Time</Text>
+                <Text style={[s.responseValue, { color: themeColors.text }]}>{data.avgResponseTime}</Text>
               </View>
             </View>
           </View>
@@ -190,14 +190,14 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
             />
           </View>
 
-          <View style={s.responseDivider} />
+          <View style={[s.responseDivider, { backgroundColor: themeColors.border }]} />
 
           <View style={s.responseRow}>
             <View style={s.responseLeft}>
-              <CheckIcon size={18} color={colors.text} />
+              <CheckIcon size={18} color={themeColors.text} />
               <View style={s.responseInfo}>
-                <Text style={s.responseLabel}>Response Rate</Text>
-                <Text style={s.responseValue}>{data.responseRate}%</Text>
+                <Text style={[s.responseLabel, { color: themeColors.textMuted }]}>Response Rate</Text>
+                <Text style={[s.responseValue, { color: themeColors.text }]}>{data.responseRate}%</Text>
               </View>
             </View>
           </View>
@@ -224,8 +224,8 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
         </View>
 
         {/* Booking funnel */}
-        <Text style={s.sectionTitle}>Booking Funnel</Text>
-        <View style={s.funnelCard}>
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Booking Funnel</Text>
+        <View style={[s.funnelCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           {[
             { label: 'Views', value: data.funnelViews },
             { label: 'Inquiries', value: data.funnelInquiries },
@@ -233,8 +233,8 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
           ].map((step, idx, arr) => (
             <View key={step.label}>
               <View style={s.funnelRow}>
-                <Text style={s.funnelLabel}>{step.label}</Text>
-                <Text style={s.funnelValue}>{formatNumber(step.value)}</Text>
+                <Text style={[s.funnelLabel, { color: themeColors.text }]}>{step.label}</Text>
+                <Text style={[s.funnelValue, { color: themeColors.text }]}>{formatNumber(step.value)}</Text>
               </View>
               <View style={s.funnelBarBg}>
                 <View
@@ -246,8 +246,8 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
               </View>
               {idx < arr.length - 1 && (
                 <View style={s.funnelArrowRow}>
-                  <BarChartIcon size={12} color={colors.textMuted} />
-                  <Text style={s.funnelArrowText}>
+                  <BarChartIcon size={12} color={themeColors.textMuted} />
+                  <Text style={[s.funnelArrowText, { color: themeColors.textMuted }]}>
                     {((arr[idx + 1].value / step.value) * 100).toFixed(0)}% conversion
                   </Text>
                 </View>
@@ -257,14 +257,14 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
         </View>
 
         {/* Performance tips */}
-        <Text style={s.sectionTitle}>Performance Tips</Text>
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Performance Tips</Text>
         <View style={s.tipsCard}>
           {TIPS.map((tip, idx) => (
             <View key={idx} style={[s.tipRow, idx < TIPS.length - 1 && s.tipRowBorder]}>
-              <View style={s.tipIconBox}>
-                <SparklesIcon size={14} color={colors.text} />
+              <View style={[s.tipIconBox, { backgroundColor: themeColors.cardBackground }]}>
+                <SparklesIcon size={14} color={themeColors.text} />
               </View>
-              <Text style={s.tipText}>{tip}</Text>
+              <Text style={[s.tipText, { color: themeColors.textSecondary }]}>{tip}</Text>
             </View>
           ))}
         </View>
