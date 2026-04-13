@@ -384,7 +384,7 @@ export default function ChatScreen({ navigation, route }: Props) {
   return (
     <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       {/* ── Header ─────────────────────────────────────── */}
-      <View style={s.header}>
+      <View style={[s.header, { borderBottomColor: themeColors.border, backgroundColor: themeColors.background }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={s.backBtn}
@@ -398,7 +398,7 @@ export default function ChatScreen({ navigation, route }: Props) {
           style={s.headerCenter}
           onPress={() => {
             if (conversation?.otherParty?.vendorId) {
-              navigation.navigate('VendorDetail', { vendorId: conversation.otherParty.vendorId });
+              (navigation as any).navigate('Explore', { screen: 'VendorDetail', params: { vendorId: conversation.otherParty.vendorId } });
             }
           }}
           activeOpacity={0.7}
@@ -420,7 +420,7 @@ export default function ChatScreen({ navigation, route }: Props) {
             </View>
           )}
           <View style={s.headerInfo}>
-            <Text style={s.headerName} numberOfLines={1}>
+            <Text style={[s.headerName, { color: themeColors.text }]} numberOfLines={1}>
               {contactName}
             </Text>
             <Text style={s.viewProfile}>View Profile</Text>
@@ -488,14 +488,14 @@ export default function ChatScreen({ navigation, route }: Props) {
         )}
 
         {/* ── Input bar ──────────────────────────────────── */}
-        <View style={s.inputBar}>
+        <View style={[s.inputBar, { borderTopColor: themeColors.border, backgroundColor: themeColors.background }]}>
           <TextInput
             ref={inputRef}
-            style={s.textInput}
+            style={[s.textInput, { backgroundColor: themeColors.cardBackground, color: themeColors.text }]}
             value={inputText}
             onChangeText={setInputText}
             placeholder="Type a message..."
-            placeholderTextColor={colors.textMuted}
+            placeholderTextColor={themeColors.textSecondary}
             multiline
             maxLength={2000}
             accessibilityLabel="Message input"

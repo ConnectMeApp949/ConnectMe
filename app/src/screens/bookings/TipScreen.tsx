@@ -109,13 +109,13 @@ export default function TipScreen({ navigation, route }: Props) {
 
   if (success) {
     return (
-      <SafeAreaView style={s.container} edges={['top']}>
+      <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
         <View style={s.successContainer}>
-          <View style={s.successIconWrap}>
+          <View style={[s.successIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
             <SparklesIcon size={36} color={colors.primary} />
           </View>
-          <Text style={s.successTitle}>Tip Sent!</Text>
-          <Text style={s.successMessage}>
+          <Text style={[s.successTitle, { color: themeColors.text }]}>Tip Sent!</Text>
+          <Text style={[s.successMessage, { color: themeColors.textSecondary }]}>
             Thank you for your generosity. The vendor will receive your tip
             within 2-3 business days.
           </Text>
@@ -156,7 +156,7 @@ export default function TipScreen({ navigation, route }: Props) {
         keyboardShouldPersistTaps="handled"
       >
         {/* Vendor info */}
-        <View style={s.vendorCard}>
+        <View style={[s.vendorCard, { backgroundColor: themeColors.cardBackground }]}>
           {coverPhoto ? (
             <Image
               source={{ uri: coverPhoto }}
@@ -170,11 +170,11 @@ export default function TipScreen({ navigation, route }: Props) {
             </View>
           )}
           <View style={s.vendorInfo}>
-            <Text style={s.vendorName}>{vendorName}</Text>
+            <Text style={[s.vendorName, { color: themeColors.text }]}>{vendorName}</Text>
             {eventDate ? (
-              <Text style={s.serviceDate}>Service on {eventDate}</Text>
+              <Text style={[s.serviceDate, { color: themeColors.textSecondary }]}>Service on {eventDate}</Text>
             ) : null}
-            <Text style={s.bookingTotal}>
+            <Text style={[s.bookingTotal, { color: themeColors.textSecondary }]}>
               Booking total: ${totalAmount.toFixed(2)}
             </Text>
           </View>
@@ -182,7 +182,7 @@ export default function TipScreen({ navigation, route }: Props) {
 
         {/* Tip amount selection */}
         <View style={s.section}>
-          <Text style={s.sectionTitle}>Select tip amount</Text>
+          <Text style={[s.sectionTitle, { color: themeColors.text }]}>Select tip amount</Text>
 
           <View style={s.percentRow}>
             {TIP_PERCENTAGES.map((pct) => {
@@ -191,7 +191,7 @@ export default function TipScreen({ navigation, route }: Props) {
               return (
                 <TouchableOpacity
                   key={pct}
-                  style={[s.percentBtn, active && s.percentBtnActive]}
+                  style={[s.percentBtn, { borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }, active && s.percentBtnActive]}
                   onPress={() => handleSelectPercent(pct)}
                   activeOpacity={0.7}
                   accessibilityLabel={`${pct} percent tip, $${dollarValue.toFixed(2)}`}
@@ -199,12 +199,12 @@ export default function TipScreen({ navigation, route }: Props) {
                   accessibilityState={{ selected: active }}
                 >
                   <Text
-                    style={[s.percentText, active && s.percentTextActive]}
+                    style={[s.percentText, { color: themeColors.text }, active && s.percentTextActive]}
                   >
                     {pct}%
                   </Text>
                   <Text
-                    style={[s.percentDollar, active && s.percentDollarActive]}
+                    style={[s.percentDollar, { color: themeColors.textSecondary }, active && s.percentDollarActive]}
                   >
                     ${dollarValue.toFixed(2)}
                   </Text>
@@ -214,14 +214,14 @@ export default function TipScreen({ navigation, route }: Props) {
 
             {/* Custom button */}
             <TouchableOpacity
-              style={[s.percentBtn, isCustom && s.percentBtnActive]}
+              style={[s.percentBtn, { borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }, isCustom && s.percentBtnActive]}
               onPress={handleCustom}
               activeOpacity={0.7}
               accessibilityLabel="Custom tip amount"
               accessibilityRole="button"
               accessibilityState={{ selected: isCustom }}
             >
-              <Text style={[s.percentText, isCustom && s.percentTextActive]}>
+              <Text style={[s.percentText, { color: themeColors.text }, isCustom && s.percentTextActive]}>
                 Custom
               </Text>
             </TouchableOpacity>
@@ -232,11 +232,11 @@ export default function TipScreen({ navigation, route }: Props) {
             <View style={s.customInputWrap}>
               <Text style={s.dollarSign}>$</Text>
               <TextInput
-                style={s.customInput}
+                style={[s.customInput, { color: themeColors.text }]}
                 value={customAmount}
                 onChangeText={setCustomAmount}
                 placeholder="0.00"
-                placeholderTextColor={colors.textMuted}
+                placeholderTextColor={themeColors.textSecondary}
                 keyboardType="decimal-pad"
                 returnKeyType="done"
                 accessibilityLabel="Custom tip amount in dollars"
@@ -247,14 +247,14 @@ export default function TipScreen({ navigation, route }: Props) {
 
           {/* No tip option */}
           <TouchableOpacity
-            style={[s.noTipBtn, noTip && s.noTipBtnActive]}
+            style={[s.noTipBtn, { borderColor: themeColors.border }, noTip && s.noTipBtnActive]}
             onPress={handleNoTip}
             activeOpacity={0.7}
             accessibilityLabel="No tip"
             accessibilityRole="button"
             accessibilityState={{ selected: noTip }}
           >
-            <Text style={[s.noTipText, noTip && s.noTipTextActive]}>
+            <Text style={[s.noTipText, noTip && { color: themeColors.text }]}>
               No tip
             </Text>
           </TouchableOpacity>
@@ -262,33 +262,33 @@ export default function TipScreen({ navigation, route }: Props) {
 
         {/* Tip message */}
         <View style={s.section}>
-          <Text style={s.sectionTitle}>Add a note (optional)</Text>
+          <Text style={[s.sectionTitle, { color: themeColors.text }]}>Add a note (optional)</Text>
           <TextInput
-            style={s.messageInput}
+            style={[s.messageInput, { color: themeColors.text, borderColor: themeColors.border }]}
             value={message}
             onChangeText={(t) => setMessage(t.slice(0, 100))}
             placeholder="Add a note for the vendor"
-            placeholderTextColor={colors.textMuted}
+            placeholderTextColor={themeColors.textSecondary}
             multiline
             maxLength={100}
             accessibilityLabel="Tip note for the vendor"
             accessibilityHint="Optional message to include with your tip, up to 100 characters"
           />
-          <Text style={s.charCount}>{message.length}/100</Text>
+          <Text style={[s.charCount, { color: themeColors.textSecondary }]}>{message.length}/100</Text>
         </View>
 
         {/* Payment summary */}
         {!noTip && tipAmount > 0 && (
-          <View style={s.summaryCard}>
-            <Text style={s.summaryTitle}>Payment Summary</Text>
+          <View style={[s.summaryCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <Text style={[s.summaryTitle, { color: themeColors.text }]}>Payment Summary</Text>
             <View style={s.summaryRow}>
-              <Text style={s.summaryLabel}>Tip amount</Text>
-              <Text style={s.summaryValue}>${tipAmount.toFixed(2)}</Text>
+              <Text style={[s.summaryLabel, { color: themeColors.textSecondary }]}>Tip amount</Text>
+              <Text style={[s.summaryValue, { color: themeColors.text }]}>${tipAmount.toFixed(2)}</Text>
             </View>
-            <View style={s.summaryDivider} />
+            <View style={[s.summaryDivider, { backgroundColor: themeColors.border }]} />
             <View style={s.summaryRow}>
-              <Text style={s.summaryLabel}>Payment method</Text>
-              <Text style={s.summaryValue}>{booking?.paymentMethodLabel ?? 'Card on file'}</Text>
+              <Text style={[s.summaryLabel, { color: themeColors.textSecondary }]}>Payment method</Text>
+              <Text style={[s.summaryValue, { color: themeColors.text }]}>{booking?.paymentMethodLabel ?? 'Card on file'}</Text>
             </View>
           </View>
         )}
@@ -322,7 +322,7 @@ export default function TipScreen({ navigation, route }: Props) {
           accessibilityLabel="Maybe later, skip leaving a tip"
           accessibilityRole="button"
         >
-          <Text style={s.skipText}>Maybe later</Text>
+          <Text style={[s.skipText, { color: themeColors.textSecondary }]}>Maybe later</Text>
         </TouchableOpacity>
 
         <View style={{ height: 40 }} />

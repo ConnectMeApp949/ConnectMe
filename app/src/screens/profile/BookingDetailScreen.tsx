@@ -149,12 +149,13 @@ function PulsingDot() {
 // ─── BookingTimeline component ───────────────────────────
 
 function BookingTimeline({ booking }: { booking: any }) {
+  const { colors: themeColors } = useTheme();
   const steps = useMemo(() => buildTimelineSteps(booking), [booking]);
   const countdown = useMemo(() => getCountdownMessage(booking), [booking]);
 
   return (
-    <View style={tl.card} accessibilityRole="summary" accessibilityLabel="Booking progress timeline">
-      <Text style={tl.cardTitle}>Booking Progress</Text>
+    <View style={[tl.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} accessibilityRole="summary" accessibilityLabel="Booking progress timeline">
+      <Text style={[tl.cardTitle, { color: themeColors.text }]}>Booking Progress</Text>
 
       {countdown && (
         <View style={tl.countdownRow}>
@@ -194,12 +195,14 @@ function BookingTimeline({ booking }: { booking: any }) {
               <View style={tl.rightCol}>
                 <Text style={[
                   tl.stepLabel,
-                  step.state === 'future' && tl.stepLabelFuture,
+                  { color: themeColors.text },
+                  step.state === 'future' && { color: themeColors.textSecondary },
                   step.state === 'cancelled' && tl.stepLabelCancelled,
                 ]}>{step.label}</Text>
                 {step.timestamp ? (
                   <Text style={[
                     tl.stepTimestamp,
+                    { color: themeColors.textSecondary },
                     step.state === 'cancelled' && tl.stepTimestampCancelled,
                   ]}>{step.timestamp}</Text>
                 ) : null}
@@ -319,31 +322,31 @@ export default function BookingDetailScreen({ navigation, route }: Props) {
           )}
           <View style={s.heroAvatarWrap}>
             {coverPhoto ? (
-              <Image source={{ uri: coverPhoto }} style={s.heroAvatar} accessibilityLabel={`${vendorName} avatar`} accessibilityRole="image" />
+              <Image source={{ uri: coverPhoto }} style={[s.heroAvatar, { borderColor: themeColors.background }]} accessibilityLabel={`${vendorName} avatar`} accessibilityRole="image" />
             ) : (
-              <View style={s.heroAvatarFallback}><Text style={s.heroAvatarText}>{vendorName[0]}</Text></View>
+              <View style={[s.heroAvatarFallback, { borderColor: themeColors.background }]}><Text style={s.heroAvatarText}>{vendorName[0]}</Text></View>
             )}
           </View>
         </View>
 
         {/* Vendor info */}
         <View style={s.vendorInfo}>
-          <Text style={s.vendorName}>{vendorName}</Text>
-          <Text style={s.vendorCategory}>{category}</Text>
+          <Text style={[s.vendorName, { color: themeColors.text }]}>{vendorName}</Text>
+          <Text style={[s.vendorCategory, { color: themeColors.textSecondary }]}>{category}</Text>
           <View style={s.ratingRow}>
             <StarIcon size={16} color={colors.star} />
-            <Text style={s.ratingText}>{rating > 0 ? rating.toFixed(1) : 'New'}</Text>
-            {reviews > 0 && <Text style={s.reviewCount}>({reviews} reviews)</Text>}
+            <Text style={[s.ratingText, { color: themeColors.text }]}>{rating > 0 ? rating.toFixed(1) : 'New'}</Text>
+            {reviews > 0 && <Text style={[s.reviewCount, { color: themeColors.textSecondary }]}>({reviews} reviews)</Text>}
           </View>
         </View>
 
         {/* Booking Details card */}
-        <View style={s.card}>
-          <Text style={s.cardTitle}>Booking Details</Text>
+        <View style={[s.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[s.cardTitle, { color: themeColors.text }]}>Booking Details</Text>
           {details.map((d) => (
-            <View key={d.label} style={s.detailRow}>
-              <Text style={s.detailLabel}>{d.label}</Text>
-              <Text style={s.detailValue}>{d.value}</Text>
+            <View key={d.label} style={[s.detailRow, { borderBottomColor: themeColors.border }]}>
+              <Text style={[s.detailLabel, { color: themeColors.textSecondary }]}>{d.label}</Text>
+              <Text style={[s.detailValue, { color: themeColors.text }]}>{d.value}</Text>
             </View>
           ))}
           {isUpcoming && (
@@ -362,9 +365,9 @@ export default function BookingDetailScreen({ navigation, route }: Props) {
         </View>
 
         {/* Vendor Information card */}
-        <View style={s.card}>
-          <Text style={s.cardTitle}>Vendor Information</Text>
-          <View style={s.detailRow}><Text style={s.detailLabel}>Name</Text><Text style={s.detailValue}>{vendorName}</Text></View>
+        <View style={[s.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[s.cardTitle, { color: themeColors.text }]}>Vendor Information</Text>
+          <View style={[s.detailRow, { borderBottomColor: themeColors.border }]}><Text style={[s.detailLabel, { color: themeColors.textSecondary }]}>Name</Text><Text style={[s.detailValue, { color: themeColors.text }]}>{vendorName}</Text></View>
           <TouchableOpacity style={s.viewProfileBtn} activeOpacity={0.7} onPress={() => navigation.navigate('VendorDetail', { vendor })} accessibilityLabel="View Vendor Profile" accessibilityRole="button" accessibilityHint={`View ${vendorName}'s full profile`}>
             <Text style={s.viewProfileText}>View Vendor Profile</Text>
           </TouchableOpacity>
@@ -400,8 +403,8 @@ export default function BookingDetailScreen({ navigation, route }: Props) {
             </>
           ) : (
             <>
-              <TouchableOpacity style={s.actionBtnOutline} activeOpacity={0.7} onPress={() => navigation.navigate('LeaveReview', { vendor: booking.vendor, bookingDate: booking.eventDate, bookingId: booking.id })} accessibilityLabel="Leave a Review" accessibilityRole="button" accessibilityHint={`Leave a review for ${vendorName}`}>
-                <Text style={s.actionBtnOutlineText}>Leave a Review</Text>
+              <TouchableOpacity style={[s.actionBtnOutline, { borderColor: themeColors.text }]} activeOpacity={0.7} onPress={() => navigation.navigate('LeaveReview', { vendor: booking.vendor, bookingDate: booking.eventDate, bookingId: booking.id })} accessibilityLabel="Leave a Review" accessibilityRole="button" accessibilityHint={`Leave a review for ${vendorName}`}>
+                <Text style={[s.actionBtnOutlineText, { color: themeColors.text }]}>Leave a Review</Text>
               </TouchableOpacity>
               <TouchableOpacity style={s.actionBtnTip} activeOpacity={0.7} onPress={() => navigation.navigate('Tip', { booking })} accessibilityLabel="Leave a Tip" accessibilityRole="button" accessibilityHint={`Leave a tip for ${vendorName}`}>
                 <Text style={s.actionBtnTipText}>Leave a Tip</Text>

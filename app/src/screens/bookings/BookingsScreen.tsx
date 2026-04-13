@@ -76,7 +76,7 @@ export default function BookingsScreen({ navigation }: Props) {
       <TouchableOpacity
         style={[s.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
         activeOpacity={0.7}
-        onPress={() => navigation.navigate('BookingDetail', { booking: item })}
+        onPress={() => (navigation as any).navigate('Profile', { screen: 'BookingDetail', params: { booking: item } })}
         accessibilityLabel={`Booking with ${vendorName}, ${date}, $${Number(item.totalAmount).toFixed(0)}`}
         accessibilityRole="button"
         accessibilityHint="Opens booking details"
