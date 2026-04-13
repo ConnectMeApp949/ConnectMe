@@ -114,7 +114,7 @@ export default function BookingsScreen({ navigation }: Props) {
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === tabKey }}
           >
-            <Text style={[s.tabText, { color: themeColors.text }, activeTab === tabKey && s.tabTextActive]}>{t(tabKey)}</Text>
+            <Text style={[s.tabText, { color: themeColors.text }, activeTab === tabKey && { color: themeColors.background }]}>{t(tabKey)}</Text>
           </TouchableOpacity>
         ))}
       </View>

@@ -79,7 +79,7 @@ export default function HelpTopicScreen({ navigation, route }: Props) {
           <Text style={[s.headerTitle, { color: themeColors.text }]}>Help</Text>
           <View style={s.backBtn} />
         </View>
-        <View style={s.empty}><Text style={s.emptyText}>Topic not found</Text></View>
+        <View style={s.empty}><Text style={[s.emptyText, { color: themeColors.textSecondary }]}>Topic not found</Text></View>
       </SafeAreaView>
     );
   }
@@ -92,34 +92,34 @@ export default function HelpTopicScreen({ navigation, route }: Props) {
         <View style={s.backBtn} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
-        <Text style={s.title}>{content.title}</Text>
+        <Text style={[s.title, { color: themeColors.text }]}>{content.title}</Text>
         {content.sections.map((section, i) => (
           <View key={i} style={s.section}>
-            <Text style={s.sectionHeading}>{section.heading}</Text>
-            <Text style={s.sectionBody}>{section.body}</Text>
+            <Text style={[s.sectionHeading, { color: themeColors.text }]}>{section.heading}</Text>
+            <Text style={[s.sectionBody, { color: themeColors.textSecondary }]}>{section.body}</Text>
           </View>
         ))}
 
-        <View style={s.helpfulCard}>
-          <Text style={s.helpfulTitle}>Was this helpful?</Text>
+        <View style={[s.helpfulCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[s.helpfulTitle, { color: themeColors.text }]}>Was this helpful?</Text>
           <View style={s.helpfulRow}>
-            <TouchableOpacity style={s.helpfulBtn} activeOpacity={0.7} accessibilityLabel="Yes, this was helpful" accessibilityRole="button">
+            <TouchableOpacity style={[s.helpfulBtn, { borderColor: themeColors.border }]} activeOpacity={0.7} accessibilityLabel="Yes, this was helpful" accessibilityRole="button">
               <View style={s.helpfulBtnContent}>
                 <CheckIcon size={16} color="#16A34A" strokeWidth={2} />
-                <Text style={s.helpfulBtnText}>Yes</Text>
+                <Text style={[s.helpfulBtnText, { color: themeColors.text }]}>Yes</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style={s.helpfulBtn} activeOpacity={0.7} accessibilityLabel="No, this was not helpful" accessibilityRole="button">
+            <TouchableOpacity style={[s.helpfulBtn, { borderColor: themeColors.border }]} activeOpacity={0.7} accessibilityLabel="No, this was not helpful" accessibilityRole="button">
               <View style={s.helpfulBtnContent}>
                 <XIcon size={16} color="#DC2626" strokeWidth={2} />
-                <Text style={s.helpfulBtnText}>No</Text>
+                <Text style={[s.helpfulBtnText, { color: themeColors.text }]}>No</Text>
               </View>
             </TouchableOpacity>
           </View>
         </View>
 
         <TouchableOpacity style={s.contactBtn} activeOpacity={0.7} onPress={() => navigation.navigate('GetHelp')} accessibilityLabel="Still need help? Contact us" accessibilityRole="link">
-          <Text style={s.contactBtnText}>Still need help? Contact us</Text>
+          <Text style={[s.contactBtnText, { color: colors.primary }]}>Still need help? Contact us</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

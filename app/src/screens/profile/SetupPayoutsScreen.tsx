@@ -78,26 +78,26 @@ export default function SetupPayoutsScreen({ navigation }: Props) {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
-        <Text style={s.title}>Let's add a payout method</Text>
-        <Text style={s.subtitle}>To start, let us know where you'd like us to send your money.</Text>
+        <Text style={[s.title, { color: themeColors.text }]}>Let's add a payout method</Text>
+        <Text style={[s.subtitle, { color: themeColors.textSecondary }]}>To start, let us know where you'd like us to send your money.</Text>
 
         {/* Country selector */}
-        <Text style={s.sectionLabel}>Billing country/region</Text>
-        <TouchableOpacity style={s.dropdownBtn} onPress={() => setCountryModalVisible(true)} activeOpacity={0.6} accessibilityLabel={`Billing country/region, currently ${country}`} accessibilityRole="button" accessibilityHint="Opens country selector">
-          <Text style={s.dropdownHint}>Billing country/region</Text>
-          <Text style={s.dropdownValue}>{country}</Text>
-          <Text style={s.dropdownArrow}>▾</Text>
+        <Text style={[s.sectionLabel, { color: themeColors.text }]}>Billing country/region</Text>
+        <TouchableOpacity style={[s.dropdownBtn, { borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }]} onPress={() => setCountryModalVisible(true)} activeOpacity={0.6} accessibilityLabel={`Billing country/region, currently ${country}`} accessibilityRole="button" accessibilityHint="Opens country selector">
+          <Text style={[s.dropdownHint, { color: themeColors.textSecondary }]}>Billing country/region</Text>
+          <Text style={[s.dropdownValue, { color: themeColors.text }]}>{country}</Text>
+          <Text style={[s.dropdownArrow, { color: themeColors.textSecondary }]}>▾</Text>
         </TouchableOpacity>
-        <Text style={s.dropdownNote}>This is where you opened your financial account.</Text>
+        <Text style={[s.dropdownNote, { color: themeColors.textSecondary }]}>This is where you opened your financial account.</Text>
 
         {/* Payout options */}
-        <Text style={s.sectionLabel}>How would you like to get paid?</Text>
-        <Text style={s.payoutNote}>Payouts will be sent in USD.</Text>
+        <Text style={[s.sectionLabel, { color: themeColors.text }]}>How would you like to get paid?</Text>
+        <Text style={[s.payoutNote, { color: themeColors.textSecondary }]}>Payouts will be sent in USD.</Text>
 
         {PAYOUT_OPTIONS.map((option) => (
           <TouchableOpacity
             key={option.id}
-            style={[s.optionCard, selectedOption === option.id && s.optionCardSelected]}
+            style={[s.optionCard, { borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }, selectedOption === option.id && { borderColor: themeColors.text }]}
             onPress={() => setSelectedOption(option.id)}
             activeOpacity={0.7}
             accessibilityLabel={option.title}
@@ -105,15 +105,15 @@ export default function SetupPayoutsScreen({ navigation }: Props) {
             accessibilityState={{ checked: selectedOption === option.id }}
           >
             <View style={s.optionHeader}>
-              <Text style={s.optionTitle}>{option.title}</Text>
-              <View style={[s.radio, selectedOption === option.id && s.radioSelected]}>
-                {selectedOption === option.id && <View style={s.radioInner} />}
+              <Text style={[s.optionTitle, { color: themeColors.text }]}>{option.title}</Text>
+              <View style={[s.radio, { borderColor: themeColors.textSecondary }, selectedOption === option.id && { borderColor: themeColors.text }]}>
+                {selectedOption === option.id && <View style={[s.radioInner, { backgroundColor: themeColors.text }]} />}
               </View>
             </View>
             {option.bullets.map((bullet, i) => (
               <View key={i} style={s.bulletRow}>
-                <Text style={s.bulletDot}>•</Text>
-                <Text style={s.bulletText}>{bullet}</Text>
+                <Text style={[s.bulletDot, { color: themeColors.textSecondary }]}>•</Text>
+                <Text style={[s.bulletText, { color: themeColors.textSecondary }]}>{bullet}</Text>
               </View>
             ))}
           </TouchableOpacity>
@@ -122,9 +122,9 @@ export default function SetupPayoutsScreen({ navigation }: Props) {
 
       {/* Continue button */}
       {selectedOption && (
-        <View style={s.footer}>
+        <View style={[s.footer, { backgroundColor: themeColors.background, borderTopColor: themeColors.border }]}>
           <TouchableOpacity
-            style={s.continueBtn}
+            style={[s.continueBtn, { backgroundColor: themeColors.text }]}
             onPress={() => {
               Alert.alert('Payout Method Saved', 'Your payout preference has been updated. You\'ll receive payments via your selected method.', [{ text: 'Done', onPress: () => navigation.goBack() }]);
             }}
@@ -133,7 +133,7 @@ export default function SetupPayoutsScreen({ navigation }: Props) {
             accessibilityRole="button"
             accessibilityHint="Save your payout method selection"
           >
-            <Text style={s.continueBtnText}>Continue</Text>
+            <Text style={[s.continueBtnText, { color: themeColors.background }]}>Continue</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -141,11 +141,11 @@ export default function SetupPayoutsScreen({ navigation }: Props) {
       {/* ─── Country Picker Modal ─── */}
       <Modal visible={countryModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
         <View style={s.modalOverlay}>
-          <View style={s.modalSheet}>
+          <View style={[s.modalSheet, { backgroundColor: themeColors.cardBackground }]}>
             <View style={s.modalHeader}>
-              <Text style={s.modalTitle}>Billing Country/Region</Text>
+              <Text style={[s.modalTitle, { color: themeColors.text }]}>Billing Country/Region</Text>
               <TouchableOpacity onPress={() => setCountryModalVisible(false)} accessibilityLabel="Close" accessibilityRole="button">
-                <XIcon size={18} color={colors.textMuted} strokeWidth={2} />
+                <XIcon size={18} color={themeColors.textSecondary} strokeWidth={2} />
               </TouchableOpacity>
             </View>
             <FlatList
@@ -155,14 +155,14 @@ export default function SetupPayoutsScreen({ navigation }: Props) {
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  style={[s.countryRow, item === country && s.countryRowActive]}
+                  style={[s.countryRow, { borderBottomColor: themeColors.border }, item === country && { backgroundColor: themeColors.background }]}
                   onPress={() => { setCountry(item); setCountryModalVisible(false); }}
                   activeOpacity={0.6}
                   accessibilityLabel={item}
                   accessibilityRole="button"
                   accessibilityState={{ selected: item === country }}
                 >
-                  <Text style={[s.countryText, item === country && s.countryTextActive]}>{item}</Text>
+                  <Text style={[s.countryText, { color: themeColors.text }, item === country && s.countryTextActive]}>{item}</Text>
                   {item === country && <CheckIcon size={16} color={colors.primary} strokeWidth={2.5} />}
                 </TouchableOpacity>
               )}

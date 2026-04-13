@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { useTheme } from '../../context/ThemeContext';
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from '../../components/Icons';
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -42,6 +43,7 @@ interface AvailabilityCalendarProps {
 }
 
 export default function AvailabilityCalendar({ vendorId }: AvailabilityCalendarProps) {
+  const { colors: themeColors } = useTheme();
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
@@ -101,16 +103,16 @@ export default function AvailabilityCalendar({ vendorId }: AvailabilityCalendarP
           accessibilityLabel="Previous month"
           accessibilityRole="button"
         >
-          <ChevronLeftIcon size={28} color={canGoPrev ? colors.primary : colors.textMuted} strokeWidth={1.5} />
+          <ChevronLeftIcon size={28} color={canGoPrev ? themeColors.primary : themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>
-        <Text style={styles.monthLabel}>{monthLabel}</Text>
+        <Text style={[styles.monthLabel, { color: themeColors.text }]}>{monthLabel}</Text>
         <TouchableOpacity
           onPress={goToNextMonth}
           style={styles.navButton}
           accessibilityLabel="Next month"
           accessibilityRole="button"
         >
-          <ChevronRightIcon size={28} color={colors.primary} strokeWidth={1.5} />
+          <ChevronRightIcon size={28} color={themeColors.primary} strokeWidth={1.5} />
         </TouchableOpacity>
       </View>
 
@@ -118,7 +120,7 @@ export default function AvailabilityCalendar({ vendorId }: AvailabilityCalendarP
       <View style={styles.weekRow}>
         {DAY_LABELS.map((d) => (
           <View key={d} style={styles.dayCell}>
-            <Text style={styles.dayHeader}>{d}</Text>
+            <Text style={[styles.dayHeader, { color: themeColors.textMuted }]}>{d}</Text>
           </View>
         ))}
       </View>
@@ -142,14 +144,15 @@ export default function AvailabilityCalendar({ vendorId }: AvailabilityCalendarP
               style={[
                 styles.dayCell,
                 { backgroundColor: cellBg },
-                isToday && styles.todayCell,
+                isToday && [styles.todayCell, { borderColor: themeColors.primary }],
               ]}
               accessibilityLabel={`${monthLabel.split(' ')[0]} ${day}${isBlocked ? ', unavailable' : isPast ? ', past date' : ', available'}`}
             >
               <Text
                 style={[
                   styles.dayText,
-                  isPast && { color: colors.textMuted },
+                  { color: themeColors.text },
+                  isPast && { color: themeColors.textMuted },
                   isBlocked && !isPast && { color: colors.error, textDecorationLine: 'line-through' as const },
                 ]}
               >
@@ -164,17 +167,17 @@ export default function AvailabilityCalendar({ vendorId }: AvailabilityCalendarP
       {/* Legend */}
       <View style={styles.legend}>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: colors.success }]} />
-          <Text style={styles.legendText}>Available</Text>
+          <View style={[styles.legendDot, { backgroundColor: themeColors.success }]} />
+          <Text style={[styles.legendText, { color: themeColors.textMuted }]}>Available</Text>
         </View>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: colors.error }]} />
-          <Text style={styles.legendText}>Unavailable</Text>
+          <View style={[styles.legendDot, { backgroundColor: themeColors.error }]} />
+          <Text style={[styles.legendText, { color: themeColors.textMuted }]}>Unavailable</Text>
         </View>
       </View>
 
       {/* Request text */}
-      <Text style={styles.requestText}>
+      <Text style={[styles.requestText, { color: themeColors.textSecondary }]}>
         Don't see your date? Request availability from the vendor.
       </Text>
     </View>

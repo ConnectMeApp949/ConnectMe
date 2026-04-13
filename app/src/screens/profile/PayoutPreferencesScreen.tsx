@@ -21,20 +21,20 @@ export default function PayoutPreferencesScreen({ navigation }: Props) {
       </View>
 
       <View style={s.content}>
-        <Text style={s.title}>How you'll get paid</Text>
-        <Text style={s.message}>
+        <Text style={[s.title, { color: themeColors.text }]}>How you'll get paid</Text>
+        <Text style={[s.message, { color: themeColors.textSecondary }]}>
           Add at least one payout method so we know where to send your money.
         </Text>
 
         <TouchableOpacity
-          style={s.setupBtn}
+          style={[s.setupBtn, { backgroundColor: themeColors.text }]}
           onPress={() => navigation.navigate('SetupPayouts')}
           activeOpacity={0.7}
           accessibilityLabel="Set up payouts"
           accessibilityRole="button"
           accessibilityHint="Configure how you receive payments"
         >
-          <Text style={s.setupBtnText}>Set up payouts</Text>
+          <Text style={[s.setupBtnText, { color: themeColors.background }]}>Set up payouts</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

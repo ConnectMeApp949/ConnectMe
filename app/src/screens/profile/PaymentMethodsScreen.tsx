@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { ChevronLeftIcon, ChevronRightIcon, XIcon, DollarIcon } from '../../components/Icons';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
@@ -38,6 +39,7 @@ const CARD_FALLBACKS: Record<string, { label: string; color: string }> = {
 };
 
 export default function PaymentMethodsScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const { token } = useAuth();
   const [methods, setMethods] = useState<PaymentMethod[]>([]);
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -118,21 +120,21 @@ export default function PaymentMethodsScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={s.container} edges={['top']}>
+    <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={s.header}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Payment Methods</Text>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Payment Methods</Text>
         <View style={s.backBtn} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
         {/* Current methods */}
-        <Text style={s.sectionTitle}>Current Payment Method</Text>
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Current Payment Method</Text>
         {methods.map((m) => (
-          <View key={m.id} style={s.methodCard}>
+          <View key={m.id} style={[s.methodCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
             <View style={s.methodLeft}>
               {m.type === 'card' && m.brand && CARD_LOGOS[m.brand] ? (
                 renderLogoOrFallback(m.brand, CARD_LOGOS[m.brand], s.cardLogo, `${m.brand} card logo`)
@@ -140,58 +142,58 @@ export default function PaymentMethodsScreen({ navigation }: Props) {
                 renderLogoOrFallback('paypal', 'https://img.icons8.com/color/48/paypal.png', s.cardLogo, 'PayPal logo')
               )}
               <View>
-                <Text style={s.methodLabel}>{m.label}</Text>
+                <Text style={[s.methodLabel, { color: themeColors.text }]}>{m.label}</Text>
                 {m.isDefault && <Text style={s.defaultBadge}>Default</Text>}
               </View>
             </View>
-            <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+            <ChevronRightIcon size={18} color={themeColors.textSecondary} strokeWidth={1.5} />
           </View>
         ))}
 
         {methods.length === 0 && (
-          <View style={s.emptyCard}>
-            <View style={s.emptyIconWrap}>
-              <DollarIcon size={36} color={colors.textMuted} />
+          <View style={[s.emptyCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+            <View style={[s.emptyIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <DollarIcon size={36} color={themeColors.textSecondary} />
             </View>
-            <Text style={s.emptyText}>No payment methods added</Text>
+            <Text style={[s.emptyText, { color: themeColors.textSecondary }]}>No payment methods added</Text>
           </View>
         )}
 
         {/* Add button */}
-        <TouchableOpacity style={s.addButton} onPress={() => { setSelectedOption(null); setAddModalVisible(true); }} activeOpacity={0.7} accessibilityLabel="Add Payment Method" accessibilityRole="button">
-          <Text style={s.addButtonText}>+ Add Payment Method</Text>
+        <TouchableOpacity style={[s.addButton, { borderColor: colors.primary }]} onPress={() => { setSelectedOption(null); setAddModalVisible(true); }} activeOpacity={0.7} accessibilityLabel="Add Payment Method" accessibilityRole="button">
+          <Text style={[s.addButtonText, { color: colors.primary }]}>+ Add Payment Method</Text>
         </TouchableOpacity>
       </ScrollView>
 
       {/* ─── Add Payment Method Modal ─── */}
       <Modal visible={addModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
         <View style={s.modalOverlay}>
-          <View style={s.modalSheet}>
+          <View style={[s.modalSheet, { backgroundColor: themeColors.cardBackground }]}>
             <View style={s.modalHeader}>
-              <Text style={s.modalTitle}>Add Payment Method</Text>
+              <Text style={[s.modalTitle, { color: themeColors.text }]}>Add Payment Method</Text>
               <TouchableOpacity onPress={() => { setAddModalVisible(false); setSelectedOption(null); }} accessibilityLabel="Close" accessibilityRole="button">
-                <XIcon size={18} color={colors.textMuted} strokeWidth={2} />
+                <XIcon size={18} color={themeColors.textSecondary} strokeWidth={2} />
               </TouchableOpacity>
             </View>
 
             {/* PayPal option */}
-            <TouchableOpacity style={s.optionRow} onPress={() => setSelectedOption('paypal')} activeOpacity={0.7} accessibilityLabel="PayPal" accessibilityRole="radio" accessibilityState={{ checked: selectedOption === 'paypal' }}>
+            <TouchableOpacity style={[s.optionRow, { borderBottomColor: themeColors.border }]} onPress={() => setSelectedOption('paypal')} activeOpacity={0.7} accessibilityLabel="PayPal" accessibilityRole="radio" accessibilityState={{ checked: selectedOption === 'paypal' }}>
               <View style={s.optionLeft}>
-                <View style={[s.radio, selectedOption === 'paypal' && s.radioSelected]}>
-                  {selectedOption === 'paypal' && <View style={s.radioInner} />}
+                <View style={[s.radio, { borderColor: themeColors.textSecondary }, selectedOption === 'paypal' && { borderColor: themeColors.text }]}>
+                  {selectedOption === 'paypal' && <View style={[s.radioInner, { backgroundColor: themeColors.text }]} />}
                 </View>
                 {renderLogoOrFallback('paypal_option', 'https://img.icons8.com/color/48/paypal.png', s.optionLogo, 'PayPal logo')}
-                <Text style={s.optionLabel}>PayPal</Text>
+                <Text style={[s.optionLabel, { color: themeColors.text }]}>PayPal</Text>
               </View>
             </TouchableOpacity>
 
             {/* Credit/Debit card option */}
-            <TouchableOpacity style={s.optionRow} onPress={() => setSelectedOption('card')} activeOpacity={0.7} accessibilityLabel="Credit or Debit Card" accessibilityRole="radio" accessibilityState={{ checked: selectedOption === 'card' }}>
+            <TouchableOpacity style={[s.optionRow, { borderBottomColor: themeColors.border }]} onPress={() => setSelectedOption('card')} activeOpacity={0.7} accessibilityLabel="Credit or Debit Card" accessibilityRole="radio" accessibilityState={{ checked: selectedOption === 'card' }}>
               <View style={s.optionLeft}>
-                <View style={[s.radio, selectedOption === 'card' && s.radioSelected]}>
-                  {selectedOption === 'card' && <View style={s.radioInner} />}
+                <View style={[s.radio, { borderColor: themeColors.textSecondary }, selectedOption === 'card' && { borderColor: themeColors.text }]}>
+                  {selectedOption === 'card' && <View style={[s.radioInner, { backgroundColor: themeColors.text }]} />}
                 </View>
-                <Text style={s.optionLabel}>Credit or Debit Card</Text>
+                <Text style={[s.optionLabel, { color: themeColors.text }]}>Credit or Debit Card</Text>
               </View>
             </TouchableOpacity>
 
@@ -209,13 +211,13 @@ export default function PaymentMethodsScreen({ navigation }: Props) {
             {selectedOption && (
               <View style={s.modalActions}>
                 <TouchableOpacity
-                  style={s.cancelBtn}
+                  style={[s.cancelBtn, { borderColor: themeColors.text }]}
                   onPress={() => { setAddModalVisible(false); setSelectedOption(null); }}
                   activeOpacity={0.7}
                   accessibilityLabel="Cancel"
                   accessibilityRole="button"
                 >
-                  <Text style={s.cancelBtnText}>Cancel</Text>
+                  <Text style={[s.cancelBtnText, { color: themeColors.text }]}>Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={s.confirmBtn}

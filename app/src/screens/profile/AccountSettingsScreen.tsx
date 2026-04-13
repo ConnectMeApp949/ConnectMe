@@ -516,9 +516,7 @@ export default function AccountSettingsScreen({ navigation }: Props) {
 
             <View style={s.connectedRow}>
               <View style={s.connectedLeft}>
-                <View style={[s.connectedLogo, s.connectedLogoFallback]}>
-                  <Text style={[s.connectedLogoFallbackText, { color: '#4285F4' }]}>G</Text>
-                </View>
+                <Image source={require('../../assets/google-logo.png')} style={{ width: 24, height: 24, resizeMode: 'contain' }} />
                 <View>
                   <Text style={[s.connectedLabel, { color: themeColors.text }]}>Google</Text>
                   <Text style={[s.connectedStatus, { color: themeColors.textSecondary }]}>{googleConnected ? 'Connected' : 'Not connected'}</Text>
@@ -529,9 +527,7 @@ export default function AccountSettingsScreen({ navigation }: Props) {
 
             <View style={s.connectedRow}>
               <View style={s.connectedLeft}>
-                <View style={[s.connectedLogo, s.connectedLogoFallback]}>
-                  <Text style={[s.connectedLogoFallbackText, { color: '#000000' }]}>{'\uF8FF'}</Text>
-                </View>
+                <Image source={require('../../assets/apple-logo.png')} style={{ width: 24, height: 24, resizeMode: 'contain' }} />
                 <View>
                   <Text style={[s.connectedLabel, { color: themeColors.text }]}>Apple</Text>
                   <Text style={[s.connectedStatus, { color: themeColors.textSecondary }]}>{appleConnected ? 'Connected' : 'Not connected'}</Text>
@@ -542,9 +538,7 @@ export default function AccountSettingsScreen({ navigation }: Props) {
 
             <View style={s.connectedRow}>
               <View style={s.connectedLeft}>
-                <View style={[s.connectedLogo, s.connectedLogoFallback]}>
-                  <Text style={[s.connectedLogoFallbackText, { color: '#1877F2' }]}>f</Text>
-                </View>
+                <Image source={require('../../assets/facebook-logo.png')} style={{ width: 24, height: 24, resizeMode: 'contain' }} />
                 <View>
                   <Text style={[s.connectedLabel, { color: themeColors.text }]}>Facebook</Text>
                   <Text style={[s.connectedStatus, { color: themeColors.textSecondary }]}>{facebookConnected ? 'Connected' : 'Not connected'}</Text>

@@ -296,7 +296,7 @@ function MainTabs() {
       />
       <Tab.Screen
         name="Messages"
-        component={InboxScreen}
+        component={MessagesNavigator}
         options={{ tabBarLabel: t('messages'), tabBarIcon: ({ focused }) => <MessageIcon size={22} color={focused ? colors.secondary : colors.textMuted} strokeWidth={focused ? 2 : 1.5} /> }}
       />
       <Tab.Screen
