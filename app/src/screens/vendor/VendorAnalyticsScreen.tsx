@@ -123,14 +123,14 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
           {PERIODS.map((p) => (
             <TouchableOpacity
               key={p.id}
-              style={[s.periodBtn, { borderColor: themeColors.border }, period === p.id && s.periodBtnActive]}
+              style={[s.periodBtn, { borderColor: themeColors.border }, period === p.id && [s.periodBtnActive, { backgroundColor: themeColors.text, borderColor: themeColors.text }]]}
               onPress={() => setPeriod(p.id)}
               activeOpacity={0.7}
               accessibilityLabel={`${p.label} period`}
               accessibilityRole="button"
               accessibilityState={{ selected: period === p.id }}
             >
-              <Text style={[s.periodText, { color: themeColors.textMuted }, period === p.id && [s.periodTextActive, { color: themeColors.text }]]}>
+              <Text style={[s.periodText, { color: themeColors.textMuted }, period === p.id && [s.periodTextActive, { color: themeColors.background }]]}>
                 {p.label}
               </Text>
             </TouchableOpacity>
@@ -145,14 +145,14 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
             return (
               <View key={metric.label} style={[s.metricCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
                 <View style={s.metricHeader}>
-                  <View style={[s.metricIconBox, { borderColor: themeColors.border }]}>
-                    <MetricIcon size={16} color={themeColors.text} />
+                  <View style={[s.metricIconBox, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+                    <MetricIcon size={16} color={themeColors.primary} />
                   </View>
                   <View style={[s.trendBadge, isPositive ? s.trendBadgeUp : s.trendBadgeDown]}>
                     {isPositive ? (
-                      <TrendingUpIcon size={12} color={colors.success} strokeWidth={2} />
+                      <TrendingUpIcon size={12} color={themeColors.success} strokeWidth={2} />
                     ) : (
-                      <TrendingDownIcon size={12} color={colors.error} strokeWidth={2} />
+                      <TrendingDownIcon size={12} color={themeColors.error} strokeWidth={2} />
                     )}
                     <Text style={[s.trendText, isPositive ? s.trendTextUp : s.trendTextDown]}>
                       {isPositive ? '+' : ''}{metric.trend}%
@@ -216,7 +216,7 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
           {data.responseRate > 95 && (
             <View style={s.badgeRow}>
               <View style={s.badge}>
-                <AwardIcon size={14} color={colors.primary} strokeWidth={2} />
+                <AwardIcon size={14} color={themeColors.primary} strokeWidth={2} />
                 <Text style={s.badgeText}>Top 10% of vendors in your area</Text>
               </View>
             </View>

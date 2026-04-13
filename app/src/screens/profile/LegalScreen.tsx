@@ -21,13 +21,13 @@ export default function LegalScreen({ navigation }: Props) {
       </View>
       <View style={s.list}>
         {ITEMS.map((label, i) => (
-          <TouchableOpacity key={label} style={[s.row, i < ITEMS.length - 1 && s.rowBorder]} activeOpacity={0.6} onPress={() => navigation.navigate('LegalDoc', { doc: label })} accessibilityLabel={label} accessibilityRole="link">
-            <Text style={s.rowLabel}>{label}</Text>
-            <Text style={s.chevron}>›</Text>
+          <TouchableOpacity key={label} style={[s.row, i < ITEMS.length - 1 && [s.rowBorder, { borderBottomColor: themeColors.border }]]} activeOpacity={0.6} onPress={() => navigation.navigate('LegalDoc', { doc: label })} accessibilityLabel={label} accessibilityRole="link">
+            <Text style={[s.rowLabel, { color: themeColors.text }]}>{label}</Text>
+            <Text style={[s.chevron, { color: themeColors.textMuted }]}>›</Text>
           </TouchableOpacity>
         ))}
       </View>
-      <Text style={s.footer}>ConnectMe Inc. All rights reserved.{'\n'}San Antonio, TX · Version 1.0.0</Text>
+      <Text style={[s.footer, { color: themeColors.textMuted }]}>ConnectMe Inc. All rights reserved.{'\n'}San Antonio, TX · Version 1.0.0</Text>
     </SafeAreaView>
   );
 }

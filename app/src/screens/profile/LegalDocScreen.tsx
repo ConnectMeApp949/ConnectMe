@@ -102,16 +102,16 @@ export default function LegalDocScreen({ navigation, route }: Props) {
         <View style={s.backBtn} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
-        <Text style={s.updated}>Last updated: {doc.lastUpdated}</Text>
+        <Text style={[s.updated, { color: themeColors.textMuted }]}>Last updated: {doc.lastUpdated}</Text>
         {doc.sections.map((section, i) => (
           <View key={i} style={s.section}>
-            <Text style={s.sectionHeading}>{section.heading}</Text>
-            <Text style={s.sectionBody}>{section.body}</Text>
+            <Text style={[s.sectionHeading, { color: themeColors.text }]}>{section.heading}</Text>
+            <Text style={[s.sectionBody, { color: themeColors.textSecondary }]}>{section.body}</Text>
           </View>
         ))}
-        <View style={s.footer}>
-          <Text style={s.footerText}>ConnectMe Inc. · San Antonio, TX</Text>
-          <Text style={s.footerText}>Version 1.0.0</Text>
+        <View style={[s.footer, { borderTopColor: themeColors.border }]}>
+          <Text style={[s.footerText, { color: themeColors.textMuted }]}>ConnectMe Inc. · San Antonio, TX</Text>
+          <Text style={[s.footerText, { color: themeColors.textMuted }]}>Version 1.0.0</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
