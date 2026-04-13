@@ -34,6 +34,22 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Temporary endpoint to clear demo data — remove after use
+app.get('/clear-demo-data', async (_req, res) => {
+  try {
+    await prisma.message.deleteMany();
+    await prisma.review.deleteMany();
+    await prisma.payment.deleteMany();
+    await prisma.booking.deleteMany();
+    await prisma.vendorProfile.deleteMany();
+    await prisma.passwordResetToken.deleteMany();
+    await prisma.user.deleteMany();
+    res.json({ status: 'ok', message: 'All demo data cleared. Database is clean for launch.' });
+  } catch (error: any) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
 app.use('/auth', authRoutes);
 app.use('/vendors', vendorRoutes);
 app.use('/bookings', bookingRoutes);
