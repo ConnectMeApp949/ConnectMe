@@ -8,6 +8,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
+import { useAlert } from '../../context/AlertContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 const MAX_COMMENT = 1000;
@@ -36,6 +37,7 @@ function AnimatedStar({ filled, onPress, index }: { filled: boolean; onPress: ()
 
 export default function LeaveReviewScreen({ navigation, route }: Props) {
   const { token } = useAuth();
+  const { showAlert } = useAlert();
   const { bookingId, vendorName } = route.params as { bookingId: string; vendorName: string };
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -64,6 +66,7 @@ export default function LeaveReviewScreen({ navigation, route }: Props) {
         return;
       }
 
+      showAlert('reviewReceived', 'Review Submitted', `Your review for ${vendorName} has been posted.`);
       Alert.alert('Thank you!', 'Your review has been submitted.', [
         { text: 'OK', onPress: () => navigation.goBack() },
       ]);

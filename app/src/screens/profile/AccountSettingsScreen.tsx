@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch,
-  TextInput, Image, Alert, Modal,
+  TextInput, Image, Alert, Modal, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -164,22 +164,28 @@ export default function AccountSettingsScreen({ navigation }: Props) {
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       setProfilePhoto(uri);
-      // Upload to API
+      // Upload to API and use server URL if available (persists across sessions)
+      let persistedUrl = uri;
       try {
         const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
         const formData = new FormData();
         formData.append('photo', { uri, type: 'image/jpeg', name: 'profile.jpg' } as any);
-        await fetch(API_URL + '/auth/upload-profile-photo', {
+        const res = await fetch(API_URL + '/auth/upload-profile-photo', {
           method: 'POST',
           headers: {
             ...(auth.token ? { 'Authorization': 'Bearer ' + auth.token } : {}),
           },
           body: formData,
         });
+        const data = await res.json();
+        if (data.success && data.data?.profilePhoto) {
+          persistedUrl = data.data.profilePhoto;
+          setProfilePhoto(persistedUrl);
+        }
       } catch {
         // Photo saved locally, will sync when online
       }
-      auth.login({ ...auth.user, profilePhoto: uri }, auth.token!);
+      auth.login({ ...auth.user, profilePhoto: persistedUrl }, auth.token!);
       Alert.alert('Updated', 'Your profile photo has been updated.');
     }
   }
@@ -354,6 +360,7 @@ export default function AccountSettingsScreen({ navigation }: Props) {
 
       {/* ─── Edit Name Modal ─── */}
       <Modal visible={nameModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }} keyboardVerticalOffset={10}>
         <View style={s.modalOverlay}>
           <View style={[s.modalSheet, { backgroundColor: themeColors.cardBackground }]}>
             <View style={s.modalHeader}>
@@ -398,10 +405,12 @@ export default function AccountSettingsScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* ─── Edit Email Modal ─── */}
       <Modal visible={emailModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }} keyboardVerticalOffset={10}>
         <View style={s.modalOverlay}>
           <View style={[s.modalSheet, { backgroundColor: themeColors.cardBackground }]}>
             <View style={s.modalHeader}>
@@ -437,10 +446,12 @@ export default function AccountSettingsScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* ─── Change Password Modal ─── */}
       <Modal visible={passwordModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }} keyboardVerticalOffset={10}>
         <View style={s.modalOverlay}>
           <View style={[s.modalSheet, { backgroundColor: themeColors.cardBackground }]}>
             <View style={s.modalHeader}>
@@ -499,6 +510,7 @@ export default function AccountSettingsScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* ─── Connected Accounts Modal ─── */}
@@ -552,6 +564,7 @@ export default function AccountSettingsScreen({ navigation }: Props) {
 
       {/* ─── Edit Phone Modal ─── */}
       <Modal visible={phoneModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }} keyboardVerticalOffset={10}>
         <View style={s.modalOverlay}>
           <View style={[s.modalSheet, { backgroundColor: themeColors.cardBackground }]}>
             <View style={s.modalHeader}>
@@ -586,6 +599,7 @@ export default function AccountSettingsScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );

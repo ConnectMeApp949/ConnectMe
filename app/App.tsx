@@ -104,6 +104,8 @@ import VendorReviewPublishScreen from './src/screens/profile/VendorReviewPublish
 import { AuthContext, AuthState, useAuth } from './src/context/AuthContext';
 export { useAuth } from './src/context/AuthContext';
 import ErrorBoundary from './src/components/ErrorBoundary';
+import { AlertProvider } from './src/context/AlertContext';
+import AlertBanner from './src/components/AlertBanner';
 
 // Suppress noisy warnings in production builds
 if (!__DEV__) {
@@ -454,7 +456,10 @@ export default function App() {
           <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_live_51TG1VgECfXBYZgZGMbENz8uj7BlJF3FLpi9GhCqQb5BYQn4yc9dW3XHbYnnKIZ7dFDmutG5IKe8BpO75oYfHrG6E005gIGjxDk'}>
           <ThemeProvider>
             <LanguageProvider>
-              <AppContent />
+              <AlertProvider>
+                <AppContent />
+                <AlertBanner />
+              </AlertProvider>
             </LanguageProvider>
           </ThemeProvider>
           </StripeProvider>

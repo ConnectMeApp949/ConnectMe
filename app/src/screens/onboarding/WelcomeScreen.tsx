@@ -87,33 +87,81 @@ export default function WelcomeScreen({ navigation }: Props) {
   }
 
   async function handleFacebookLogin() {
+    const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+    const fbAppId = '951097110641665';
+    const redirectUri = 'https://auth.expo.io/@connectme/connectme';
+
+    let result;
     try {
-      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
-      const fbAppId = '951097110641665';
-      const redirectUri = 'https://auth.expo.io/@connectme/connectme';
-      const authUrl = 'https://www.facebook.com/v18.0/dialog/oauth?client_id=' + fbAppId + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&scope=email,public_profile&response_type=token';
+      const authUrl =
+        `https://www.facebook.com/v18.0/dialog/oauth` +
+        `?client_id=${fbAppId}` +
+        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+        `&scope=email,public_profile` +
+        `&response_type=token`;
 
-      const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
+      result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
+    } catch (err: any) {
+      Alert.alert(
+        'Unable to Connect',
+        'Unable to connect to Facebook. Please try again or use email to sign in.',
+      );
+      return;
+    }
 
-      if (result.type === 'success' && result.url) {
-        const params = new URLSearchParams(result.url.split('#')[1]);
-        const accessToken = params.get('access_token');
-        if (accessToken) {
-          const res = await fetch(API_URL + '/auth/social-login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ provider: 'facebook', accessToken }),
-          });
-          const data = await res.json();
-          if (data.success) {
-            auth.login(data.data.user, data.data.accessToken);
-          } else {
-            Alert.alert('Sign In Failed', data.error?.message || 'Unable to sign in with Facebook.');
-          }
-        }
+    if (result.type === 'cancel' || result.type === 'dismiss') {
+      // User closed the browser — do nothing
+      return;
+    }
+
+    if (result.type !== 'success' || !result.url) {
+      Alert.alert(
+        'Unable to Connect',
+        'Unable to connect to Facebook. Please try again or use email to sign in.',
+      );
+      return;
+    }
+
+    // Check for OAuth error in the redirect URL
+    const urlFragment = result.url.split('#')[1] ?? '';
+    const urlQuery = result.url.split('?')[1] ?? '';
+    const errorParams = new URLSearchParams(urlQuery);
+    if (errorParams.get('error')) {
+      const errorDesc = errorParams.get('error_description') ?? 'Facebook login was not completed.';
+      Alert.alert('Facebook Login', errorDesc.replace(/\+/g, ' '));
+      return;
+    }
+
+    const params = new URLSearchParams(urlFragment);
+    const accessToken = params.get('access_token');
+    if (!accessToken) {
+      Alert.alert(
+        'Unable to Connect',
+        'Unable to connect to Facebook. Please try again or use email to sign in.',
+      );
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/auth/social-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider: 'facebook', accessToken }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        auth.login(data.data.user, data.data.accessToken);
+      } else {
+        Alert.alert(
+          'Sign In Failed',
+          data.error?.message || 'Unable to sign in with Facebook. Please try again or use email to sign in.',
+        );
       }
-    } catch {
-      Alert.alert('Sign In Failed', 'Unable to sign in with Facebook. Please try again or use email and password.');
+    } catch (err: any) {
+      Alert.alert(
+        'Unable to Connect',
+        'Unable to connect to Facebook. Please try again or use email to sign in.',
+      );
     }
   }
 

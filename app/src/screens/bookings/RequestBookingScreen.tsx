@@ -7,6 +7,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
+import { useAlert } from '../../context/AlertContext';
 import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon, ShieldIcon, CheckIcon, ClockIcon } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'RequestBooking'>;
@@ -73,6 +74,7 @@ const PROMO_CODES: Record<string, { type: 'percent' | 'flat'; value: number; lab
 export default function RequestBookingScreen({ navigation, route }: Props) {
   const { colors: themeColors } = useTheme();
   const { token } = useAuth();
+  const { showAlert } = useAlert();
   const vendor = (route.params as any)?.vendor;
   const instantBook = (route.params as any)?.instantBook === true;
   const vendorName = vendor?.businessName ?? 'Vendor';
@@ -200,6 +202,7 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
       if (!data.success) {
         throw new Error(data.error?.message || 'Booking failed');
       }
+      showAlert('bookingReceived', 'Booking Request Sent', `Your request to ${vendorName} has been submitted.`);
       navigation.replace('BookingConfirmation', {
         instantBook,
         vendor,

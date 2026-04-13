@@ -74,15 +74,19 @@ export default function ViewProfileScreen({ navigation }: Props) {
         </View>
 
         <Text style={[s.fullName, { color: themeColors.text }]}>{firstName} {lastName}</Text>
-        <Text style={[s.memberSince, { color: themeColors.textMuted }]}>Member since 2024</Text>
+        <Text style={[s.memberSince, { color: themeColors.textMuted }]}>
+          {user?.createdAt
+            ? `Member since ${new Date(user.createdAt).getFullYear()}`
+            : 'Member'}
+        </Text>
 
         {/* Stats */}
         <View style={[s.statsCard, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}>
-          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>3</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Bookings</Text></View>
+          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>{user?.bookingCount ?? 0}</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Bookings</Text></View>
           <View style={[s.statDiv, { backgroundColor: themeColors.border }]} />
-          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>2</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Reviews</Text></View>
+          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>{user?.reviewCount ?? 0}</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Reviews</Text></View>
           <View style={[s.statDiv, { backgroundColor: themeColors.border }]} />
-          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>1</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Years on ConnectMe</Text></View>
+          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>{user?.memberYears ?? '<1'}</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>{'Years on\nConnectMe'}</Text></View>
         </View>
 
         {/* About */}

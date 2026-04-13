@@ -17,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useAlert } from '../../context/AlertContext';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 const MAX_COMMENT_LENGTH = 500;
@@ -37,6 +38,7 @@ type Props = NativeStackScreenProps<any, 'LeaveReview'>;
 export default function LeaveReviewScreen({ navigation, route }: Props) {
   const { colors: themeColors } = useTheme();
   const { token } = useAuth();
+  const { showAlert } = useAlert();
   const vendor = route.params?.vendor as any;
   const bookingDate = route.params?.bookingDate as string | undefined;
   const bookingId = route.params?.bookingId as string | undefined;
@@ -125,6 +127,7 @@ export default function LeaveReviewScreen({ navigation, route }: Props) {
       const data = await res.json();
 
       if (data.success) {
+        showAlert('reviewReceived', 'Review Submitted', `Your review for ${vendorName} has been posted.`);
         Alert.alert('Review submitted', 'Thank you for your feedback!', [
           {
             text: 'Share Your Experience',
