@@ -59,29 +59,29 @@ export default function VendorPayoutSettingsScreen({ navigation }: Props) {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
 
         {/* ─── Payout Methods ─── */}
-        <Text style={s.sectionTitle}>Payout Methods</Text>
-        <Text style={s.sectionSub}>Add and manage how you get paid</Text>
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Payout Methods</Text>
+        <Text style={[s.sectionSub, { color: themeColors.textSecondary }]}>Add and manage how you get paid</Text>
 
         {/* Primary method */}
-        <View style={s.methodCard}>
+        <View style={[s.methodCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           <View style={s.methodHeader}>
-            <View style={s.methodIconWrap}>
-              <DollarIcon size={20} color={colors.primary} strokeWidth={1.5} />
+            <View style={[s.methodIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <DollarIcon size={20} color={themeColors.primary} strokeWidth={1.5} />
             </View>
             <View style={s.methodInfo}>
-              <Text style={s.methodTitle}>Bank Account</Text>
-              <Text style={s.methodDetail}>Chase ••••4521</Text>
+              <Text style={[s.methodTitle, { color: themeColors.text }]}>Bank Account</Text>
+              <Text style={[s.methodDetail, { color: themeColors.textMuted }]}>Chase ••••4521</Text>
             </View>
             <View style={s.defaultBadge}>
               <Text style={s.defaultBadgeText}>Default</Text>
             </View>
           </View>
-          <View style={s.methodMeta}>
-            <Text style={s.methodMetaText}>2-3 business days · No fees</Text>
+          <View style={[s.methodMeta, { borderTopColor: themeColors.border }]}>
+            <Text style={[s.methodMetaText, { color: themeColors.textMuted }]}>2-3 business days · No fees</Text>
           </View>
           <View style={s.methodActions}>
             <TouchableOpacity style={s.methodActionBtn} onPress={() => Alert.alert('Edit', 'Edit bank account details')} accessibilityLabel="Edit bank account" accessibilityRole="button">
-              <Text style={s.methodActionText}>Edit</Text>
+              <Text style={[s.methodActionText, { color: themeColors.primary }]}>Edit</Text>
             </TouchableOpacity>
             <TouchableOpacity style={s.methodActionBtn} onPress={() => handleRemoveMethod('Bank Account ••••4521')} accessibilityLabel="Remove bank account" accessibilityRole="button">
               <Text style={[s.methodActionText, { color: colors.error }]}>Remove</Text>
@@ -90,22 +90,22 @@ export default function VendorPayoutSettingsScreen({ navigation }: Props) {
         </View>
 
         {/* Fast Pay method */}
-        <View style={s.methodCard}>
+        <View style={[s.methodCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           <View style={s.methodHeader}>
-            <View style={[s.methodIconWrap, { backgroundColor: '#F0FFF4', borderColor: '#BBF7D0' }]}>
+            <View style={[s.methodIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <ClockIcon size={20} color={colors.success} strokeWidth={1.5} />
             </View>
             <View style={s.methodInfo}>
-              <Text style={s.methodTitle}>Fast Pay (Debit Card)</Text>
-              <Text style={s.methodDetail}>Visa ••••8923</Text>
+              <Text style={[s.methodTitle, { color: themeColors.text }]}>Fast Pay (Debit Card)</Text>
+              <Text style={[s.methodDetail, { color: themeColors.textMuted }]}>Visa ••••8923</Text>
             </View>
           </View>
-          <View style={s.methodMeta}>
-            <Text style={s.methodMetaText}>Within 30 minutes · $1.99 per transfer</Text>
+          <View style={[s.methodMeta, { borderTopColor: themeColors.border }]}>
+            <Text style={[s.methodMetaText, { color: themeColors.textMuted }]}>Within 30 minutes · $1.99 per transfer</Text>
           </View>
           <View style={s.methodActions}>
             <TouchableOpacity style={s.methodActionBtn} onPress={() => Alert.alert('Edit', 'Edit debit card details')} accessibilityLabel="Edit debit card" accessibilityRole="button">
-              <Text style={s.methodActionText}>Edit</Text>
+              <Text style={[s.methodActionText, { color: themeColors.primary }]}>Edit</Text>
             </TouchableOpacity>
             <TouchableOpacity style={s.methodActionBtn} onPress={() => handleRemoveMethod('Debit Card ••••8923')} accessibilityLabel="Remove debit card" accessibilityRole="button">
               <Text style={[s.methodActionText, { color: colors.error }]}>Remove</Text>
@@ -114,36 +114,36 @@ export default function VendorPayoutSettingsScreen({ navigation }: Props) {
         </View>
 
         {/* Add method button */}
-        <TouchableOpacity style={s.addMethodBtn} activeOpacity={0.7} onPress={handleAddMethod} accessibilityLabel="Add payout method" accessibilityRole="button">
-          <Text style={s.addMethodText}>+ Add Payout Method</Text>
+        <TouchableOpacity style={[s.addMethodBtn, { borderColor: themeColors.primary }]} activeOpacity={0.7} onPress={handleAddMethod} accessibilityLabel="Add payout method" accessibilityRole="button">
+          <Text style={[s.addMethodText, { color: themeColors.primary }]}>+ Add Payout Method</Text>
         </TouchableOpacity>
 
         {/* ─── Payout Schedule ─── */}
-        <Text style={[s.sectionTitle, { marginTop: 28 }]}>Payout Schedule</Text>
+        <Text style={[s.sectionTitle, { marginTop: 28, color: themeColors.text }]}>Payout Schedule</Text>
 
-        <TouchableOpacity style={s.settingRow} activeOpacity={0.6} onPress={handleScheduleChange} accessibilityLabel="Change payout schedule" accessibilityRole="button">
+        <TouchableOpacity style={[s.settingRow, { borderBottomColor: themeColors.border }]} activeOpacity={0.6} onPress={handleScheduleChange} accessibilityLabel="Change payout schedule" accessibilityRole="button">
           <View style={s.settingLeft}>
-            <View style={s.settingIconWrap}>
-              <ClockIcon size={20} color={colors.primary} strokeWidth={1.5} />
+            <View style={[s.settingIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <ClockIcon size={20} color={themeColors.primary} strokeWidth={1.5} />
             </View>
             <View>
-              <Text style={s.settingLabel}>Frequency</Text>
-              <Text style={s.settingValue}>
+              <Text style={[s.settingLabel, { color: themeColors.text }]}>Frequency</Text>
+              <Text style={[s.settingValue, { color: themeColors.textMuted }]}>
                 {payoutSchedule === 'daily' ? 'Daily' : payoutSchedule === 'weekly' ? 'Every Monday' : '1st of each month'}
               </Text>
             </View>
           </View>
-          <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+          <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>
 
-        <View style={s.toggleRow}>
+        <View style={[s.toggleRow, { borderBottomColor: themeColors.border }]}>
           <View style={s.settingLeft}>
-            <View style={s.settingIconWrap}>
-              <CheckIcon size={20} color={colors.primary} strokeWidth={1.5} />
+            <View style={[s.settingIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <CheckIcon size={20} color={themeColors.primary} strokeWidth={1.5} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={s.settingLabel}>Automatic Payouts</Text>
-              <Text style={s.settingDesc}>Automatically transfer your available balance on schedule</Text>
+              <Text style={[s.settingLabel, { color: themeColors.text }]}>Automatic Payouts</Text>
+              <Text style={[s.settingDesc, { color: themeColors.textMuted }]}>Automatically transfer your available balance on schedule</Text>
             </View>
           </View>
           <Switch
@@ -156,38 +156,38 @@ export default function VendorPayoutSettingsScreen({ navigation }: Props) {
         </View>
 
         {/* ─── Tax Info ─── */}
-        <Text style={[s.sectionTitle, { marginTop: 28 }]}>Tax Information</Text>
+        <Text style={[s.sectionTitle, { marginTop: 28, color: themeColors.text }]}>Tax Information</Text>
 
-        <TouchableOpacity style={s.settingRow} activeOpacity={0.6} onPress={() => Alert.alert('Tax Documents', 'Your 1099-K form will be available for download in January for the previous tax year.\n\nConnectMe reports earnings over $600 to the IRS as required by law.')} accessibilityLabel="Tax documents" accessibilityRole="button">
+        <TouchableOpacity style={[s.settingRow, { borderBottomColor: themeColors.border }]} activeOpacity={0.6} onPress={() => Alert.alert('Tax Documents', 'Your 1099-K form will be available for download in January for the previous tax year.\n\nConnectMe reports earnings over $600 to the IRS as required by law.')} accessibilityLabel="Tax documents" accessibilityRole="button">
           <View style={s.settingLeft}>
-            <View style={s.settingIconWrap}>
-              <CameraIcon size={20} color={colors.primary} strokeWidth={1.5} />
+            <View style={[s.settingIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <CameraIcon size={20} color={themeColors.primary} strokeWidth={1.5} />
             </View>
             <View>
-              <Text style={s.settingLabel}>Tax Documents</Text>
-              <Text style={s.settingValue}>1099-K available in January</Text>
+              <Text style={[s.settingLabel, { color: themeColors.text }]}>Tax Documents</Text>
+              <Text style={[s.settingValue, { color: themeColors.textMuted }]}>1099-K available in January</Text>
             </View>
           </View>
-          <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+          <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={s.settingRow} activeOpacity={0.6} onPress={() => Alert.alert('Taxpayer Info', 'Your taxpayer information is on file.\n\nName: On file\nTIN: ••••1234\nType: Individual\n\nTo update, contact support.')} accessibilityLabel="Taxpayer information" accessibilityRole="button">
+        <TouchableOpacity style={[s.settingRow, { borderBottomColor: themeColors.border }]} activeOpacity={0.6} onPress={() => Alert.alert('Taxpayer Info', 'Your taxpayer information is on file.\n\nName: On file\nTIN: ••••1234\nType: Individual\n\nTo update, contact support.')} accessibilityLabel="Taxpayer information" accessibilityRole="button">
           <View style={s.settingLeft}>
-            <View style={s.settingIconWrap}>
-              <DollarIcon size={20} color={colors.primary} strokeWidth={1.5} />
+            <View style={[s.settingIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+              <DollarIcon size={20} color={themeColors.primary} strokeWidth={1.5} />
             </View>
             <View>
-              <Text style={s.settingLabel}>Taxpayer Information</Text>
-              <Text style={s.settingValue}>W-9 on file</Text>
+              <Text style={[s.settingLabel, { color: themeColors.text }]}>Taxpayer Information</Text>
+              <Text style={[s.settingValue, { color: themeColors.textMuted }]}>W-9 on file</Text>
             </View>
           </View>
-          <ChevronRightIcon size={18} color={colors.textMuted} strokeWidth={1.5} />
+          <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
         </TouchableOpacity>
 
         {/* ─── Help ─── */}
-        <View style={s.helpCard}>
-          <Text style={s.helpTitle}>Need help with payouts?</Text>
-          <Text style={s.helpText}>If you have questions about your earnings, payment methods, or tax information, our support team is here to help.</Text>
+        <View style={[s.helpCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <Text style={[s.helpTitle, { color: themeColors.text }]}>Need help with payouts?</Text>
+          <Text style={[s.helpText, { color: themeColors.textMuted }]}>If you have questions about your earnings, payment methods, or tax information, our support team is here to help.</Text>
           <TouchableOpacity style={s.helpBtn} activeOpacity={0.7} onPress={() => Alert.alert('Support', 'Contact us at support@connectmeapp.services or through Live Chat in the Get Help section.')} accessibilityLabel="Contact support" accessibilityRole="button">
             <Text style={s.helpBtnText}>Contact Support</Text>
           </TouchableOpacity>

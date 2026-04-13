@@ -174,7 +174,7 @@ export default function VendorEarningsScreen({ navigation }: Props) {
         {/* ─── Fast Pay Banner ─── */}
         <TouchableOpacity style={[s.fastPayBanner, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={handleSetupFastPay} accessibilityLabel="Set up Fast Pay" accessibilityRole="button">
           <View style={s.fastPayLeft}>
-            <View style={s.fastPayIconWrap}>
+            <View style={[s.fastPayIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <ClockIcon size={18} color={colors.success} strokeWidth={2} />
             </View>
             <View>
@@ -190,14 +190,14 @@ export default function VendorEarningsScreen({ navigation }: Props) {
           {(['week', 'month', 'year'] as const).map((p) => (
             <TouchableOpacity
               key={p}
-              style={[s.periodBtn, { borderColor: themeColors.border }, selectedPeriod === p && s.periodBtnActive]}
+              style={[s.periodBtn, { borderColor: themeColors.border }, selectedPeriod === p && [s.periodBtnActive, { backgroundColor: themeColors.text, borderColor: themeColors.text }]]}
               onPress={() => setSelectedPeriod(p)}
               activeOpacity={0.7}
               accessibilityLabel={`View ${p}ly earnings`}
               accessibilityRole="button"
               accessibilityState={{ selected: selectedPeriod === p }}
             >
-              <Text style={[s.periodText, { color: themeColors.textMuted }, selectedPeriod === p && s.periodTextActive]}>
+              <Text style={[s.periodText, { color: themeColors.textMuted }, selectedPeriod === p && [s.periodTextActive, { color: themeColors.background }]]}>
                 {p === 'week' ? 'This Week' : p === 'month' ? 'This Month' : 'This Year'}
               </Text>
             </TouchableOpacity>
@@ -225,10 +225,13 @@ export default function VendorEarningsScreen({ navigation }: Props) {
         </View>
 
         {/* ─── Payout History ─── */}
-        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Payout History</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('VendorPayoutSettings')} style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Text style={[s.sectionTitle, { color: themeColors.text }]}>Payout History</Text>
+          <ChevronRightIcon size={18} color={themeColors.textMuted} strokeWidth={1.5} />
+        </TouchableOpacity>
         {payoutHistory.map((payout) => (
           <TouchableOpacity key={payout.id} style={[s.payoutRow, { borderBottomColor: themeColors.border }]} activeOpacity={0.6} onPress={() => Alert.alert('Payout Details', `Amount: $${payout.amount.toFixed(2)}\nDate: ${payout.date}\nMethod: ${payout.method}\nStatus: Completed\n\nTransaction ID: TXN-${payout.id.padStart(6, '0')}`)}>
-            <View style={s.payoutIconWrap}>
+            <View style={[s.payoutIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <CheckIcon size={18} color={colors.success} strokeWidth={2} />
             </View>
             <View style={s.payoutInfo}>
@@ -306,7 +309,7 @@ const s = StyleSheet.create({
     borderColor: colors.border,
   },
   fastPayLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  fastPayIconWrap: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#F0FFF4', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#BBF7D0' },
+  fastPayIconWrap: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
   fastPayTitle: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.text },
   fastPaySub: { fontFamily: fonts.regular, fontSize: 12, color: colors.textMuted, marginTop: 2 },
 
@@ -339,7 +342,7 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  payoutIconWrap: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#F0FFF4', alignItems: 'center', justifyContent: 'center', marginRight: 12, borderWidth: 1, borderColor: '#BBF7D0' },
+  payoutIconWrap: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginRight: 12, borderWidth: 1 },
   payoutInfo: { flex: 1 },
   payoutAmount: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.text },
   payoutDate: { fontFamily: fonts.regular, fontSize: 12, color: colors.textMuted, marginTop: 2 },
