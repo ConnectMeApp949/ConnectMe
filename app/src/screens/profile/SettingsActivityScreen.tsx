@@ -97,6 +97,25 @@ export default function SettingsActivityScreen({ navigation }: Props) {
           })}
         </View>
 
+        {/* ─── Vendor mode banner ─── */}
+        <TouchableOpacity
+          style={[styles.vendorBanner, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
+          activeOpacity={0.8}
+          onPress={() => auth.toggleVendorMode()}
+          accessibilityLabel={auth.isVendorMode ? 'Switch to Booking' : 'Switch to hosting'}
+          accessibilityRole="button"
+        >
+          <View style={styles.vendorBannerLeft}>
+            <Text style={[styles.vendorBannerTitle, { color: themeColors.text }]}>
+              {auth.isVendorMode ? 'Switch to Booking' : 'Switch to hosting'}
+            </Text>
+            <Text style={[styles.vendorBannerSub, { color: themeColors.textSecondary }]}>
+              {auth.isVendorMode ? 'Browse and book vendors for your events' : 'Manage your vendor business'}
+            </Text>
+          </View>
+          <ChevronRightIcon size={24} color={themeColors.primary} strokeWidth={1.5} />
+        </TouchableOpacity>
+
         {/* ─── Version ─── */}
         <Text style={[styles.version, { color: themeColors.textSecondary }]}>ConnectMe v1.0.0</Text>
 
@@ -179,6 +198,20 @@ const styles = StyleSheet.create({
   menuLabelDanger: {
     color: colors.error,
   },
+
+  // ─── Vendor banner ───
+  vendorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  vendorBannerLeft: { flex: 1 },
+  vendorBannerTitle: { fontFamily: fonts.semiBold, fontSize: 16 },
+  vendorBannerSub: { fontFamily: fonts.regular, fontSize: 13, marginTop: 2 },
 
   // ─── Version ───
   version: {

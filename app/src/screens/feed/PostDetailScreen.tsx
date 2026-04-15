@@ -11,6 +11,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Modal,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
@@ -28,6 +30,9 @@ import {
   MoreHorizontalIcon,
   MapPinIcon,
   SendIcon,
+  ClockIcon,
+  EditPencilIcon,
+  XIcon,
 } from '../../components/Icons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -137,7 +142,7 @@ function CommentItem({
 export default function PostDetailScreen({ route, navigation }: any) {
   const { colors: themeColors } = useTheme();
   const { user } = useAuth();
-  const { posts, likePost, bookmarkPost, addComment, likeComment } = useFeed();
+  const { posts, likePost, bookmarkPost, addComment, likeComment, editPost } = useFeed();
   const inputRef = useRef<TextInput>(null);
 
   const { postId } = route.params;
@@ -145,6 +150,11 @@ export default function PostDetailScreen({ route, navigation }: any) {
 
   const [commentText, setCommentText] = useState('');
   const [currentImage, setCurrentImage] = useState(0);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [editVisible, setEditVisible] = useState(false);
+  const [editCaption, setEditCaption] = useState('');
+  const [editLocation, setEditLocation] = useState('');
+  const [editTaggedFriends, setEditTaggedFriends] = useState('');
 
   const handleSendComment = useCallback(() => {
     if (!commentText.trim()) return;
@@ -231,7 +241,7 @@ export default function PostDetailScreen({ route, navigation }: any) {
                     ) : null}
                   </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.moreBtn} activeOpacity={0.6} accessibilityLabel="Post options" accessibilityRole="button">
+                <TouchableOpacity style={styles.moreBtn} activeOpacity={0.6} onPress={() => setMenuVisible(true)} accessibilityLabel="Post options" accessibilityRole="button">
                   <MoreHorizontalIcon size={20} color={themeColors.textMuted} />
                 </TouchableOpacity>
               </View>
@@ -370,9 +380,118 @@ export default function PostDetailScreen({ route, navigation }: any) {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+
+      {/* ─── Edit post modal ─── */}
+      <Modal visible={editVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setEditVisible(false)}>
+        <SafeAreaView style={[{ flex: 1, backgroundColor: themeColors.background }]}>
+          <View style={[menuStyles.editHeader, { borderBottomColor: themeColors.border }]}>
+            <TouchableOpacity onPress={() => setEditVisible(false)} activeOpacity={0.6}>
+              <Text style={[menuStyles.editCancel, { color: themeColors.textSecondary }]}>Cancel</Text>
+            </TouchableOpacity>
+            <Text style={[menuStyles.editTitle, { color: themeColors.text }]}>Edit Post</Text>
+            <TouchableOpacity onPress={() => {
+              editPost(post.id, {
+                caption: editCaption,
+                location: editLocation,
+                taggedFriends: editTaggedFriends.split(',').map((s: string) => s.trim()).filter(Boolean),
+              });
+              setEditVisible(false);
+              Alert.alert('Updated', 'Your post has been updated.');
+            }} activeOpacity={0.6}>
+              <Text style={[menuStyles.editSave, { color: themeColors.primary }]}>Save</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView style={{ padding: 20 }} keyboardShouldPersistTaps="handled">
+            <Text style={[menuStyles.editLabel, { color: themeColors.text }]}>Caption</Text>
+            <TextInput
+              style={[menuStyles.editInput, menuStyles.editInputLarge, { color: themeColors.text, backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
+              value={editCaption}
+              onChangeText={setEditCaption}
+              placeholder="Write a caption..."
+              placeholderTextColor={themeColors.textMuted}
+              multiline
+              textAlignVertical="top"
+            />
+
+            <Text style={[menuStyles.editLabel, { color: themeColors.text }]}>Location</Text>
+            <TextInput
+              style={[menuStyles.editInput, { color: themeColors.text, backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
+              value={editLocation}
+              onChangeText={setEditLocation}
+              placeholder="Add location"
+              placeholderTextColor={themeColors.textMuted}
+            />
+
+            <Text style={[menuStyles.editLabel, { color: themeColors.text }]}>Tag Friends</Text>
+            <TextInput
+              style={[menuStyles.editInput, { color: themeColors.text, backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
+              value={editTaggedFriends}
+              onChangeText={setEditTaggedFriends}
+              placeholder="Separate names with commas"
+              placeholderTextColor={themeColors.textMuted}
+            />
+            <Text style={[menuStyles.editHint, { color: themeColors.textMuted }]}>Tagged vendors cannot be changed after posting.</Text>
+          </ScrollView>
+        </SafeAreaView>
+      </Modal>
+
+      {/* ─── Post options bottom sheet ─── */}
+      <Modal visible={menuVisible} transparent animationType="slide" onRequestClose={() => setMenuVisible(false)}>
+        <TouchableOpacity style={menuStyles.overlay} activeOpacity={1} onPress={() => setMenuVisible(false)}>
+          <View style={[menuStyles.sheet, { backgroundColor: themeColors.cardBackground }]}>
+            <View style={[menuStyles.handle, { backgroundColor: themeColors.border }]} />
+            {[
+              { label: 'Save', Icon: BookmarkIcon, onPress: () => { bookmarkPost(post.id); setMenuVisible(false); Alert.alert('Saved', 'Post saved to your collection.'); } },
+              { label: 'Archive', Icon: ClockIcon, onPress: () => { setMenuVisible(false); Alert.alert('Archived', 'Post moved to your archive.'); } },
+              { label: 'Edit', Icon: EditPencilIcon, onPress: () => { setMenuVisible(false); setEditCaption(post.caption); setEditLocation(post.location); setEditTaggedFriends(post.taggedFriends.join(', ')); setEditVisible(true); } },
+              { label: 'Share', Icon: ShareIcon, onPress: () => { setMenuVisible(false); Alert.alert('Share', 'Post link copied to clipboard.'); } },
+              { label: 'Delete', Icon: XIcon, danger: true, onPress: () => { setMenuVisible(false); Alert.alert('Delete Post', 'Are you sure you want to delete this post? This cannot be undone.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Delete', style: 'destructive', onPress: () => { navigation.goBack(); } }]); } },
+            ].map((item, i) => {
+              const MenuIcon = item.Icon;
+              return (
+                <TouchableOpacity
+                  key={item.label}
+                  style={[menuStyles.option, i < 4 && { borderBottomWidth: 1, borderBottomColor: themeColors.border }]}
+                  onPress={item.onPress}
+                  activeOpacity={0.6}
+                >
+                  <View style={[menuStyles.optionIconWrap, { backgroundColor: themeColors.background, borderColor: themeColors.border }]}>
+                    <MenuIcon size={18} color={(item as any).danger ? '#DC2626' : themeColors.primary} strokeWidth={1.5} />
+                  </View>
+                  <Text style={[menuStyles.optionLabel, { color: (item as any).danger ? '#DC2626' : themeColors.text }]}>{item.label}</Text>
+                </TouchableOpacity>
+              );
+            })}
+            <TouchableOpacity style={[menuStyles.cancelBtn, { backgroundColor: themeColors.background, borderColor: themeColors.border }]} onPress={() => setMenuVisible(false)} activeOpacity={0.7}>
+              <Text style={[menuStyles.cancelText, { color: themeColors.text }]}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
+
+// ─── Menu styles ────────────────────────────────────────
+
+const menuStyles = StyleSheet.create({
+  overlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
+  sheet: { borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingBottom: 34, paddingTop: 8 },
+  handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 16 },
+  option: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 24, gap: 14 },
+  optionIconWrap: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
+  optionLabel: { fontFamily: fonts.medium, fontSize: 16 },
+  cancelBtn: { marginHorizontal: 16, marginTop: 12, paddingVertical: 14, borderRadius: 12, alignItems: 'center', borderWidth: 1 },
+  cancelText: { fontFamily: fonts.semiBold, fontSize: 16 },
+  editHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1 },
+  editCancel: { fontFamily: fonts.regular, fontSize: 16 },
+  editTitle: { fontFamily: fonts.semiBold, fontSize: 17 },
+  editSave: { fontFamily: fonts.semiBold, fontSize: 16 },
+  editLabel: { fontFamily: fonts.semiBold, fontSize: 15, marginBottom: 8, marginTop: 16 },
+  editInput: { fontFamily: fonts.regular, fontSize: 15, padding: 14, borderRadius: 12, borderWidth: 1 },
+  editInputLarge: { minHeight: 120, textAlignVertical: 'top' },
+  editHint: { fontFamily: fonts.regular, fontSize: 12, marginTop: 8 },
+});
 
 // ─── Styles ─────────────────────────────────────────────
 

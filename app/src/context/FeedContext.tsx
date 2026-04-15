@@ -32,6 +32,7 @@ export interface FeedPost {
 interface FeedContextValue {
   posts: FeedPost[];
   addPost: (post: Omit<FeedPost, 'id' | 'likes' | 'liked' | 'bookmarked' | 'comments' | 'createdAt'> & { comments?: FeedComment[] }) => void;
+  editPost: (id: string, updates: { caption?: string; location?: string; taggedVendors?: string[]; taggedFriends?: string[] }) => void;
   likePost: (id: string) => void;
   bookmarkPost: (id: string) => void;
   addComment: (postId: string, comment: Omit<FeedComment, 'id' | 'likes' | 'createdAt'>) => void;
@@ -41,6 +42,7 @@ interface FeedContextValue {
 const FeedContext = createContext<FeedContextValue>({
   posts: [],
   addPost: () => {},
+  editPost: () => {},
   likePost: () => {},
   bookmarkPost: () => {},
   addComment: () => {},
@@ -190,6 +192,14 @@ export function FeedProvider({ children }: { children: React.ReactNode }) {
     setPosts((prev) => [newPost, ...prev]);
   }, []);
 
+  const editPost = useCallback((id: string, updates: { caption?: string; location?: string; taggedVendors?: string[]; taggedFriends?: string[] }) => {
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === id ? { ...p, ...updates } : p,
+      ),
+    );
+  }, []);
+
   const likePost = useCallback((id: string) => {
     setPosts((prev) =>
       prev.map((p) =>
@@ -238,7 +248,7 @@ export function FeedProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <FeedContext.Provider value={{ posts, addPost, likePost, bookmarkPost, addComment, likeComment }}>
+    <FeedContext.Provider value={{ posts, addPost, editPost, likePost, bookmarkPost, addComment, likeComment }}>
       {children}
     </FeedContext.Provider>
   );

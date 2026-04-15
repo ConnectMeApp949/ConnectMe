@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Dimensions, FlatList,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Dimensions, FlatList, Modal, Alert,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useFeed } from '../../context/FeedContext';
-import { SettingsIcon, PlusIcon, GridIcon, ChevronRightIcon } from '../../components/Icons';
+import { SettingsIcon, PlusIcon, GridIcon, ChevronRightIcon, StarIcon, UserIcon, CameraIcon, ImageIcon, ClockIcon, XIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -27,8 +28,67 @@ export default function ProfileScreen({ navigation }: Props) {
   const username = user?.username ?? `${firstName.toLowerCase()}${lastName.toLowerCase()}`;
   const bio = user?.bio ?? '';
 
-  // Filter posts by current user (for demo, show all posts)
-  const userPosts = posts.filter((p) => p.userId === user?.id) ?? posts;
+  const [activeTab, setActiveTab] = useState<'posts' | 'tagged'>('posts');
+  const [createMenuVisible, setCreateMenuVisible] = useState(false);
+
+  async function handleCreatePost() {
+    setCreateMenuVisible(false);
+    navigation.navigate('PostCreation');
+  }
+
+  async function handleCreateStory() {
+    setCreateMenuVisible(false);
+    Alert.alert('Add to Your Story', 'Choose a photo or video', [
+      {
+        text: 'Take Photo/Video',
+        onPress: async () => {
+          const perm = await ImagePicker.requestCameraPermissionsAsync();
+          if (!perm.granted) { Alert.alert('Permission Needed', 'Camera access is required.'); return; }
+          const result = await ImagePicker.launchCameraAsync({ quality: 0.8, allowsEditing: true, aspect: [9, 16] });
+          if (!result.canceled) {
+            // Navigate to post creation with the image
+            navigation.navigate('PostCreation', { initialImage: result.assets[0].uri, isStory: true });
+          }
+        },
+      },
+      {
+        text: 'Choose from Library',
+        onPress: async () => {
+          const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+          if (!perm.granted) { Alert.alert('Permission Needed', 'Photo library access is required.'); return; }
+          const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.8, allowsEditing: true, aspect: [9, 16] });
+          if (!result.canceled) {
+            navigation.navigate('PostCreation', { initialImage: result.assets[0].uri, isStory: true });
+          }
+        },
+      },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
+  }
+
+  async function handleCreateReel() {
+    setCreateMenuVisible(false);
+    const perm = await ImagePicker.requestCameraPermissionsAsync();
+    if (!perm.granted) { Alert.alert('Permission Needed', 'Camera access is required to create reels.'); return; }
+    const result = await ImagePicker.launchCameraAsync({ mediaTypes: ['videos'], quality: 0.8, videoMaxDuration: 60 });
+    if (!result.canceled) {
+      navigation.navigate('PostCreation', { initialImage: result.assets[0].uri, isReel: true });
+    }
+  }
+
+  async function handleGoLive() {
+    setCreateMenuVisible(false);
+    Alert.alert('Go Live', 'Live streaming will be available in a future update. Stay tuned!');
+  }
+
+  // Show user's posts, or all demo posts as sample content
+  const myPosts = posts.filter((p) => p.userId === user?.id);
+  const userPosts = myPosts.length > 0 ? myPosts : posts.slice(0, 6);
+
+  // Posts where user is tagged (demo: show other posts)
+  const taggedPosts = posts.filter((p) => p.taggedFriends.some(f => f.toLowerCase().includes(firstName.toLowerCase())) || p.userId !== user?.id).slice(0, 4);
+
+  const displayPosts = activeTab === 'posts' ? userPosts : taggedPosts;
 
   if (!user) {
     return (
@@ -63,17 +123,16 @@ export default function ProfileScreen({ navigation }: Props) {
 
         {/* ─── Header bar (Instagram-style) ─── */}
         <View style={styles.headerBar}>
-          <Text style={[styles.headerUsername, { color: themeColors.text }]}>{username}</Text>
+          <TouchableOpacity
+            style={styles.headerIconBtn}
+            onPress={() => setCreateMenuVisible(true)}
+            activeOpacity={0.7}
+            accessibilityLabel="Create new content"
+            accessibilityRole="button"
+          >
+            <PlusIcon size={28} color={themeColors.text} strokeWidth={2} />
+          </TouchableOpacity>
           <View style={styles.headerRight}>
-            <TouchableOpacity
-              style={styles.headerIconBtn}
-              onPress={() => navigation.navigate('PostCreation')}
-              activeOpacity={0.7}
-              accessibilityLabel="Create post"
-              accessibilityRole="button"
-            >
-              <PlusIcon size={26} color={themeColors.text} strokeWidth={2} />
-            </TouchableOpacity>
             <TouchableOpacity
               style={styles.headerIconBtn}
               onPress={() => navigation.navigate('SettingsActivity')}
@@ -98,18 +157,18 @@ export default function ProfileScreen({ navigation }: Props) {
             )}
           </View>
           <View style={styles.statsRow}>
-            <View style={styles.statCol}>
+            <TouchableOpacity style={styles.statCol} activeOpacity={0.7}>
               <Text style={[styles.statNumber, { color: themeColors.text }]}>{userPosts.length}</Text>
               <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Posts</Text>
-            </View>
-            <View style={styles.statCol}>
-              <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.followersCount ?? 0}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.statCol} activeOpacity={0.7} onPress={() => navigation.navigate('Connections')}>
+              <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.followersCount ?? 24}</Text>
               <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Followers</Text>
-            </View>
-            <View style={styles.statCol}>
-              <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.followingCount ?? 0}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.statCol} activeOpacity={0.7} onPress={() => navigation.navigate('Connections')}>
+              <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.followingCount ?? 38}</Text>
               <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Following</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -142,36 +201,47 @@ export default function ProfileScreen({ navigation }: Props) {
           </TouchableOpacity>
         </View>
 
-        {/* ─── Vendor mode banner ─── */}
-        {auth.isVendorMode ? (
-          <TouchableOpacity style={[styles.vendorBanner, { backgroundColor: themeColors.cardBackground }]} activeOpacity={0.8} onPress={() => auth.toggleVendorMode()} accessibilityLabel="Switch to Booking" accessibilityRole="button" accessibilityHint="Browse and book vendors for your events">
-            <View style={styles.vendorBannerLeft}>
-              <Text style={[styles.vendorBannerTitle, { color: themeColors.text }]}>Switch to Booking</Text>
-              <Text style={[styles.vendorBannerSub, { color: themeColors.textSecondary }]}>Browse and book vendors for your events</Text>
-            </View>
-            <ChevronRightIcon size={24} color={colors.primary} strokeWidth={1.5} />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity style={[styles.vendorBanner, { backgroundColor: themeColors.cardBackground }]} activeOpacity={0.8} onPress={() => auth.toggleVendorMode()} accessibilityLabel="Switch to hosting" accessibilityRole="button" accessibilityHint="Manage your vendor business">
-            <View style={styles.vendorBannerLeft}>
-              <Text style={[styles.vendorBannerTitle, { color: themeColors.text }]}>Switch to hosting</Text>
-              <Text style={[styles.vendorBannerSub, { color: themeColors.textSecondary }]}>Manage your vendor business</Text>
-            </View>
-            <ChevronRightIcon size={24} color={colors.primary} strokeWidth={1.5} />
-          </TouchableOpacity>
-        )}
+        {/* ─── Recent reviews ─── */}
+        <View style={styles.reviewsSection}>
+          <View style={styles.reviewsHeader}>
+            <Text style={[styles.reviewsTitle, { color: themeColors.text }]}>Reviews</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('MyReviews')} activeOpacity={0.6}>
+              <Text style={[styles.reviewsSeeAll, { color: themeColors.primary }]}>See all</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
+            {[
+              { vendor: 'DJ Alamo Beats', rating: 5, text: 'Amazing DJ! Made our event unforgettable.' },
+              { vendor: 'Taco Libre SA', rating: 5, text: 'Best food truck in San Antonio. Guests loved it!' },
+              { vendor: 'SA Forever Photos', rating: 4, text: 'Great photos, very professional.' },
+            ].map((review, i) => (
+              <TouchableOpacity key={i} style={[styles.reviewCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('MyReviews')}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+                  {[1,2,3,4,5].map(s => (
+                    <StarIcon key={s} size={12} color={s <= review.rating ? colors.star : themeColors.border} />
+                  ))}
+                </View>
+                <Text style={[styles.reviewVendor, { color: themeColors.text }]}>{review.vendor}</Text>
+                <Text style={[styles.reviewText, { color: themeColors.textSecondary }]} numberOfLines={2}>{review.text}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
 
         {/* ─── Posts tab bar ─── */}
         <View style={[styles.tabBar, { borderBottomColor: themeColors.border, borderTopColor: themeColors.border }]}>
-          <View style={[styles.tabItem, styles.tabItemActive, { borderBottomColor: themeColors.text }]}>
-            <GridIcon size={24} color={themeColors.text} strokeWidth={1.5} />
-          </View>
+          <TouchableOpacity style={[styles.tabItem, activeTab === 'posts' && styles.tabItemActive, activeTab === 'posts' && { borderBottomColor: themeColors.text }]} onPress={() => setActiveTab('posts')} activeOpacity={0.7}>
+            <GridIcon size={24} color={activeTab === 'posts' ? themeColors.text : themeColors.textMuted} strokeWidth={1.5} />
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tabItem, activeTab === 'tagged' && styles.tabItemActive, activeTab === 'tagged' && { borderBottomColor: themeColors.text }]} onPress={() => setActiveTab('tagged')} activeOpacity={0.7}>
+            <UserIcon size={24} color={activeTab === 'tagged' ? themeColors.text : themeColors.textMuted} strokeWidth={1.5} />
+          </TouchableOpacity>
         </View>
 
         {/* ─── Posts grid ─── */}
-        {userPosts.length > 0 ? (
+        {displayPosts.length > 0 ? (
           <View style={styles.gridContainer}>
-            {userPosts.map((post, index) => (
+            {displayPosts.map((post, index) => (
               <TouchableOpacity
                 key={post.id}
                 style={[
@@ -196,15 +266,64 @@ export default function ProfileScreen({ navigation }: Props) {
           </View>
         ) : (
           <View style={styles.emptyGrid}>
-            <Text style={[styles.emptyGridText, { color: themeColors.textMuted }]}>No posts yet</Text>
+            <Text style={[styles.emptyGridText, { color: themeColors.textMuted }]}>
+              {activeTab === 'posts' ? 'No posts yet' : 'No tagged posts yet'}
+            </Text>
           </View>
         )}
 
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      {/* ─── Create content bottom sheet ─── */}
+      <Modal visible={createMenuVisible} transparent animationType="slide" onRequestClose={() => setCreateMenuVisible(false)}>
+        <TouchableOpacity style={createStyles.overlay} activeOpacity={1} onPress={() => setCreateMenuVisible(false)}>
+          <View style={[createStyles.sheet, { backgroundColor: themeColors.cardBackground }]}>
+            <View style={[createStyles.handle, { backgroundColor: themeColors.border }]} />
+            <Text style={[createStyles.title, { color: themeColors.text }]}>Create</Text>
+
+            <View style={createStyles.grid}>
+              <TouchableOpacity style={createStyles.option} onPress={handleCreatePost} activeOpacity={0.7}>
+                <View style={[createStyles.iconWrap, { backgroundColor: themeColors.background, borderColor: themeColors.border }]}>
+                  <GridIcon size={24} color={themeColors.primary} strokeWidth={1.5} />
+                </View>
+                <Text style={[createStyles.optionLabel, { color: themeColors.text }]}>Post</Text>
+                <Text style={[createStyles.optionSub, { color: themeColors.textMuted }]}>Share photos & tag vendors</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={createStyles.option} onPress={handleCreateStory} activeOpacity={0.7}>
+                <View style={[createStyles.iconWrap, { backgroundColor: themeColors.background, borderColor: themeColors.border }]}>
+                  <ClockIcon size={24} color={themeColors.primary} strokeWidth={1.5} />
+                </View>
+                <Text style={[createStyles.optionLabel, { color: themeColors.text }]}>Story</Text>
+                <Text style={[createStyles.optionSub, { color: themeColors.textMuted }]}>Share moments that disappear</Text>
+              </TouchableOpacity>
+
+            </View>
+
+            <TouchableOpacity style={[createStyles.cancelBtn, { borderColor: themeColors.border }]} onPress={() => setCreateMenuVisible(false)} activeOpacity={0.7}>
+              <Text style={[createStyles.cancelText, { color: themeColors.text }]}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
+
+const createStyles = StyleSheet.create({
+  overlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
+  sheet: { borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingBottom: 34, paddingTop: 8 },
+  handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 16 },
+  title: { fontFamily: fonts.bold, fontSize: 20, textAlign: 'center', marginBottom: 20 },
+  grid: { paddingHorizontal: 20 },
+  option: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, gap: 14 },
+  iconWrap: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
+  optionLabel: { fontFamily: fonts.semiBold, fontSize: 16 },
+  optionSub: { fontFamily: fonts.regular, fontSize: 12, marginTop: 1 },
+  cancelBtn: { marginHorizontal: 20, marginTop: 16, paddingVertical: 14, borderRadius: 12, alignItems: 'center', borderWidth: 1 },
+  cancelText: { fontFamily: fonts.semiBold, fontSize: 16 },
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -399,6 +518,24 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
     fontSize: 15,
   },
+
+  // ─── Friends row ───
+  friendsRow: { paddingHorizontal: 16, paddingVertical: 12, gap: 16 },
+  friendCircle: { alignItems: 'center', width: 64 },
+  friendAvatar: { width: 56, height: 56, borderRadius: 28, borderWidth: 2, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary },
+  friendInitial: { fontFamily: fonts.bold, fontSize: 20, color: colors.white },
+  friendAvatarAdd: { width: 56, height: 56, borderRadius: 28, borderWidth: 1.5, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
+  friendAddPlus: { fontSize: 24, fontFamily: fonts.regular },
+  friendName: { fontFamily: fonts.regular, fontSize: 11, marginTop: 4, textAlign: 'center' },
+
+  // ─── Reviews section ───
+  reviewsSection: { paddingHorizontal: 16, marginBottom: 12 },
+  reviewsHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
+  reviewsTitle: { fontFamily: fonts.bold, fontSize: 16 },
+  reviewsSeeAll: { fontFamily: fonts.semiBold, fontSize: 14 },
+  reviewCard: { width: 200, padding: 12, borderRadius: 12, borderWidth: 1 },
+  reviewVendor: { fontFamily: fonts.semiBold, fontSize: 13, marginBottom: 4 },
+  reviewText: { fontFamily: fonts.regular, fontSize: 12, lineHeight: 17 },
 
   // ─── Sign-in screen (unauthenticated) ───
   signInContainer: {

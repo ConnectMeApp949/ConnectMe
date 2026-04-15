@@ -10,7 +10,10 @@ import {
   Dimensions,
   ScrollView,
   TextInput,
+  Modal,
+  Alert,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -44,7 +47,7 @@ const STORY_USERS = [
   { id: 's6', name: 'Marcus R.', initial: 'MR', hasStory: true },
 ];
 
-function StoriesRow({ themeColors }: { themeColors: any }) {
+function StoriesRow({ themeColors, onAddStory }: { themeColors: any; onAddStory: () => void }) {
   return (
     <View style={[styles.storiesContainer, { borderBottomColor: themeColors.border }]}>
       <ScrollView
@@ -57,6 +60,7 @@ function StoriesRow({ themeColors }: { themeColors: any }) {
             key={user.id}
             style={styles.storyItem}
             activeOpacity={0.7}
+            onPress={user.id === 'you' ? onAddStory : undefined}
             accessibilityLabel={`${user.name} story`}
             accessibilityRole="button"
           >
@@ -346,8 +350,59 @@ function PostCard({
 
 export default function FeedScreen({ navigation }: any) {
   const { colors: themeColors } = useTheme();
-  const { posts, likePost, bookmarkPost } = useFeed();
+  const auth = useAuth();
+  const { posts, likePost, bookmarkPost, addPost } = useFeed();
   const [refreshing, setRefreshing] = useState(false);
+  const [storyPreview, setStoryPreview] = useState<string | null>(null);
+  const [storyCaption, setStoryCaption] = useState('');
+
+  function handleAddStory() {
+    if (!auth.user) {
+      Alert.alert('Sign In Required', 'Please sign in to share a story.', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign In', onPress: () => navigation.navigate('Onboarding') },
+      ]);
+      return;
+    }
+    Alert.alert('Add to Your Story', 'Choose a photo or video to share', [
+      {
+        text: 'Take Photo',
+        onPress: async () => {
+          const perm = await ImagePicker.requestCameraPermissionsAsync();
+          if (!perm.granted) { Alert.alert('Permission Needed', 'Camera access is required to take photos.'); return; }
+          const result = await ImagePicker.launchCameraAsync({ quality: 0.8, allowsEditing: true, aspect: [9, 16] });
+          if (!result.canceled) { setStoryPreview(result.assets[0].uri); }
+        },
+      },
+      {
+        text: 'Choose from Library',
+        onPress: async () => {
+          const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+          if (!perm.granted) { Alert.alert('Permission Needed', 'Photo library access is required.'); return; }
+          const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.8, allowsEditing: true, aspect: [9, 16] });
+          if (!result.canceled) { setStoryPreview(result.assets[0].uri); }
+        },
+      },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
+  }
+
+  function handlePostStory() {
+    if (!storyPreview) return;
+    addPost({
+      userId: auth.user?.id ?? 'me',
+      userName: (auth.user?.firstName ?? '') + ' ' + (auth.user?.lastName ?? ''),
+      userAvatar: auth.user?.profilePhoto ?? null,
+      images: [storyPreview],
+      caption: storyCaption,
+      taggedVendors: [],
+      taggedFriends: [],
+      location: '',
+    });
+    setStoryPreview(null);
+    setStoryCaption('');
+    Alert.alert('Posted!', 'Your story has been shared to your feed.');
+  }
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -407,7 +462,7 @@ export default function FeedScreen({ navigation }: any) {
         data={posts}
         keyExtractor={(item) => item.id}
         renderItem={renderPost}
-        ListHeaderComponent={<StoriesRow themeColors={themeColors} />}
+        ListHeaderComponent={<StoriesRow themeColors={themeColors} onAddStory={handleAddStory} />}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -419,9 +474,51 @@ export default function FeedScreen({ navigation }: any) {
         }
         contentContainerStyle={{ paddingBottom: 20 }}
       />
+      {/* ─── Story preview modal ─── */}
+      <Modal visible={!!storyPreview} animationType="slide" presentationStyle="fullScreen">
+        <View style={[storyStyles.container, { backgroundColor: '#000' }]}>
+          <SafeAreaView style={{ flex: 1 }}>
+            <View style={storyStyles.header}>
+              <TouchableOpacity onPress={() => { setStoryPreview(null); setStoryCaption(''); }} activeOpacity={0.6}>
+                <Text style={storyStyles.headerCancel}>Cancel</Text>
+              </TouchableOpacity>
+              <Text style={storyStyles.headerTitle}>Your Story</Text>
+              <TouchableOpacity onPress={handlePostStory} activeOpacity={0.6}>
+                <Text style={[storyStyles.headerShare, { color: themeColors.primary }]}>Share</Text>
+              </TouchableOpacity>
+            </View>
+            {storyPreview && (
+              <Image source={{ uri: storyPreview }} style={storyStyles.preview} resizeMode="contain" />
+            )}
+            <View style={storyStyles.captionBar}>
+              <TextInput
+                style={storyStyles.captionInput}
+                value={storyCaption}
+                onChangeText={setStoryCaption}
+                placeholder="Add a caption..."
+                placeholderTextColor="rgba(255,255,255,0.5)"
+                multiline
+              />
+            </View>
+          </SafeAreaView>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
+
+// ─── Story styles ───────────────────────────────────────
+
+const storyStyles = StyleSheet.create({
+  container: { flex: 1 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
+  headerCancel: { fontFamily: fonts.regular, fontSize: 16, color: '#fff' },
+  headerTitle: { fontFamily: fonts.semiBold, fontSize: 17, color: '#fff' },
+  headerShare: { fontFamily: fonts.semiBold, fontSize: 16 },
+  preview: { flex: 1, width: '100%' },
+  captionBar: { paddingHorizontal: 16, paddingVertical: 12 },
+  captionInput: { fontFamily: fonts.regular, fontSize: 15, color: '#fff', minHeight: 40 },
+});
 
 // ─── Styles ─────────────────────────────────────────────
 
