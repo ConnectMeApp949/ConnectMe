@@ -605,3 +605,42 @@ export const DashboardIcon: React.FC<IconProps> = ({
     <Rect x="3" y="14" width="7" height="7" />
   </Svg>
 );
+
+// Grid icon for Feed tab
+export const GridIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Rect x="3" y="3" width="7" height="7" rx="1" />
+    <Rect x="14" y="3" width="7" height="7" rx="1" />
+    <Rect x="14" y="14" width="7" height="7" rx="1" />
+    <Rect x="3" y="14" width="7" height="7" rx="1" />
+  </Svg>
+);
+
+// Three-dot horizontal menu icon
+export const MoreHorizontalIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke="none">
+    <Circle cx="5" cy="12" r="1.5" />
+    <Circle cx="12" cy="12" r="1.5" />
+    <Circle cx="19" cy="12" r="1.5" />
+  </Svg>
+);
+
+// Image/photo icon
+export const ImageIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+    <Circle cx="8.5" cy="8.5" r="1.5" />
+    <Polyline points="21 15 16 10 5 21" />
+  </Svg>
+);

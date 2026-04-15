@@ -19,6 +19,7 @@ import {
   MessageIcon,
   UserIcon,
   DashboardIcon,
+  GridIcon,
 } from './src/components/Icons';
 
 // Onboarding screens
@@ -45,6 +46,11 @@ import NotificationsScreen from './src/screens/notifications/NotificationsScreen
 // Vendor dashboard screens
 import { BookingManagementScreen } from './src/screens/vendor-dashboard';
 import { ReviewsScreen } from './src/screens/reviews';
+
+// Feed screens
+import FeedScreen from './src/screens/feed/FeedScreen';
+import PostCreationScreen from './src/screens/feed/PostCreationScreen';
+import PostDetailScreen from './src/screens/feed/PostDetailScreen';
 
 // Planner
 import EventPlannerScreen from './src/screens/planner/EventPlannerScreen';
@@ -102,6 +108,7 @@ import VendorPricingScreen from './src/screens/profile/VendorPricingScreen';
 import VendorReviewPublishScreen from './src/screens/profile/VendorReviewPublishScreen';
 
 import { AuthContext, AuthState, useAuth } from './src/context/AuthContext';
+import { FeedProvider } from './src/context/FeedContext';
 export { useAuth } from './src/context/AuthContext';
 import ErrorBoundary from './src/components/ErrorBoundary';
 import { AlertProvider } from './src/context/AlertContext';
@@ -120,6 +127,7 @@ const queryClient = new QueryClient({
 
 const OnboardingStack = createNativeStackNavigator<OnboardingStackParamList>();
 const ExploreStack = createNativeStackNavigator();
+const FeedStack = createNativeStackNavigator();
 const ProfileStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const RootStack = createNativeStackNavigator();
@@ -169,6 +177,17 @@ function ExploreNavigator() {
   );
 }
 
+function FeedNavigator() {
+  return (
+    <FeedStack.Navigator screenOptions={noHeader}>
+      <FeedStack.Screen name="FeedMain" component={FeedScreen} />
+      <FeedStack.Screen name="PostCreation" component={PostCreationScreen} options={{ animation: 'slide_from_bottom' }} />
+      <FeedStack.Screen name="PostDetail" component={PostDetailScreen} options={slide} />
+      <FeedStack.Screen name="Notifications" component={NotificationsScreen} options={slide} />
+    </FeedStack.Navigator>
+  );
+}
+
 function ProfileNavigator() {
   return (
     <ProfileStack.Navigator screenOptions={noHeader}>
@@ -199,6 +218,7 @@ function ProfileNavigator() {
       <ProfileStack.Screen name="VendorPhotos" component={VendorPhotosScreen} options={slide} />
       <ProfileStack.Screen name="VendorPricing" component={VendorPricingScreen} options={slide} />
       <ProfileStack.Screen name="VendorReviewPublish" component={VendorReviewPublishScreen} options={slide} />
+      <ProfileStack.Screen name="PostDetail" component={PostDetailScreen} options={slide} />
       <ProfileStack.Screen name="VendorDetail" component={VendorDetailScreen} options={slide} />
       <ProfileStack.Screen name="CancelBooking" component={CancelBookingScreen} options={slide} />
       <ProfileStack.Screen name="ModifyBooking" component={ModifyBookingScreen} options={slide} />
@@ -289,6 +309,11 @@ function MainTabs() {
         options={{ tabBarLabel: t('explore'), tabBarIcon: ({ focused }) => <SearchIcon size={22} color={focused ? colors.secondary : colors.textMuted} strokeWidth={focused ? 2 : 1.5} /> }}
       />
       <Tab.Screen
+        name="Feed"
+        component={FeedNavigator}
+        options={{ tabBarLabel: 'Feed', tabBarIcon: ({ focused }) => <GridIcon size={22} color={focused ? colors.secondary : colors.textMuted} strokeWidth={focused ? 2 : 1.5} /> }}
+      />
+      <Tab.Screen
         name="Wishlists"
         component={WishlistsScreen}
         options={{ tabBarLabel: t('wishlists'), tabBarIcon: ({ focused }) => focused ? <HeartFilledIcon size={22} color={colors.secondary} /> : <HeartIcon size={22} color={colors.textMuted} /> }}
@@ -365,6 +390,13 @@ function AppContent() {
                         CompareVendors: 'compare',
                       },
                     },
+                    Feed: {
+                      screens: {
+                        FeedMain: 'feed',
+                        PostCreation: 'feed/new',
+                        PostDetail: 'feed/post/:postId',
+                      },
+                    },
                     Wishlists: 'wishlists',
                     Bookings: 'bookings',
                     Messages: 'messages',
@@ -424,6 +456,7 @@ function AppContent() {
           </RootStack.Navigator>
         </NavigationContainer>
         <StatusBar style={isDark ? 'light' : 'dark'} />
+        <AlertBanner />
       </SafeAreaProvider>
     </View>
   );
@@ -456,10 +489,11 @@ export default function App() {
           <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_live_51TG1VgECfXBYZgZGMbENz8uj7BlJF3FLpi9GhCqQb5BYQn4yc9dW3XHbYnnKIZ7dFDmutG5IKe8BpO75oYfHrG6E005gIGjxDk'}>
           <ThemeProvider>
             <LanguageProvider>
-              <AlertProvider>
-                <AppContent />
-                <AlertBanner />
-              </AlertProvider>
+              <FeedProvider>
+                <AlertProvider>
+                  <AppContent />
+                </AlertProvider>
+              </FeedProvider>
             </LanguageProvider>
           </ThemeProvider>
           </StripeProvider>

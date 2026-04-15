@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Image,
-  Modal, TextInput, Alert,
+  Modal, TextInput, Alert, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../context/AuthContext';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
-import { ChevronLeftIcon, StarIcon, XIcon } from '../../components/Icons';
+import { ChevronLeftIcon, StarIcon, XIcon, GridIcon } from '../../components/Icons';
 import { useTheme } from '../../context/ThemeContext';
+import { useFeed } from '../../context/FeedContext';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const GRID_GAP = 2;
+const GRID_ITEM_SIZE = (SCREEN_WIDTH - 40 - GRID_GAP * 2) / 3;
 
 type Props = NativeStackScreenProps<any, 'ViewProfile'>;
 
@@ -18,9 +23,13 @@ const MAX_BIO = 500;
 export default function ViewProfileScreen({ navigation }: Props) {
   const { colors: themeColors } = useTheme();
   const auth = useAuth();
+  const { posts } = useFeed();
   const user = auth.user;
   const firstName = user?.firstName ?? 'User';
   const lastName = user?.lastName ?? '';
+
+  // Get posts by current user (for demo, show first 6 demo posts as "user's posts")
+  const userPosts = posts.slice(0, 6);
 
   const [bio, setBio] = useState(user?.bio ?? '');
   const [bioModalVisible, setBioModalVisible] = useState(false);
@@ -82,12 +91,44 @@ export default function ViewProfileScreen({ navigation }: Props) {
 
         {/* Stats */}
         <View style={[s.statsCard, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}>
+          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>{userPosts.length}</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Posts</Text></View>
+          <View style={[s.statDiv, { backgroundColor: themeColors.border }]} />
           <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>{user?.bookingCount ?? 0}</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Bookings</Text></View>
           <View style={[s.statDiv, { backgroundColor: themeColors.border }]} />
           <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>{user?.reviewCount ?? 0}</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Reviews</Text></View>
           <View style={[s.statDiv, { backgroundColor: themeColors.border }]} />
           <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>{user?.memberYears ?? '<1'}</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>{'Years on\nConnectMe'}</Text></View>
         </View>
+
+        {/* Posts Grid */}
+        {userPosts.length > 0 && (
+          <View style={s.section}>
+            <View style={s.sectionHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <GridIcon size={18} color={themeColors.text} />
+                <Text style={[s.sectionTitle, { color: themeColors.text }]}>Posts</Text>
+              </View>
+            </View>
+            <View style={s.postsGrid}>
+              {userPosts.map((post) => (
+                <TouchableOpacity
+                  key={post.id}
+                  onPress={() => navigation.navigate('PostDetail', { postId: post.id })}
+                  activeOpacity={0.8}
+                  accessibilityLabel={`View post by ${post.userName}`}
+                  accessibilityRole="button"
+                >
+                  <Image
+                    source={{ uri: post.images[0] }}
+                    style={s.postThumbnail}
+                    accessibilityLabel="Post thumbnail"
+                    accessibilityRole="image"
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
 
         {/* About */}
         <View style={s.section}>
@@ -200,6 +241,9 @@ const s = StyleSheet.create({
   statNum: { fontFamily: fonts.bold, fontSize: 22, color: colors.text },
   statLabel: { fontFamily: fonts.regular, fontSize: 11, color: colors.textMuted, marginTop: 4, textAlign: 'center' },
   statDiv: { width: 1, height: 36, backgroundColor: colors.border, alignSelf: 'center' },
+
+  postsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: GRID_GAP },
+  postThumbnail: { width: GRID_ITEM_SIZE, height: GRID_ITEM_SIZE, borderRadius: 4 },
 
   section: { marginBottom: 24 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
