@@ -1,46 +1,34 @@
 import React from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert, Dimensions,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Dimensions, FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAuth } from '../../context/AuthContext';
-import { useLanguage } from '../../context/LanguageContext';
-import { SettingsIcon, UserIcon, HelpCircleIcon, ShieldIcon, UsersIcon, FileTextIcon, LogOutIcon, ChevronRightIcon, CalendarIcon } from '../../components/Icons';
-import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useTheme } from '../../context/ThemeContext';
+import { useFeed } from '../../context/FeedContext';
+import { SettingsIcon, PlusIcon, GridIcon, ChevronRightIcon } from '../../components/Icons';
+import { colors, fonts, spacing, borderRadius } from '../../theme';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const GRID_GAP = 2;
+const GRID_ITEM_SIZE = (SCREEN_WIDTH - GRID_GAP * 2) / 3;
 
 type Props = NativeStackScreenProps<any, 'Profile'>;
 
 export default function ProfileScreen({ navigation }: Props) {
   const auth = useAuth();
   const { colors: themeColors } = useTheme();
-  const { t } = useLanguage();
+  const { posts } = useFeed();
   const user = auth.user;
   const firstName = user?.firstName ?? 'User';
   const lastName = user?.lastName ?? '';
   const city = user?.city ?? '';
+  const username = user?.username ?? `${firstName.toLowerCase()}${lastName.toLowerCase()}`;
+  const bio = user?.bio ?? '';
 
-  function handleSignOut() {
-    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Sign Out', style: 'destructive', onPress: () => auth.logout() },
-    ]);
-  }
-
-  // ─── Menu items ────────────────────────────────────────
-
-  type IconComp = React.FC<{ size?: number; color?: string; strokeWidth?: number }>;
-
-  const menuItems: { label: string; icon: IconComp; danger?: boolean; onPress: () => void }[] = [
-    { label: t('accountSettings'), icon: SettingsIcon, onPress: () => navigation.navigate('AccountSettings') },
-    { label: t('getHelp'), icon: HelpCircleIcon, onPress: () => navigation.navigate('GetHelp') },
-    { label: t('viewProfile'), icon: UserIcon, onPress: () => navigation.navigate('ViewProfile') },
-    { label: t('privacy'), icon: ShieldIcon, onPress: () => navigation.navigate('Privacy') },
-    { label: 'Refer a Vendor', icon: UsersIcon, onPress: () => navigation.navigate('ReferVendor') },
-    { label: t('legal'), icon: FileTextIcon, onPress: () => navigation.navigate('Legal') },
-    { label: t('logOut'), icon: LogOutIcon, danger: true, onPress: handleSignOut },
-  ];
+  // Filter posts by current user (for demo, show all posts)
+  const userPosts = posts.filter((p) => p.userId === user?.id) ?? posts;
 
   if (!user) {
     return (
@@ -71,52 +59,86 @@ export default function ProfileScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <ScrollView showsVerticalScrollIndicator={false}>
 
-        {/* ─── Profile header ─── */}
-        <View style={styles.profileHeader}>
-          {user?.profilePhoto ? (
-            <Image source={{ uri: user.profilePhoto }} style={styles.avatar} accessibilityLabel={`${firstName} ${lastName} profile photo`} accessibilityRole="image" />
-          ) : (
-            <View style={styles.avatarFallback}>
-              <Text style={styles.avatarInitials}>{firstName[0]}{lastName?.[0] ?? ''}</Text>
+        {/* ─── Header bar (Instagram-style) ─── */}
+        <View style={styles.headerBar}>
+          <Text style={[styles.headerUsername, { color: themeColors.text }]}>{username}</Text>
+          <View style={styles.headerRight}>
+            <TouchableOpacity
+              style={styles.headerIconBtn}
+              onPress={() => navigation.navigate('PostCreation')}
+              activeOpacity={0.7}
+              accessibilityLabel="Create post"
+              accessibilityRole="button"
+            >
+              <PlusIcon size={26} color={themeColors.text} strokeWidth={2} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.headerIconBtn}
+              onPress={() => navigation.navigate('SettingsActivity')}
+              activeOpacity={0.7}
+              accessibilityLabel="Settings and activity"
+              accessibilityRole="button"
+            >
+              <SettingsIcon size={26} color={themeColors.text} strokeWidth={1.5} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* ─── Profile section (avatar + stats) ─── */}
+        <View style={styles.profileSection}>
+          <View style={styles.avatarWrap}>
+            {user?.profilePhoto ? (
+              <Image source={{ uri: user.profilePhoto }} style={styles.avatar} accessibilityLabel={`${firstName} ${lastName} profile photo`} accessibilityRole="image" />
+            ) : (
+              <View style={[styles.avatarFallback, { backgroundColor: colors.primary }]}>
+                <Text style={styles.avatarInitials}>{firstName[0]}{lastName?.[0] ?? ''}</Text>
+              </View>
+            )}
+          </View>
+          <View style={styles.statsRow}>
+            <View style={styles.statCol}>
+              <Text style={[styles.statNumber, { color: themeColors.text }]}>{userPosts.length}</Text>
+              <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Posts</Text>
             </View>
-          )}
+            <View style={styles.statCol}>
+              <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.followersCount ?? 0}</Text>
+              <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Followers</Text>
+            </View>
+            <View style={styles.statCol}>
+              <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.followingCount ?? 0}</Text>
+              <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Following</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* ─── Name & Bio ─── */}
+        <View style={styles.bioSection}>
           <Text style={[styles.fullName, { color: themeColors.text }]}>{firstName} {lastName}</Text>
-          {city !== '' && <Text style={[styles.location, { color: themeColors.textSecondary }]}>{city}</Text>}
+          {bio !== '' && <Text style={[styles.bioText, { color: themeColors.text }]}>{bio}</Text>}
+          {city !== '' && <Text style={[styles.cityText, { color: themeColors.textSecondary }]}>{city}</Text>}
         </View>
 
-        {/* ─── Stats row ─── */}
-        <View style={[styles.statsCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-          <View style={styles.statCol}>
-            <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.bookingCount ?? 0}</Text>
-            <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Bookings</Text>
-          </View>
-          <View style={[styles.statDivider, { backgroundColor: themeColors.border }]} />
-          <View style={styles.statCol}>
-            <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.reviewCount ?? 0}</Text>
-            <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Reviews</Text>
-          </View>
-          <View style={[styles.statDivider, { backgroundColor: themeColors.border }]} />
-          <View style={styles.statCol}>
-            <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.memberYears ?? '<1'}</Text>
-            <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Years on{'\n'}ConnectMe</Text>
-          </View>
-        </View>
-
-        {/* ─── Activity cards ─── */}
-        <View style={styles.activityRow}>
-          <TouchableOpacity style={[styles.activityCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('PastBookings')} accessibilityLabel="Past Bookings" accessibilityRole="button" accessibilityHint="View your past bookings">
-            <View style={[styles.activityIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-              <CalendarIcon size={28} color={colors.primary} strokeWidth={1.5} />
-            </View>
-            <Text style={[styles.activityLabel, { color: themeColors.text }]}>Past Bookings</Text>
+        {/* ─── Action buttons ─── */}
+        <View style={styles.actionRow}>
+          <TouchableOpacity
+            style={[styles.actionBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
+            onPress={() => navigation.navigate('AccountSettings')}
+            activeOpacity={0.7}
+            accessibilityLabel="Edit Profile"
+            accessibilityRole="button"
+          >
+            <Text style={[styles.actionBtnText, { color: themeColors.text }]}>Edit Profile</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.activityCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('Connections')} accessibilityLabel="Connections" accessibilityRole="button" accessibilityHint="View your vendor connections">
-            <View style={[styles.activityIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
-              <UsersIcon size={28} color={colors.primary} strokeWidth={1.5} />
-            </View>
-            <Text style={[styles.activityLabel, { color: themeColors.text }]}>Connections</Text>
+          <TouchableOpacity
+            style={[styles.actionBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
+            onPress={() => {/* share profile */}}
+            activeOpacity={0.7}
+            accessibilityLabel="Share Profile"
+            accessibilityRole="button"
+          >
+            <Text style={[styles.actionBtnText, { color: themeColors.text }]}>Share Profile</Text>
           </TouchableOpacity>
         </View>
 
@@ -139,36 +161,44 @@ export default function ProfileScreen({ navigation }: Props) {
           </TouchableOpacity>
         )}
 
-        {/* ─── Menu list ─── */}
-        <View style={styles.menuContainer}>
-          {menuItems.map((item, i) => {
-            const IconComp = item.icon;
-            return (
-              <TouchableOpacity
-                key={item.label}
-                style={[styles.menuRow, i < menuItems.length - 1 && styles.menuRowBorder, i < menuItems.length - 1 && { borderBottomColor: themeColors.border }]}
-                onPress={item.onPress}
-                activeOpacity={0.6}
-                accessibilityLabel={item.label}
-                accessibilityRole="button"
-                accessibilityHint={item.danger ? 'Signs you out of your account' : `Navigate to ${item.label}`}
-              >
-                <View style={styles.menuRowLeft}>
-                  <View style={[styles.menuIconCircle, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }, item.danger && styles.menuIconCircleDanger]}>
-                    <IconComp size={20} color={item.danger ? colors.error : colors.primary} strokeWidth={1.5} />
-                  </View>
-                  <Text style={[styles.menuLabel, { color: themeColors.text }, item.danger && styles.menuLabelDanger]}>
-                    {item.label}
-                  </Text>
-                </View>
-                <ChevronRightIcon size={18} color={item.danger ? colors.error : themeColors.textSecondary} strokeWidth={1.5} />
-              </TouchableOpacity>
-            );
-          })}
+        {/* ─── Posts tab bar ─── */}
+        <View style={[styles.tabBar, { borderBottomColor: themeColors.border, borderTopColor: themeColors.border }]}>
+          <View style={[styles.tabItem, styles.tabItemActive, { borderBottomColor: themeColors.text }]}>
+            <GridIcon size={24} color={themeColors.text} strokeWidth={1.5} />
+          </View>
         </View>
 
-        {/* ─── Version ─── */}
-        <Text style={[styles.version, { color: themeColors.textSecondary }]}>ConnectMe v1.0.0</Text>
+        {/* ─── Posts grid ─── */}
+        {userPosts.length > 0 ? (
+          <View style={styles.gridContainer}>
+            {userPosts.map((post, index) => (
+              <TouchableOpacity
+                key={post.id}
+                style={[
+                  styles.gridItem,
+                  { marginRight: (index + 1) % 3 === 0 ? 0 : GRID_GAP },
+                  { marginBottom: GRID_GAP },
+                ]}
+                onPress={() => navigation.navigate('PostDetail', { postId: post.id })}
+                activeOpacity={0.8}
+                accessibilityLabel={`Post by ${post.userName}`}
+                accessibilityRole="button"
+              >
+                {post.images.length > 0 ? (
+                  <Image source={{ uri: post.images[0] }} style={styles.gridImage} />
+                ) : (
+                  <View style={[styles.gridPlaceholder, { backgroundColor: themeColors.cardBackground }]}>
+                    <Text style={[styles.gridPlaceholderText, { color: themeColors.textMuted }]}>{post.caption.substring(0, 40)}...</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        ) : (
+          <View style={styles.emptyGrid}>
+            <Text style={[styles.emptyGridText, { color: themeColors.textMuted }]}>No posts yet</Text>
+          </View>
+        )}
 
         <View style={{ height: 40 }} />
       </ScrollView>
@@ -179,174 +209,124 @@ export default function ProfileScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
-  },
-  scroll: {
-    paddingHorizontal: 24,
   },
 
-  // Close
-  topRow: {
+  // ─── Header bar ───
+  headerBar: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.xs,
-  },
-  closeBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.cardBackground,
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
-  closeText: {
-    fontSize: 14,
-    color: colors.text,
-    fontWeight: '600',
+  headerUsername: {
+    fontFamily: fonts.bold,
+    fontSize: 22,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  headerIconBtn: {
+    padding: 4,
   },
 
-  // Profile header
-  profileHeader: {
+  // ─── Profile section ───
+  profileSection: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.lg,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  avatarWrap: {
+    marginRight: 24,
   },
   avatar: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    borderWidth: 3,
-    borderColor: colors.white,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 6,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
   },
   avatarFallback: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    backgroundColor: colors.primary,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 3,
-    borderColor: colors.white,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 6,
   },
   avatarInitials: {
     fontFamily: fonts.bold,
-    fontSize: 30,
-    color: colors.white,
+    fontSize: 28,
+    color: '#FFFFFF',
   },
-  fullName: {
-    fontFamily: fonts.bold,
-    fontSize: 22,
-    color: colors.text,
-    marginTop: spacing.md,
-  },
-  location: {
-    fontFamily: fonts.regular,
-    fontSize: 14,
-    color: colors.textMuted,
-    marginTop: spacing.xs,
-  },
-
-  // Stats
-  statsCard: {
+  statsRow: {
+    flex: 1,
     flexDirection: 'row',
-    backgroundColor: colors.white,
-    borderRadius: borderRadius.lg,
-    paddingVertical: spacing.lg,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.04)',
+    justifyContent: 'space-around',
   },
   statCol: {
-    flex: 1,
     alignItems: 'center',
-    paddingHorizontal: 4,
   },
   statNumber: {
     fontFamily: fonts.bold,
-    fontSize: 22,
-    color: colors.text,
+    fontSize: 18,
   },
   statLabel: {
     fontFamily: fonts.regular,
-    fontSize: 12,
-    color: colors.textMuted,
-    marginTop: 6,
-    textAlign: 'center',
-    lineHeight: 16,
-  },
-  statDivider: {
-    width: 1,
-    height: 40,
-    backgroundColor: colors.border,
-    alignSelf: 'center',
+    fontSize: 13,
+    marginTop: 2,
   },
 
-  // Activity cards
-  activityRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 20,
+  // ─── Name & Bio ───
+  bioSection: {
+    paddingHorizontal: 16,
+    paddingBottom: 12,
   },
-  activityCard: {
+  fullName: {
+    fontFamily: fonts.bold,
+    fontSize: 14,
+  },
+  bioText: {
+    fontFamily: fonts.regular,
+    fontSize: 14,
+    marginTop: 2,
+    lineHeight: 20,
+  },
+  cityText: {
+    fontFamily: fonts.regular,
+    fontSize: 14,
+    marginTop: 2,
+  },
+
+  // ─── Action buttons ───
+  actionRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    gap: 8,
+    marginBottom: 12,
+  },
+  actionBtn: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.white,
-    borderRadius: 14,
-    paddingVertical: 20,
-    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.border,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
   },
-  activityIconWrap: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: colors.cardBackground,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: 10,
-  },
-  activityLabel: {
+  actionBtnText: {
     fontFamily: fonts.semiBold,
     fontSize: 14,
-    color: colors.text,
-    textAlign: 'center',
   },
 
-  // Vendor banner
+  // ─── Vendor banner ───
   vendorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: colors.backgroundWarm,
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
-    marginBottom: spacing.xl,
+    marginHorizontal: 16,
+    marginBottom: 12,
     borderLeftWidth: 4,
     borderLeftColor: colors.primary,
     shadowColor: colors.primary,
@@ -361,73 +341,66 @@ const styles = StyleSheet.create({
   vendorBannerTitle: {
     fontFamily: fonts.bold,
     fontSize: 16,
-    color: colors.text,
   },
   vendorBannerSub: {
     fontFamily: fonts.regular,
     fontSize: 13,
-    color: colors.textSecondary,
     marginTop: 4,
   },
-  vendorBannerArrow: {
-    fontSize: 28,
-    color: colors.primary,
-    marginLeft: spacing.md,
+
+  // ─── Tab bar ───
+  tabBar: {
+    flexDirection: 'row',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  tabItemActive: {
+    borderBottomWidth: 2,
   },
 
-  // Menu
-  menuContainer: {
-    marginBottom: spacing.lg,
-  },
-  menuRow: {
+  // ─── Posts grid ───
+  gridContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 56,
+    flexWrap: 'wrap',
   },
-  menuRowBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+  gridItem: {
+    width: GRID_ITEM_SIZE,
+    height: GRID_ITEM_SIZE,
   },
-  menuRowLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
+  gridImage: {
+    width: '100%',
+    height: '100%',
   },
-  menuIconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: colors.cardBackground,
+  gridPlaceholder: {
+    width: '100%',
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+    padding: 8,
   },
-  menuIconCircleDanger: {
-    backgroundColor: '#FEF2F2',
-    borderColor: '#FECACA',
-  },
-  menuLabel: {
-    fontFamily: fonts.medium,
-    fontSize: 16,
-    color: colors.text,
-  },
-  menuLabelDanger: {
-    color: colors.error,
-  },
-
-  // Version
-  version: {
+  gridPlaceholderText: {
     fontFamily: fonts.regular,
     fontSize: 12,
-    color: colors.textMuted,
     textAlign: 'center',
-    marginTop: spacing.sm,
   },
 
-  // Sign-in screen (unauthenticated)
+  // ─── Empty grid ───
+  emptyGrid: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  emptyGridText: {
+    fontFamily: fonts.regular,
+    fontSize: 15,
+  },
+
+  // ─── Sign-in screen (unauthenticated) ───
   signInContainer: {
     flex: 1,
     alignItems: 'center',
@@ -443,13 +416,11 @@ const styles = StyleSheet.create({
   signInTitle: {
     fontFamily: fonts.bold,
     fontSize: 22,
-    color: colors.text,
     marginBottom: 8,
   },
   signInSub: {
     fontFamily: fonts.regular,
     fontSize: 15,
-    color: colors.textMuted,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 24,
@@ -463,6 +434,6 @@ const styles = StyleSheet.create({
   signInBtnText: {
     fontFamily: fonts.semiBold,
     fontSize: 16,
-    color: colors.white,
+    color: '#FFFFFF',
   },
 });

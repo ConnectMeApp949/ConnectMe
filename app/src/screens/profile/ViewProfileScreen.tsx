@@ -108,7 +108,7 @@ export default function ViewProfileScreen({ navigation }: Props) {
 
         {/* Action buttons — Instagram style */}
         <View style={s.igActions}>
-          <TouchableOpacity style={[s.igEditBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} onPress={() => { setEditBio(bio); setBioModalVisible(true); }} activeOpacity={0.7}>
+          <TouchableOpacity style={[s.igEditBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} onPress={() => navigation.navigate('AccountSettings')} activeOpacity={0.7}>
             <Text style={[s.igEditBtnText, { color: themeColors.text }]}>Edit Profile</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[s.igShareBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => Alert.alert('Share Profile', 'Your profile link has been copied!')}>
@@ -189,7 +189,7 @@ export default function ViewProfileScreen({ navigation }: Props) {
       {/* ─── Edit Bio Modal ─── */}
       <Modal visible={bioModalVisible} animationType="slide" transparent accessibilityViewIsModal={true}>
         <View style={s.modalOverlay}>
-          <View style={[s.modalSheet, { backgroundColor: themeColors.card }]}>
+          <View style={[s.modalSheet, { backgroundColor: themeColors.cardBackground }]}>
             <View style={s.modalHeader}>
               <Text style={[s.modalTitle, { color: themeColors.text }]}>Edit About</Text>
               <TouchableOpacity onPress={() => setBioModalVisible(false)} accessibilityLabel="Close" accessibilityRole="button">
@@ -197,7 +197,7 @@ export default function ViewProfileScreen({ navigation }: Props) {
               </TouchableOpacity>
             </View>
 
-            <Text style={[s.modalSub, { color: themeColors.textMuted }]}>
+            <Text style={[s.modalSub, { color: themeColors.textSecondary }]}>
               Tell vendors about yourself — what types of events you enjoy, your planning style, or anything else you'd like them to know.
             </Text>
 

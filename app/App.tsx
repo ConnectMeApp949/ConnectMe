@@ -88,6 +88,7 @@ import GetHelpScreen from './src/screens/profile/GetHelpScreen';
 import HelpTopicScreen from './src/screens/profile/HelpTopicScreen';
 import PrivacyScreen from './src/screens/profile/PrivacyScreen';
 import ReferVendorScreen from './src/screens/profile/ReferVendorScreen';
+import SettingsActivityScreen from './src/screens/profile/SettingsActivityScreen';
 import LegalScreen from './src/screens/profile/LegalScreen';
 import LegalDocScreen from './src/screens/profile/LegalDocScreen';
 import PaymentMethodsScreen from './src/screens/profile/PaymentMethodsScreen';
@@ -192,6 +193,7 @@ function ProfileNavigator() {
   return (
     <ProfileStack.Navigator screenOptions={noHeader}>
       <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} />
+      <ProfileStack.Screen name="SettingsActivity" component={SettingsActivityScreen} options={slide} />
       <ProfileStack.Screen name="PastBookings" component={PastBookingsScreen} options={slide} />
       <ProfileStack.Screen name="BookingDetail" component={BookingDetailScreen} options={slide} />
       <ProfileStack.Screen name="Connections" component={ConnectionsScreen} options={slide} />
@@ -403,6 +405,7 @@ function AppContent() {
                     Profile: {
                       screens: {
                         ProfileMain: 'profile',
+                        SettingsActivity: 'profile/settings-activity',
                         AccountSettings: 'profile/settings',
                         ViewProfile: 'profile/view',
                         GetHelp: 'help',
