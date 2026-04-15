@@ -68,20 +68,37 @@ export default function ViewProfileScreen({ navigation }: Props) {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 20 }}>
-        {/* Avatar */}
-        <View style={s.avatarSection}>
-          {auth.user?.profilePhoto ? (
-            <Image source={{ uri: auth.user.profilePhoto }} style={s.avatar} accessibilityLabel={`${firstName} ${lastName} profile photo`} accessibilityRole="image" />
-          ) : (
-            <View style={s.avatarFb}>
-              <Text style={s.avatarText}>{firstName[0]}{lastName?.[0]}</Text>
-            </View>
-          )}
-          <TouchableOpacity onPress={handleEditPhoto} activeOpacity={0.6} accessibilityLabel="Edit Photo" accessibilityRole="button" accessibilityHint="Choose a new profile photo">
-            <Text style={[s.editPhotoLink, { color: themeColors.primary }]}>Edit Photo</Text>
+        {/* Instagram-style profile header */}
+        <View style={s.igHeader}>
+          {/* Avatar */}
+          <TouchableOpacity onPress={handleEditPhoto} activeOpacity={0.8} accessibilityLabel="Edit Photo" accessibilityRole="button">
+            {auth.user?.profilePhoto ? (
+              <Image source={{ uri: auth.user.profilePhoto }} style={s.avatar} accessibilityLabel={`${firstName} ${lastName} profile photo`} accessibilityRole="image" />
+            ) : (
+              <View style={s.avatarFb}>
+                <Text style={s.avatarText}>{firstName[0]}{lastName?.[0]}</Text>
+              </View>
+            )}
           </TouchableOpacity>
+
+          {/* Stats row — Instagram style */}
+          <View style={s.igStatsRow}>
+            <View style={s.igStatCol}>
+              <Text style={[s.igStatNum, { color: themeColors.text }]}>{userPosts.length}</Text>
+              <Text style={[s.igStatLabel, { color: themeColors.textSecondary }]}>Posts</Text>
+            </View>
+            <View style={s.igStatCol}>
+              <Text style={[s.igStatNum, { color: themeColors.text }]}>{user?.followerCount ?? 12}</Text>
+              <Text style={[s.igStatLabel, { color: themeColors.textSecondary }]}>Followers</Text>
+            </View>
+            <View style={s.igStatCol}>
+              <Text style={[s.igStatNum, { color: themeColors.text }]}>{user?.followingCount ?? 28}</Text>
+              <Text style={[s.igStatLabel, { color: themeColors.textSecondary }]}>Following</Text>
+            </View>
+          </View>
         </View>
 
+        {/* Name and bio */}
         <Text style={[s.fullName, { color: themeColors.text }]}>{firstName} {lastName}</Text>
         <Text style={[s.memberSince, { color: themeColors.textMuted }]}>
           {user?.createdAt
@@ -89,15 +106,14 @@ export default function ViewProfileScreen({ navigation }: Props) {
             : 'Member'}
         </Text>
 
-        {/* Stats */}
-        <View style={[s.statsCard, { backgroundColor: themeColors.card, borderColor: themeColors.border }]}>
-          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>{userPosts.length}</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Posts</Text></View>
-          <View style={[s.statDiv, { backgroundColor: themeColors.border }]} />
-          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>{user?.bookingCount ?? 0}</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Bookings</Text></View>
-          <View style={[s.statDiv, { backgroundColor: themeColors.border }]} />
-          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>{user?.reviewCount ?? 0}</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>Reviews</Text></View>
-          <View style={[s.statDiv, { backgroundColor: themeColors.border }]} />
-          <View style={s.statCol}><Text style={[s.statNum, { color: themeColors.text }]}>{user?.memberYears ?? '<1'}</Text><Text style={[s.statLabel, { color: themeColors.textMuted }]}>{'Years on\nConnectMe'}</Text></View>
+        {/* Action buttons — Instagram style */}
+        <View style={s.igActions}>
+          <TouchableOpacity style={[s.igEditBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} onPress={() => { setEditBio(bio); setBioModalVisible(true); }} activeOpacity={0.7}>
+            <Text style={[s.igEditBtnText, { color: themeColors.text }]}>Edit Profile</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[s.igShareBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => Alert.alert('Share Profile', 'Your profile link has been copied!')}>
+            <Text style={[s.igEditBtnText, { color: themeColors.text }]}>Share Profile</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Posts Grid */}
@@ -228,13 +244,22 @@ const s = StyleSheet.create({
   backText: { fontSize: 24, color: colors.text },
   headerTitle: { fontFamily: fonts.semiBold, fontSize: 17, color: colors.text },
 
+  igHeader: { flexDirection: 'row', alignItems: 'center', marginTop: 20, marginBottom: 12 },
+  igStatsRow: { flex: 1, flexDirection: 'row', justifyContent: 'space-around', marginLeft: 20 },
+  igStatCol: { alignItems: 'center' },
+  igStatNum: { fontFamily: fonts.bold, fontSize: 18 },
+  igStatLabel: { fontFamily: fonts.regular, fontSize: 13, marginTop: 2 },
+  igActions: { flexDirection: 'row', gap: 8, marginBottom: 20 },
+  igEditBtn: { flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: 'center', borderWidth: 1 },
+  igShareBtn: { flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: 'center', borderWidth: 1 },
+  igEditBtnText: { fontFamily: fonts.semiBold, fontSize: 14 },
   avatarSection: { alignItems: 'center', marginTop: 24 },
   avatar: { width: 100, height: 100, borderRadius: 50, borderWidth: 2, borderColor: colors.border },
   avatarFb: { width: 100, height: 100, borderRadius: 50, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
   avatarText: { fontFamily: fonts.bold, fontSize: 34, color: colors.white },
   editPhotoLink: { fontFamily: fonts.medium, fontSize: 14, color: colors.primary, marginTop: 8 },
-  fullName: { fontFamily: fonts.bold, fontSize: 24, color: colors.text, textAlign: 'center', marginTop: 12 },
-  memberSince: { fontFamily: fonts.regular, fontSize: 13, color: colors.textMuted, textAlign: 'center', marginTop: 4, marginBottom: 20 },
+  fullName: { fontFamily: fonts.bold, fontSize: 15, color: colors.text, marginBottom: 2 },
+  memberSince: { fontFamily: fonts.regular, fontSize: 13, color: colors.textMuted, marginBottom: 12 },
 
   statsCard: { flexDirection: 'row', backgroundColor: colors.white, borderRadius: 12, paddingVertical: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2, borderWidth: 1, borderColor: 'rgba(0,0,0,0.04)', marginBottom: 24 },
   statCol: { flex: 1, alignItems: 'center' },
