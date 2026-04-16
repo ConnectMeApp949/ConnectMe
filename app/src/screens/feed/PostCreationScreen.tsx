@@ -15,7 +15,9 @@ import {
   FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Slider from '@react-native-community/slider';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useFeed } from '../../context/FeedContext';
@@ -31,12 +33,51 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   CheckIcon,
+  SunIcon,
+  ContrastIcon,
+  ThermometerIcon,
+  DropletIcon,
+  CropIcon,
+  FlipIcon,
+  RotateIcon,
+  SparklesIcon,
 } from '../../components/Icons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+interface Adjustments {
+  brightness: number;
+  contrast: number;
+  warmth: number;
+  saturation: number;
+}
+
+const DEFAULT_ADJUSTMENTS: Adjustments = {
+  brightness: 0,
+  contrast: 0,
+  warmth: 0,
+  saturation: 0,
+};
 const MAX_CAPTION = 2200;
 const MAX_IMAGES = 10;
 const MAX_TAGS = 10;
+
+const FILTERS = [
+  { id: 'normal', name: 'Normal', overlay: 'transparent' },
+  { id: 'clarendon', name: 'Clarendon', overlay: 'rgba(127,187,227,0.15)' },
+  { id: 'gingham', name: 'Gingham', overlay: 'rgba(230,230,250,0.2)' },
+  { id: 'moon', name: 'Moon', overlay: 'rgba(160,160,160,0.3)' },
+  { id: 'lark', name: 'Lark', overlay: 'rgba(245,224,180,0.15)' },
+  { id: 'reyes', name: 'Reyes', overlay: 'rgba(239,205,173,0.2)' },
+  { id: 'juno', name: 'Juno', overlay: 'rgba(255,200,150,0.12)' },
+  { id: 'slumber', name: 'Slumber', overlay: 'rgba(125,105,120,0.2)' },
+  { id: 'aden', name: 'Aden', overlay: 'rgba(66,10,14,0.1)' },
+  { id: 'perpetua', name: 'Perpetua', overlay: 'rgba(130,200,180,0.15)' },
+  { id: 'mayfair', name: 'Mayfair', overlay: 'rgba(255,200,200,0.12)' },
+  { id: 'rise', name: 'Rise', overlay: 'rgba(236,205,169,0.15)' },
+  { id: 'valencia', name: 'Valencia', overlay: 'rgba(250,180,90,0.12)' },
+  { id: 'xpro2', name: 'X-Pro II', overlay: 'rgba(230,80,120,0.12)' },
+];
 
 // Demo vendors and friends for searching
 const DEMO_VENDORS = [
@@ -389,61 +430,32 @@ function StepPhotoSelection({
 
       {/* Action buttons */}
       <View style={styles.actionArea}>
-        {activeTab === 'gallery' ? (
+        <View style={styles.actionRow}>
           <TouchableOpacity
             onPress={handlePickFromGallery}
-            style={[
-              styles.actionButton,
-              {
-                backgroundColor: themeColors.primary,
-              },
-            ]}
+            style={[styles.actionBtn, { backgroundColor: themeColors.primary }]}
             activeOpacity={0.7}
-            accessibilityLabel="Select from gallery"
+            accessibilityLabel="Select from camera roll"
             accessibilityRole="button"
           >
-            <ImageIcon size={24} color="#fff" />
-            <Text style={styles.actionButtonText}>Select from Gallery</Text>
-            {images.length > 0 && (
-              <Text style={styles.actionButtonSub}>
-                {MAX_IMAGES - images.length} remaining
-              </Text>
-            )}
+            <ImageIcon size={20} color="#fff" />
+            <Text style={styles.actionBtnText}>Camera Roll</Text>
           </TouchableOpacity>
-        ) : (
           <TouchableOpacity
             onPress={handleTakePhoto}
-            style={[
-              styles.actionButton,
-              {
-                backgroundColor: themeColors.primary,
-              },
-            ]}
+            style={[styles.actionBtn, { backgroundColor: themeColors.cardBackground, borderWidth: 1, borderColor: themeColors.border }]}
             activeOpacity={0.7}
             accessibilityLabel="Take a photo"
             accessibilityRole="button"
           >
-            <CameraIcon size={24} color="#fff" />
-            <Text style={styles.actionButtonText}>Take Photo</Text>
+            <CameraIcon size={20} color={themeColors.text} />
+            <Text style={[styles.actionBtnText, { color: themeColors.text }]}>Take Photo</Text>
           </TouchableOpacity>
-        )}
-
-        {images.length > 0 && activeTab === 'gallery' && (
-          <TouchableOpacity
-            onPress={handlePickFromGallery}
-            style={[
-              styles.selectMultipleBtn,
-              { borderColor: themeColors.primary },
-            ]}
-            activeOpacity={0.7}
-            accessibilityLabel="Select multiple photos"
-            accessibilityRole="button"
-          >
-            <PlusIcon size={18} color={themeColors.primary} strokeWidth={2} />
-            <Text style={[styles.selectMultipleText, { color: themeColors.primary }]}>
-              Select Multiple
-            </Text>
-          </TouchableOpacity>
+        </View>
+        {images.length > 0 && (
+          <Text style={[styles.photoCount, { color: themeColors.textMuted }]}>
+            {images.length} of {MAX_IMAGES} photos selected
+          </Text>
         )}
       </View>
     </View>
@@ -452,14 +464,133 @@ function StepPhotoSelection({
 
 // ─── Step 2: Edit/Filter ────────────────────────────────
 
+type AdjustKey = keyof Adjustments;
+
+const ADJUST_TOOLS: { key: AdjustKey; label: string; Icon: React.FC<any> }[] = [
+  { key: 'brightness', label: 'Brightness', Icon: SunIcon },
+  { key: 'contrast', label: 'Contrast', Icon: ContrastIcon },
+  { key: 'warmth', label: 'Warmth', Icon: ThermometerIcon },
+  { key: 'saturation', label: 'Saturation', Icon: DropletIcon },
+];
+
+function buildAdjustOverlays(adj: Adjustments) {
+  const overlays: { color: string }[] = [];
+
+  // Brightness: positive = white overlay, negative = black overlay
+  if (adj.brightness > 0) {
+    overlays.push({ color: `rgba(255,255,255,${adj.brightness * 0.5})` });
+  } else if (adj.brightness < 0) {
+    overlays.push({ color: `rgba(0,0,0,${Math.abs(adj.brightness) * 0.5})` });
+  }
+
+  // Contrast: positive = increase mid-tone darkness, negative = wash out
+  if (adj.contrast > 0) {
+    overlays.push({ color: `rgba(0,0,0,${adj.contrast * 0.15})` });
+  } else if (adj.contrast < 0) {
+    overlays.push({ color: `rgba(128,128,128,${Math.abs(adj.contrast) * 0.3})` });
+  }
+
+  // Warmth: positive = warm orange tint, negative = cool blue tint
+  if (adj.warmth > 0) {
+    overlays.push({ color: `rgba(255,165,0,${adj.warmth * 0.2})` });
+  } else if (adj.warmth < 0) {
+    overlays.push({ color: `rgba(100,149,237,${Math.abs(adj.warmth) * 0.2})` });
+  }
+
+  // Saturation: negative = desaturate with gray overlay
+  if (adj.saturation < 0) {
+    overlays.push({ color: `rgba(128,128,128,${Math.abs(adj.saturation) * 0.45})` });
+  } else if (adj.saturation > 0) {
+    // Boost: subtle vibrant tint
+    overlays.push({ color: `rgba(255,0,128,${adj.saturation * 0.08})` });
+  }
+
+  return overlays;
+}
+
 function StepEdit({
   images,
+  onImagesChange,
   themeColors,
+  selectedFilter,
+  onFilterChange,
+  adjustments,
+  onAdjustmentsChange,
 }: {
   images: string[];
+  onImagesChange: (imgs: string[]) => void;
   themeColors: any;
+  selectedFilter: string;
+  onFilterChange: (id: string) => void;
+  adjustments: Adjustments;
+  onAdjustmentsChange: (adj: Adjustments) => void;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [activeTool, setActiveTool] = useState<AdjustKey | null>(null);
+
+  const handleCrop = useCallback(async () => {
+    try {
+      const uri = images[activeIndex];
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.9,
+      });
+      if (!result.canceled && result.assets[0]) {
+        const updated = [...images];
+        updated[activeIndex] = result.assets[0].uri;
+        onImagesChange(updated);
+      }
+    } catch {}
+  }, [images, activeIndex, onImagesChange]);
+
+  const handleFlip = useCallback(async () => {
+    try {
+      const uri = images[activeIndex];
+      const manipulated = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ flip: ImageManipulator.FlipType.Horizontal }],
+        { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      const updated = [...images];
+      updated[activeIndex] = manipulated.uri;
+      onImagesChange(updated);
+    } catch {
+      Alert.alert('Error', 'Unable to flip the image.');
+    }
+  }, [images, activeIndex, onImagesChange]);
+
+  const handleRotate = useCallback(async () => {
+    try {
+      const uri = images[activeIndex];
+      const manipulated = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ rotate: 90 }],
+        { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      const updated = [...images];
+      updated[activeIndex] = manipulated.uri;
+      onImagesChange(updated);
+    } catch {
+      Alert.alert('Error', 'Unable to rotate the image.');
+    }
+  }, [images, activeIndex, onImagesChange]);
+
+  const handleAutoEdit = useCallback(() => {
+    // Apply a balanced preset: slight brightness boost, warmth, and saturation
+    onAdjustmentsChange({
+      brightness: 0.12,
+      contrast: 0.08,
+      warmth: 0.06,
+      saturation: 0.1,
+    });
+    if (selectedFilter === 'normal') {
+      onFilterChange('clarendon');
+    }
+  }, [selectedFilter, onFilterChange, onAdjustmentsChange]);
+
+  const adjustOverlays = buildAdjustOverlays(adjustments);
 
   const handleScroll = useCallback(
     (event: any) => {
@@ -472,8 +603,22 @@ function StepEdit({
     [activeIndex, images.length],
   );
 
+  const handleSliderChange = useCallback(
+    (key: AdjustKey, value: number) => {
+      onAdjustmentsChange({ ...adjustments, [key]: Math.round(value * 100) / 100 });
+    },
+    [adjustments, onAdjustmentsChange],
+  );
+
+  const handleReset = useCallback(
+    (key: AdjustKey) => {
+      onAdjustmentsChange({ ...adjustments, [key]: 0 });
+    },
+    [adjustments, onAdjustmentsChange],
+  );
+
   return (
-    <View style={styles.stepContainer}>
+    <ScrollView style={styles.stepContainer} showsVerticalScrollIndicator={false}>
       {/* Carousel */}
       <View style={styles.editCarouselContainer}>
         <FlatList
@@ -491,6 +636,14 @@ function StepEdit({
                 style={styles.editImage}
                 accessibilityRole="image"
               />
+              {/* Filter overlay */}
+              {selectedFilter !== 'normal' && (
+                <View style={[styles.editFilterOverlay, { backgroundColor: FILTERS.find(f => f.id === selectedFilter)?.overlay || 'transparent' }]} />
+              )}
+              {/* Adjustment overlays */}
+              {adjustOverlays.map((overlay, i) => (
+                <View key={i} style={[styles.editFilterOverlay, { backgroundColor: overlay.color }]} />
+              ))}
             </View>
           )}
         />
@@ -514,21 +667,133 @@ function StepEdit({
         )}
       </View>
 
-      {/* Filter placeholder */}
-      <View
-        style={[
-          styles.filterPlaceholder,
-          { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border },
-        ]}
-      >
-        <Text style={[styles.filterPlaceholderTitle, { color: themeColors.text }]}>
-          Filters coming soon
-        </Text>
-        <Text style={[styles.filterPlaceholderSub, { color: themeColors.textMuted }]}>
-          Advanced editing tools and filters will be available in a future update.
-        </Text>
+      {/* Filter strip */}
+      <Text style={[styles.filterSectionTitle, { color: themeColors.text }]}>Filters</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterStrip}>
+        {FILTERS.map((filter) => {
+          const isActive = selectedFilter === filter.id;
+          return (
+            <TouchableOpacity
+              key={filter.id}
+              style={[styles.filterItem, isActive && { borderColor: themeColors.primary, borderWidth: 2 }]}
+              onPress={() => onFilterChange(filter.id)}
+              activeOpacity={0.7}
+              accessibilityLabel={`${filter.name} filter`}
+              accessibilityRole="button"
+              accessibilityState={{ selected: isActive }}
+            >
+              <View style={styles.filterPreviewWrap}>
+                <Image source={{ uri: images[0] }} style={styles.filterPreview} />
+                <View style={[styles.filterOverlay, { backgroundColor: filter.overlay }]} />
+              </View>
+              <Text style={[styles.filterName, { color: isActive ? themeColors.primary : themeColors.textSecondary }]}>{filter.name}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+
+      {/* Adjust tools */}
+      <Text style={[styles.filterSectionTitle, { color: themeColors.text, marginTop: 16 }]}>Adjust</Text>
+      <View style={styles.adjustRow}>
+        {ADJUST_TOOLS.map((tool) => {
+          const isActive = activeTool === tool.key;
+          const value = adjustments[tool.key];
+          const isModified = value !== 0;
+          return (
+            <TouchableOpacity
+              key={tool.key}
+              style={[
+                styles.adjustBtn,
+                {
+                  backgroundColor: isActive ? themeColors.primary : themeColors.cardBackground,
+                  borderColor: isModified && !isActive ? themeColors.primary : themeColors.border,
+                },
+              ]}
+              onPress={() => setActiveTool(isActive ? null : tool.key)}
+              activeOpacity={0.7}
+              accessibilityLabel={`${tool.label} adjustment`}
+              accessibilityRole="button"
+              accessibilityState={{ selected: isActive }}
+            >
+              <tool.Icon size={20} color={isActive ? '#fff' : isModified ? themeColors.primary : themeColors.textSecondary} strokeWidth={1.5} />
+              <Text style={[styles.adjustLabel, { color: isActive ? '#fff' : isModified ? themeColors.primary : themeColors.textSecondary }]}>{tool.label}</Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
-    </View>
+
+      {/* Tools: Crop & Flip */}
+      <Text style={[styles.filterSectionTitle, { color: themeColors.text, marginTop: 16 }]}>Tools</Text>
+      <View style={styles.adjustRow}>
+        <TouchableOpacity
+          style={[styles.adjustBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
+          onPress={handleCrop} activeOpacity={0.7} accessibilityLabel="Crop image" accessibilityRole="button">
+          <CropIcon size={20} color={themeColors.textSecondary} strokeWidth={1.5} />
+          <Text style={[styles.adjustLabel, { color: themeColors.textSecondary }]}>Crop</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.adjustBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
+          onPress={handleFlip} activeOpacity={0.7} accessibilityLabel="Flip image horizontally" accessibilityRole="button">
+          <FlipIcon size={20} color={themeColors.textSecondary} strokeWidth={1.5} />
+          <Text style={[styles.adjustLabel, { color: themeColors.textSecondary }]}>Flip</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.adjustBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
+          onPress={handleRotate} activeOpacity={0.7} accessibilityLabel="Rotate image 90 degrees" accessibilityRole="button">
+          <RotateIcon size={20} color={themeColors.textSecondary} strokeWidth={1.5} />
+          <Text style={[styles.adjustLabel, { color: themeColors.textSecondary }]}>Rotate</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.adjustBtn, { backgroundColor: themeColors.primary, borderColor: themeColors.primary }]}
+          onPress={handleAutoEdit} activeOpacity={0.7} accessibilityLabel="Auto enhance image" accessibilityRole="button">
+          <SparklesIcon size={20} color="#fff" strokeWidth={1.5} />
+          <Text style={[styles.adjustLabel, { color: '#fff' }]}>Auto</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Active slider */}
+      {activeTool && (
+        <View style={[styles.sliderContainer, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          <View style={styles.sliderHeader}>
+            <Text style={[styles.sliderLabel, { color: themeColors.text }]}>
+              {ADJUST_TOOLS.find(t => t.key === activeTool)?.label}
+            </Text>
+            <View style={styles.sliderValueRow}>
+              <Text style={[styles.sliderValue, { color: themeColors.primary }]}>
+                {adjustments[activeTool] > 0 ? '+' : ''}{Math.round(adjustments[activeTool] * 100)}
+              </Text>
+              {adjustments[activeTool] !== 0 && (
+                <TouchableOpacity
+                  onPress={() => handleReset(activeTool)}
+                  style={[styles.resetBtn, { borderColor: themeColors.border }]}
+                  activeOpacity={0.6}
+                  accessibilityLabel={`Reset ${activeTool}`}
+                  accessibilityRole="button"
+                >
+                  <Text style={[styles.resetBtnText, { color: themeColors.textMuted }]}>Reset</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+          <View style={styles.sliderTrackRow}>
+            <Text style={[styles.sliderBound, { color: themeColors.textMuted }]}>-100</Text>
+            <Slider
+              style={styles.slider}
+              minimumValue={-1}
+              maximumValue={1}
+              value={adjustments[activeTool]}
+              onValueChange={(v: number) => handleSliderChange(activeTool, v)}
+              minimumTrackTintColor={themeColors.primary}
+              maximumTrackTintColor={`${themeColors.text}20`}
+              thumbTintColor={themeColors.primary}
+              accessibilityLabel={`${activeTool} slider`}
+              accessibilityRole="adjustable"
+            />
+            <Text style={[styles.sliderBound, { color: themeColors.textMuted }]}>+100</Text>
+          </View>
+        </View>
+      )}
+    </ScrollView>
   );
 }
 
@@ -561,25 +826,24 @@ function StepShare({
   const [friendSearch, setFriendSearch] = useState('');
   const [expandedSection, setExpandedSection] = useState<
     'vendors' | 'people' | 'location' | null
-  >(null);
+  >('vendors');
 
+  // Show suggestions immediately; filter as user types
+  const availableVendors = DEMO_VENDORS.filter(v => !taggedVendors.includes(v));
   const vendorResults =
     vendorSearch.length > 0
-      ? DEMO_VENDORS.filter(
-          (v) =>
-            v.toLowerCase().includes(vendorSearch.toLowerCase()) &&
-            !taggedVendors.includes(v),
-        ).slice(0, 4)
-      : [];
+      ? availableVendors.filter(
+          (v) => v.toLowerCase().includes(vendorSearch.toLowerCase()),
+        ).slice(0, 5)
+      : availableVendors.slice(0, 5);
 
+  const availableFriends = DEMO_FRIENDS.filter(f => !taggedFriends.includes(f));
   const friendResults =
     friendSearch.length > 0
-      ? DEMO_FRIENDS.filter(
-          (f) =>
-            f.toLowerCase().includes(friendSearch.toLowerCase()) &&
-            !taggedFriends.includes(f),
-        ).slice(0, 4)
-      : [];
+      ? availableFriends.filter(
+          (f) => f.toLowerCase().includes(friendSearch.toLowerCase()),
+        ).slice(0, 5)
+      : availableFriends.slice(0, 5);
 
   const toggleSection = useCallback(
     (section: 'vendors' | 'people' | 'location') => {
@@ -777,6 +1041,19 @@ function StepShare({
                 </TouchableOpacity>
               )}
             </View>
+            {/* Location suggestions */}
+            <View style={[styles.searchResults, { borderColor: themeColors.border }]}>
+              {['The Pearl, San Antonio', 'River Walk, San Antonio', 'Alamo Heights, San Antonio', 'La Villita, San Antonio', 'Hemisfair Park, San Antonio']
+                .filter(loc => !location || loc.toLowerCase().includes(location.toLowerCase()))
+                .slice(0, 4)
+                .map(loc => (
+                  <TouchableOpacity key={loc} style={[styles.searchResultItem, { borderBottomColor: themeColors.border }]}
+                    onPress={() => onLocationChange(loc)}>
+                    <MapPinIcon size={16} color={themeColors.primary} strokeWidth={1.5} />
+                    <Text style={[styles.searchResultText, { color: themeColors.text }]}>{loc}</Text>
+                  </TouchableOpacity>
+                ))}
+            </View>
           </View>
         )}
       </ScrollView>
@@ -792,6 +1069,8 @@ export default function PostCreationScreen({ navigation }: any) {
   const { addPost } = useFeed();
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [selectedFilter, setSelectedFilter] = useState('normal');
+  const [adjustments, setAdjustments] = useState<Adjustments>(DEFAULT_ADJUSTMENTS);
   const [images, setImages] = useState<string[]>([]);
   const [caption, setCaption] = useState('');
   const [taggedVendors, setTaggedVendors] = useState<string[]>([]);
@@ -965,7 +1244,7 @@ export default function PostCreationScreen({ navigation }: any) {
           />
         )}
 
-        {step === 2 && <StepEdit images={images} themeColors={themeColors} />}
+        {step === 2 && <StepEdit images={images} onImagesChange={setImages} themeColors={themeColors} selectedFilter={selectedFilter} onFilterChange={setSelectedFilter} adjustments={adjustments} onAdjustmentsChange={setAdjustments} />}
 
         {step === 3 && (
           <StepShare
@@ -1145,42 +1424,32 @@ const styles = StyleSheet.create({
   },
 
   actionArea: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: spacing.lg,
-    gap: 16,
+    paddingVertical: 16,
+    gap: 10,
   },
-  actionButton: {
-    width: '100%',
-    paddingVertical: 18,
-    borderRadius: borderRadius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
+  actionRow: {
+    flexDirection: 'row',
+    gap: 10,
   },
-  actionButtonText: {
-    color: '#fff',
-    fontFamily: fonts.semiBold,
-    fontSize: 17,
-  },
-  actionButtonSub: {
-    color: 'rgba(255,255,255,0.7)',
-    fontFamily: fonts.regular,
-    fontSize: 13,
-  },
-  selectMultipleBtn: {
+  actionBtn: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: borderRadius.full,
-    borderWidth: 1.5,
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: 12,
+    gap: 8,
   },
-  selectMultipleText: {
-    fontFamily: fonts.medium,
-    fontSize: 14,
+  actionBtnText: {
+    color: '#fff',
+    fontFamily: fonts.semiBold,
+    fontSize: 15,
+  },
+  photoCount: {
+    fontFamily: fonts.regular,
+    fontSize: 13,
+    textAlign: 'center',
   },
 
   // ── Step 2: Edit ──
@@ -1359,5 +1628,124 @@ const styles = StyleSheet.create({
     fontFamily: fonts.medium,
     fontSize: 14,
     flex: 1,
+  },
+
+  // ── Filters & Adjust ──
+
+  filterSectionTitle: {
+    fontFamily: fonts.semiBold,
+    fontSize: 14,
+    paddingHorizontal: spacing.md,
+    paddingTop: 14,
+    paddingBottom: 8,
+  },
+  filterStrip: {
+    paddingHorizontal: spacing.md,
+    gap: 12,
+  },
+  filterItem: {
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    padding: 2,
+  },
+  filterPreviewWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  filterPreview: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  filterOverlay: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  filterName: {
+    fontFamily: fonts.medium,
+    fontSize: 11,
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  adjustRow: {
+    flexDirection: 'row',
+    paddingHorizontal: spacing.md,
+    gap: 10,
+    paddingBottom: 16,
+  },
+  adjustBtn: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    gap: 4,
+  },
+  adjustLabel: {
+    fontFamily: fonts.medium,
+    fontSize: 11,
+  },
+  editFilterOverlay: {
+    ...StyleSheet.absoluteFillObject,
+  },
+
+  // ── Slider ──
+
+  sliderContainer: {
+    marginHorizontal: spacing.md,
+    marginTop: 12,
+    marginBottom: 20,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  sliderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  sliderLabel: {
+    fontFamily: fonts.semiBold,
+    fontSize: 15,
+  },
+  sliderValueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  sliderValue: {
+    fontFamily: fonts.bold,
+    fontSize: 15,
+    minWidth: 40,
+    textAlign: 'right',
+  },
+  resetBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  resetBtnText: {
+    fontFamily: fonts.medium,
+    fontSize: 12,
+  },
+  sliderTrackRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  slider: {
+    flex: 1,
+    height: 40,
+  },
+  sliderBound: {
+    fontFamily: fonts.regular,
+    fontSize: 11,
+    width: 30,
+    textAlign: 'center',
   },
 });

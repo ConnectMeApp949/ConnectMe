@@ -7,6 +7,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { ChevronLeftIcon, XIcon, CheckIcon } from '../../components/Icons';
+import { apiHeaders } from '../../services/headers';
 
 type Props = NativeStackScreenProps<any, 'AddCard'>;
 
@@ -80,10 +81,7 @@ export default function AddCardScreen({ navigation }: Props) {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       const res = await fetch(`${API_URL}/payment-methods`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        headers: apiHeaders(token),
         body: JSON.stringify({
           cardNumber: cleanCard,
           expiration,

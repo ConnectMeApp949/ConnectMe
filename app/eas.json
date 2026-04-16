@@ -32,7 +32,8 @@
         "image": "latest"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.connectmeapp.services"
+        "EXPO_PUBLIC_API_URL": "https://api.connectmeapp.services",
+        "EXPO_PUBLIC_API_KEY": "13e91afe0195f2724dd4f43976d9d977f13178d64aed0601a763317683455cbf"
       }
     }
   },

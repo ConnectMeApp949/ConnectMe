@@ -4,6 +4,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ProfileSetupLayout from '../../components/ProfileSetupLayout';
 import { VerificationFlowParamList } from './types';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -33,6 +34,7 @@ export default function ReviewSubmitScreen({ navigation, route }: Props) {
 
       const res = await fetch(`${API_URL}/verification/submit`, {
         method: 'POST',
+        headers: apiHeaders(),
         body: formData,
       });
 

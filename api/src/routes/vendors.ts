@@ -40,7 +40,7 @@ const upload = multer({
 
 const VALID_CATEGORIES = [
   'FOOD_TRUCK', 'DJ', 'CATERING', 'WEDDING_SERVICES',
-  'PHOTOGRAPHY', 'ENTERTAINMENT', 'OTHER',
+  'PHOTOGRAPHY', 'ENTERTAINMENT', 'EXPERIENCES', 'WELLNESS', 'BEVERAGES', 'OTHER',
 ];
 const VALID_PRICE_UNITS = ['PER_HOUR', 'PER_EVENT', 'CUSTOM'];
 
@@ -344,9 +344,9 @@ router.get(
           where,
           select: PUBLIC_PROFILE_SELECT,
           orderBy: [
+            { createdAt: 'desc' },
             { averageRating: 'desc' },
             { totalReviews: 'desc' },
-            { totalBookings: 'desc' },
           ],
           skip,
           take: perPage,

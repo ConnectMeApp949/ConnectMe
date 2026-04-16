@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { colors, fonts, spacing } from '../theme';
+import { apiHeaders } from '../services/headers';
 
 // Simple network check — polls /health endpoint
 export default function NetworkToast() {
@@ -11,7 +12,7 @@ export default function NetworkToast() {
     const interval = setInterval(async () => {
       try {
         const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
-        const res = await fetch(`${API_URL}/health`, { method: 'GET' });
+        const res = await fetch(`${API_URL}/health`, { method: 'GET', headers: apiHeaders() });
         setOffline(!res.ok);
       } catch {
         setOffline(true);

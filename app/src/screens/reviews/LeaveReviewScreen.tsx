@@ -9,6 +9,7 @@ import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { useAlert } from '../../context/AlertContext';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 const MAX_COMMENT = 1000;
@@ -53,10 +54,7 @@ export default function LeaveReviewScreen({ navigation, route }: Props) {
     try {
       const res = await fetch(`${API_URL}/reviews`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
         body: JSON.stringify({ bookingId, rating, comment: comment.trim() || undefined }),
       });
       const data = await res.json();

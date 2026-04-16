@@ -16,6 +16,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 const MAX_COMMENT_LENGTH = 300;
@@ -76,10 +77,7 @@ export default function ReviewClientScreen({ navigation, route }: Props) {
 
       const res = await fetch(`${API_URL}/reviews/client`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
         body: JSON.stringify(body),
       });
 

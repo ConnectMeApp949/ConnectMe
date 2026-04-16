@@ -32,12 +32,12 @@ export async function sendPasswordResetEmail(email: string, resetToken: string):
 
   await sendEmail(email, 'Reset Your Password', '\
     <div style="font-family: Poppins, Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 40px 20px;">\
-      <h1 style="color: #AA8330; font-size: 24px; margin-bottom: 8px;">ConnectMe</h1>\
+      <h1 style="color: #2A8B8B; font-size: 24px; margin-bottom: 8px;">ConnectMe</h1>\
       <h2 style="color: #151515; font-size: 20px;">Reset Your Password</h2>\
       <p style="color: #575757; line-height: 1.6;">You requested a password reset. Click the button below to set a new password:</p>\
-      <a href="' + resetUrl + '" style="display: inline-block; background: #AA8330; color: #fff; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 600; margin: 20px 0;">Reset Password</a>\
+      <a href="' + resetUrl + '" style="display: inline-block; background: #2A8B8B; color: #fff; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 600; margin: 20px 0;">Reset Password</a>\
       <p style="color: #9CA3AF; font-size: 14px;">This link expires in 1 hour. If you didn\'t request this, ignore this email.</p>\
-      <hr style="border: none; border-top: 1px solid #E8E2D9; margin: 30px 0;">\
+      <hr style="border: none; border-top: 1px solid #D1E8E4; margin: 30px 0;">\
       <p style="color: #9CA3AF; font-size: 12px;">ConnectMe Inc. · San Antonio, TX</p>\
     </div>\
   ');
@@ -46,16 +46,16 @@ export async function sendPasswordResetEmail(email: string, resetToken: string):
 export async function sendBookingConfirmationEmail(email: string, vendorName: string, eventDate: string, confirmationCode: string): Promise<void> {
   await sendEmail(email, 'Booking Confirmed - ' + vendorName, '\
     <div style="font-family: Poppins, Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 40px 20px;">\
-      <h1 style="color: #AA8330; font-size: 24px; margin-bottom: 8px;">ConnectMe</h1>\
+      <h1 style="color: #2A8B8B; font-size: 24px; margin-bottom: 8px;">ConnectMe</h1>\
       <h2 style="color: #151515; font-size: 20px;">Booking Confirmed!</h2>\
       <p style="color: #575757; line-height: 1.6;">Your booking with <strong>' + vendorName + '</strong> has been confirmed.</p>\
-      <div style="background: #FEF2E4; border-radius: 12px; padding: 20px; margin: 20px 0;">\
+      <div style="background: #E8F6F3; border-radius: 12px; padding: 20px; margin: 20px 0;">\
         <p style="color: #151515; margin: 0;"><strong>Vendor:</strong> ' + vendorName + '</p>\
         <p style="color: #151515; margin: 8px 0 0;"><strong>Date:</strong> ' + eventDate + '</p>\
         <p style="color: #151515; margin: 8px 0 0;"><strong>Confirmation:</strong> ' + confirmationCode + '</p>\
       </div>\
       <p style="color: #575757; line-height: 1.6;">You can view your booking details in the ConnectMe app.</p>\
-      <hr style="border: none; border-top: 1px solid #E8E2D9; margin: 30px 0;">\
+      <hr style="border: none; border-top: 1px solid #D1E8E4; margin: 30px 0;">\
       <p style="color: #9CA3AF; font-size: 12px;">ConnectMe Inc. · San Antonio, TX</p>\
     </div>\
   ');
@@ -64,7 +64,7 @@ export async function sendBookingConfirmationEmail(email: string, vendorName: st
 export async function sendWelcomeEmail(email: string, firstName: string): Promise<void> {
   await sendEmail(email, 'Welcome to ConnectMe!', '\
     <div style="font-family: Poppins, Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 40px 20px;">\
-      <h1 style="color: #AA8330; font-size: 24px; margin-bottom: 8px;">ConnectMe</h1>\
+      <h1 style="color: #2A8B8B; font-size: 24px; margin-bottom: 8px;">ConnectMe</h1>\
       <h2 style="color: #151515; font-size: 20px;">Welcome, ' + firstName + '!</h2>\
       <p style="color: #575757; line-height: 1.6;">Thanks for joining ConnectMe — the premier marketplace for event vendors in San Antonio.</p>\
       <p style="color: #575757; line-height: 1.6;">Here\'s what you can do:</p>\
@@ -74,8 +74,8 @@ export async function sendWelcomeEmail(email: string, firstName: string): Promis
         <li>Message vendors directly</li>\
         <li>Plan your events with our event planner</li>\
       </ul>\
-      <a href="https://connectmeapp.services" style="display: inline-block; background: #AA8330; color: #fff; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 600; margin: 20px 0;">Open ConnectMe</a>\
-      <hr style="border: none; border-top: 1px solid #E8E2D9; margin: 30px 0;">\
+      <a href="https://connectmeapp.services" style="display: inline-block; background: #2A8B8B; color: #fff; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 600; margin: 20px 0;">Open ConnectMe</a>\
+      <hr style="border: none; border-top: 1px solid #D1E8E4; margin: 30px 0;">\
       <p style="color: #9CA3AF; font-size: 12px;">ConnectMe Inc. · San Antonio, TX</p>\
     </div>\
   ');

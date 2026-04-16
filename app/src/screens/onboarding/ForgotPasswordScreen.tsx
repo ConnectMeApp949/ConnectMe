@@ -8,6 +8,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, MailIcon } from '../../components/Icons';
 import { useTheme } from '../../context/ThemeContext';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -30,7 +31,7 @@ export default function ForgotPasswordScreen({ navigation, route }: Props) {
     try {
       await fetch(`${API_URL}/auth/forgot-password`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: apiHeaders(),
         body: JSON.stringify({ email: email.trim() }),
       });
       // Always show success to prevent email enumeration

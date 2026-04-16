@@ -6,6 +6,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, DollarIcon, CheckIcon, ClockIcon, ChevronRightIcon } from '../../components/Icons';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -46,10 +47,7 @@ export default function VendorEarningsScreen({ navigation }: Props) {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/vendor/earnings?period=${selectedPeriod}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
       });
       const data = await res.json();
       if (data.success) {
@@ -79,10 +77,7 @@ export default function VendorEarningsScreen({ navigation }: Props) {
             try {
               const res = await fetch(`${API_URL}/vendor/payouts`, {
                 method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-                },
+                headers: apiHeaders(token),
                 body: JSON.stringify({ amount: availableBalance }),
               });
               const data = await res.json();

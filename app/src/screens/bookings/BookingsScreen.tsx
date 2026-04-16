@@ -10,6 +10,7 @@ import { CalendarIcon, CheckIcon, XIcon, SearchIcon } from '../../components/Ico
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useTheme } from '../../context/ThemeContext';
 import Skeleton from '../../components/Skeleton';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -47,10 +48,7 @@ export default function BookingsScreen({ navigation }: Props) {
         cancelled: 'CANCELLED',
       };
       const res = await fetch(`${API_URL}/bookings?status=${statusMap[activeTab]}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        headers: apiHeaders(token),
       });
       if (!res.ok) {
         throw new Error(`Server error (${res.status})`);

@@ -8,6 +8,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { ChevronLeftIcon, ChevronRightIcon, XIcon, DollarIcon } from '../../components/Icons';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -49,10 +50,7 @@ export default function PaymentMethodsScreen({ navigation }: Props) {
   const fetchPaymentMethods = useCallback(async () => {
     try {
       const res = await fetch(`${API_URL}/payment-methods`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        headers: apiHeaders(token),
       });
       if (!res.ok) return;
       const data = await res.json();

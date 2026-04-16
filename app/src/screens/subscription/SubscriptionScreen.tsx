@@ -8,6 +8,7 @@ import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, AlertCircleIcon, FileTextIcon } from '../../components/Icons';
 import { useAuth } from '../../context/AuthContext';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -80,10 +81,7 @@ export default function SubscriptionScreen({ navigation }: Props) {
   async function loadSubscription() {
     try {
       const res = await fetch(`${API_URL}/subscriptions/me`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
       });
       const data = await res.json();
       if (data.success) {
@@ -104,10 +102,7 @@ export default function SubscriptionScreen({ navigation }: Props) {
 
       const res = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
         body: JSON.stringify({ tier }),
       });
       const data = await res.json();
@@ -140,10 +135,7 @@ export default function SubscriptionScreen({ navigation }: Props) {
             try {
               const res = await fetch(`${API_URL}/subscriptions/cancel`, {
                 method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-                },
+                headers: apiHeaders(token),
               });
               const data = await res.json();
               if (data.success) {

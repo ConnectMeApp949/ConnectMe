@@ -5,14 +5,14 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, borderRadius } from '../../theme';
 import {
   ChevronLeftIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon,
-  CompassIcon, WellnessIcon,
+  CompassIcon, WellnessIcon, CoffeeIcon,
 } from '../../components/Icons';
 import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'EditCategory'>;
 
 const CATEGORIES = [
-  { id: 'FOOD_TRUCK', label: 'Food Truck', Icon: TruckIcon },
+  { id: 'FOOD_TRUCK', label: 'Mobile Eats', Icon: TruckIcon },
   { id: 'DJ', label: 'Music', Icon: MusicIcon },
   { id: 'CATERING', label: 'Catering', Icon: UtensilsIcon },
   { id: 'WEDDING_SERVICES', label: 'Wedding Services', Icon: RingsIcon },
@@ -20,6 +20,7 @@ const CATEGORIES = [
   { id: 'ENTERTAINMENT', label: 'Entertainment', Icon: SparklesIcon },
   { id: 'EXPERIENCES', label: 'Experiences', Icon: CompassIcon },
   { id: 'WELLNESS', label: 'Wellness', Icon: WellnessIcon },
+  { id: 'BEVERAGES', label: 'Beverages', Icon: CoffeeIcon },
   { id: 'OTHER', label: 'Other', Icon: SparklesIcon },
 ];
 

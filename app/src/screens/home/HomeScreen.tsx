@@ -9,7 +9,7 @@ import { useVendorSearch } from '../../hooks/useVendors';
 import { useAuth } from '../../context/AuthContext';
 import { useRecentlyViewed } from '../../hooks/useRecentlyViewed';
 import { useLanguage } from '../../context/LanguageContext';
-import { TrendingIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon, CompassIcon, WellnessIcon, BellIcon, MapIcon, SearchIcon, CalendarIcon, ChevronRightIcon } from '../../components/Icons';
+import { TrendingIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon, CompassIcon, WellnessIcon, CoffeeIcon, BellIcon, MapIcon, SearchIcon, CalendarIcon, ChevronRightIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useTheme } from '../../context/ThemeContext';
 import NotificationPrompt from '../../components/NotificationPrompt';
@@ -17,7 +17,7 @@ import RateAppPrompt from '../../components/RateAppPrompt';
 
 const CATEGORIES = [
   { id: '', label: 'All', Icon: TrendingIcon },
-  { id: 'FOOD_TRUCK', label: 'Food Trucks', Icon: TruckIcon },
+  { id: 'FOOD_TRUCK', label: 'Mobile Eats', Icon: TruckIcon },
   { id: 'DJ', label: 'Music', Icon: MusicIcon },
   { id: 'CATERING', label: 'Catering', Icon: UtensilsIcon },
   { id: 'WEDDING_SERVICES', label: 'Weddings', Icon: RingsIcon },
@@ -25,6 +25,7 @@ const CATEGORIES = [
   { id: 'ENTERTAINMENT', label: 'Entertainment', Icon: SparklesIcon },
   { id: 'EXPERIENCES', label: 'Experiences', Icon: CompassIcon },
   { id: 'WELLNESS', label: 'Wellness', Icon: WellnessIcon },
+  { id: 'BEVERAGES', label: 'Beverages', Icon: CoffeeIcon },
 ];
 
 type Props = NativeStackScreenProps<any, 'Home'>;
@@ -36,11 +37,9 @@ export default function HomeScreen({ navigation }: Props) {
   const { recentlyViewed } = useRecentlyViewed();
   const [activeCategory, setActiveCategory] = React.useState('');
 
-  const userCity = auth.user?.city || undefined;
-  const featured = useVendorSearch({ city: userCity });
+  const featured = useVendorSearch({});
   const recent = useVendorSearch({
     category: activeCategory || undefined,
-    city: userCity,
   });
 
   const featuredVendors = featured.data?.pages.flatMap((p) => p.vendors) ?? [];

@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Dimensions, FlatList, Modal, Alert,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Dimensions, FlatList, Modal, Alert, Linking, Share,
 } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useFeed } from '../../context/FeedContext';
-import { SettingsIcon, PlusIcon, GridIcon, ChevronRightIcon, StarIcon, UserIcon, CameraIcon, ImageIcon, ClockIcon, XIcon } from '../../components/Icons';
+import { SettingsIcon, PlusIcon, GridIcon, ChevronRightIcon, StarIcon, UserIcon, CameraIcon, ImageIcon, ClockIcon, XIcon, MessageIcon, MailIcon, LinkIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -30,40 +31,27 @@ export default function ProfileScreen({ navigation }: Props) {
 
   const [activeTab, setActiveTab] = useState<'posts' | 'tagged'>('posts');
   const [createMenuVisible, setCreateMenuVisible] = useState(false);
+  const [shareSheetVisible, setShareSheetVisible] = useState(false);
+
+  const profileUrl = `https://connectmeapp.services/profile/${username}`;
+
+  async function handleShareProfile() {
+    try {
+      await Share.share({
+        message: `Check out my profile on ConnectMe! ${profileUrl}`,
+        url: profileUrl,
+      });
+    } catch {}
+  }
 
   async function handleCreatePost() {
     setCreateMenuVisible(false);
     navigation.navigate('PostCreation');
   }
 
-  async function handleCreateStory() {
+  function handleCreateStory() {
     setCreateMenuVisible(false);
-    Alert.alert('Add to Your Story', 'Choose a photo or video', [
-      {
-        text: 'Take Photo/Video',
-        onPress: async () => {
-          const perm = await ImagePicker.requestCameraPermissionsAsync();
-          if (!perm.granted) { Alert.alert('Permission Needed', 'Camera access is required.'); return; }
-          const result = await ImagePicker.launchCameraAsync({ quality: 0.8, allowsEditing: true, aspect: [9, 16] });
-          if (!result.canceled) {
-            // Navigate to post creation with the image
-            navigation.navigate('PostCreation', { initialImage: result.assets[0].uri, isStory: true });
-          }
-        },
-      },
-      {
-        text: 'Choose from Library',
-        onPress: async () => {
-          const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-          if (!perm.granted) { Alert.alert('Permission Needed', 'Photo library access is required.'); return; }
-          const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.8, allowsEditing: true, aspect: [9, 16] });
-          if (!result.canceled) {
-            navigation.navigate('PostCreation', { initialImage: result.assets[0].uri, isStory: true });
-          }
-        },
-      },
-      { text: 'Cancel', style: 'cancel' },
-    ]);
+    navigation.navigate('StoryCreation');
   }
 
   async function handleCreateReel() {
@@ -161,11 +149,11 @@ export default function ProfileScreen({ navigation }: Props) {
               <Text style={[styles.statNumber, { color: themeColors.text }]}>{userPosts.length}</Text>
               <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Posts</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.statCol} activeOpacity={0.7} onPress={() => navigation.navigate('Connections')}>
+            <TouchableOpacity style={styles.statCol} activeOpacity={0.7} onPress={() => navigation.navigate('Connections', { tab: 'followers' })}>
               <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.followersCount ?? 24}</Text>
               <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Followers</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.statCol} activeOpacity={0.7} onPress={() => navigation.navigate('Connections')}>
+            <TouchableOpacity style={styles.statCol} activeOpacity={0.7} onPress={() => navigation.navigate('Connections', { tab: 'following' })}>
               <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.followingCount ?? 38}</Text>
               <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Following</Text>
             </TouchableOpacity>
@@ -192,7 +180,7 @@ export default function ProfileScreen({ navigation }: Props) {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.actionBtn, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}
-            onPress={() => {/* share profile */}}
+            onPress={handleShareProfile}
             activeOpacity={0.7}
             accessibilityLabel="Share Profile"
             accessibilityRole="button"
@@ -230,11 +218,15 @@ export default function ProfileScreen({ navigation }: Props) {
 
         {/* ─── Posts tab bar ─── */}
         <View style={[styles.tabBar, { borderBottomColor: themeColors.border, borderTopColor: themeColors.border }]}>
-          <TouchableOpacity style={[styles.tabItem, activeTab === 'posts' && styles.tabItemActive, activeTab === 'posts' && { borderBottomColor: themeColors.text }]} onPress={() => setActiveTab('posts')} activeOpacity={0.7}>
-            <GridIcon size={24} color={activeTab === 'posts' ? themeColors.text : themeColors.textMuted} strokeWidth={1.5} />
+          <TouchableOpacity style={[styles.tabItem, activeTab === 'posts' && styles.tabItemActive, activeTab === 'posts' && { borderBottomColor: themeColors.text }]} onPress={() => setActiveTab('posts')} activeOpacity={0.7}
+            accessibilityLabel="My Posts" accessibilityRole="tab" accessibilityState={{ selected: activeTab === 'posts' }}>
+            <ImageIcon size={22} color={activeTab === 'posts' ? themeColors.text : themeColors.textMuted} strokeWidth={1.5} />
+            <Text style={[styles.tabLabel, { color: activeTab === 'posts' ? themeColors.text : themeColors.textMuted }]}>My Posts</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.tabItem, activeTab === 'tagged' && styles.tabItemActive, activeTab === 'tagged' && { borderBottomColor: themeColors.text }]} onPress={() => setActiveTab('tagged')} activeOpacity={0.7}>
-            <UserIcon size={24} color={activeTab === 'tagged' ? themeColors.text : themeColors.textMuted} strokeWidth={1.5} />
+          <TouchableOpacity style={[styles.tabItem, activeTab === 'tagged' && styles.tabItemActive, activeTab === 'tagged' && { borderBottomColor: themeColors.text }]} onPress={() => setActiveTab('tagged')} activeOpacity={0.7}
+            accessibilityLabel="Tagged" accessibilityRole="tab" accessibilityState={{ selected: activeTab === 'tagged' }}>
+            <UserIcon size={22} color={activeTab === 'tagged' ? themeColors.text : themeColors.textMuted} strokeWidth={1.5} />
+            <Text style={[styles.tabLabel, { color: activeTab === 'tagged' ? themeColors.text : themeColors.textMuted }]}>Tagged</Text>
           </TouchableOpacity>
         </View>
 
@@ -275,7 +267,7 @@ export default function ProfileScreen({ navigation }: Props) {
         <View style={{ height: 40 }} />
       </ScrollView>
 
-      {/* ─── Create content bottom sheet ─── */}
+      {/* ─── Create Bottom Sheet ─── */}
       <Modal visible={createMenuVisible} transparent animationType="slide" onRequestClose={() => setCreateMenuVisible(false)}>
         <TouchableOpacity style={createStyles.overlay} activeOpacity={1} onPress={() => setCreateMenuVisible(false)}>
           <View style={[createStyles.sheet, { backgroundColor: themeColors.cardBackground }]}>
@@ -322,6 +314,19 @@ const createStyles = StyleSheet.create({
   optionLabel: { fontFamily: fonts.semiBold, fontSize: 16 },
   optionSub: { fontFamily: fonts.regular, fontSize: 12, marginTop: 1 },
   cancelBtn: { marginHorizontal: 20, marginTop: 16, paddingVertical: 14, borderRadius: 12, alignItems: 'center', borderWidth: 1 },
+  cancelText: { fontFamily: fonts.semiBold, fontSize: 16 },
+});
+
+const shareStyles = StyleSheet.create({
+  overlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
+  sheet: { borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingBottom: 34, paddingTop: 8 },
+  handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 16 },
+  title: { fontFamily: fonts.bold, fontSize: 20, textAlign: 'center', marginBottom: 24 },
+  optionsRow: { flexDirection: 'row', justifyContent: 'center', gap: 32, paddingHorizontal: 20, marginBottom: 24 },
+  option: { alignItems: 'center', gap: 8 },
+  iconWrap: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
+  optionLabel: { fontFamily: fonts.medium, fontSize: 13 },
+  cancelBtn: { marginHorizontal: 20, paddingVertical: 14, borderRadius: 12, alignItems: 'center', borderWidth: 1 },
   cancelText: { fontFamily: fonts.semiBold, fontSize: 16 },
 });
 
@@ -476,10 +481,15 @@ const styles = StyleSheet.create({
   tabItem: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 8,
+    gap: 2,
   },
   tabItemActive: {
     borderBottomWidth: 2,
+  },
+  tabLabel: {
+    fontFamily: fonts.medium,
+    fontSize: 11,
   },
 
   // ─── Posts grid ───

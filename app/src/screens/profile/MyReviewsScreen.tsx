@@ -9,6 +9,7 @@ import { ChevronLeftIcon, StarIcon, StarOutlineIcon } from '../../components/Ico
 import Skeleton from '../../components/Skeleton';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -52,10 +53,7 @@ export default function MyReviewsScreen({ navigation }: Props) {
     try {
       // Fetch completed bookings which have reviews
       const res = await fetch(`${API_URL}/bookings?status=COMPLETED`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
       });
       const data = await res.json();
       if (data.success) {

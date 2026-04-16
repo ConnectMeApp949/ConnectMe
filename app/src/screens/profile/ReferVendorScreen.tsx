@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Share, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Share, Alert, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, borderRadius, spacing } from '../../theme';
@@ -36,13 +36,20 @@ export default function ReferVendorScreen({ navigation }: Props) {
     Alert.alert('Copied!', 'Invite code copied to clipboard');
   }
 
+  const appStoreLink = 'https://apps.apple.com/app/id6761668389';
+  const playStoreLink = 'https://play.google.com/store/apps/details?id=com.connectmeapp.services';
+  const downloadLink = Platform.OS === 'ios' ? appStoreLink : playStoreLink;
+
   async function shareCode() {
-    await Share.share({ message: `Join ConnectMe as a vendor! Use my referral code: ${REFERRAL_CODE}` });
+    await Share.share({
+      message: `Join ConnectMe as a vendor and grow your business! Use my referral code: ${REFERRAL_CODE}\n\nDownload the app: ${downloadLink}`,
+    });
   }
 
   async function shareApp() {
     await Share.share({
-      message: 'I\'m using ConnectMe to find amazing event vendors in San Antonio! Download it here: https://connectmeapp.services',
+      message: `I'm using ConnectMe to find amazing event vendors in San Antonio! Download it here: ${downloadLink}`,
+      url: downloadLink,
     });
   }
 

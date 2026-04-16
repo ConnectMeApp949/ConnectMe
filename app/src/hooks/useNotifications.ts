@@ -4,6 +4,7 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { useAuth } from '../context/AuthContext';
+import { apiHeaders } from '../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -94,10 +95,7 @@ async function saveTokenToServer(pushToken: string, authToken?: string): Promise
   try {
     await fetch(`${API_URL}/notifications/register-token`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}),
-      },
+      headers: apiHeaders(authToken),
       body: JSON.stringify({ token: pushToken }),
     });
   } catch (err) {

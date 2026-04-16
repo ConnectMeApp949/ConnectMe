@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, LogBox } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import { apiHeaders } from './src/services/headers';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -51,6 +53,7 @@ import { ReviewsScreen } from './src/screens/reviews';
 import FeedScreen from './src/screens/feed/FeedScreen';
 import PostCreationScreen from './src/screens/feed/PostCreationScreen';
 import PostDetailScreen from './src/screens/feed/PostDetailScreen';
+import StoryCreationScreen from './src/screens/feed/StoryCreationScreen';
 
 // Planner
 import EventPlannerScreen from './src/screens/planner/EventPlannerScreen';
@@ -183,6 +186,7 @@ function FeedNavigator() {
     <FeedStack.Navigator screenOptions={noHeader}>
       <FeedStack.Screen name="FeedMain" component={FeedScreen} />
       <FeedStack.Screen name="PostCreation" component={PostCreationScreen} options={{ animation: 'slide_from_bottom' }} />
+      <FeedStack.Screen name="StoryCreation" component={StoryCreationScreen} options={{ animation: 'slide_from_bottom' }} />
       <FeedStack.Screen name="PostDetail" component={PostDetailScreen} options={slide} />
       <FeedStack.Screen name="Notifications" component={NotificationsScreen} options={slide} />
     </FeedStack.Navigator>
@@ -221,6 +225,8 @@ function ProfileNavigator() {
       <ProfileStack.Screen name="VendorPricing" component={VendorPricingScreen} options={slide} />
       <ProfileStack.Screen name="VendorReviewPublish" component={VendorReviewPublishScreen} options={slide} />
       <ProfileStack.Screen name="PostDetail" component={PostDetailScreen} options={slide} />
+      <ProfileStack.Screen name="PostCreation" component={PostCreationScreen} options={{ animation: 'slide_from_bottom' }} />
+      <ProfileStack.Screen name="StoryCreation" component={StoryCreationScreen} options={{ animation: 'slide_from_bottom' }} />
       <ProfileStack.Screen name="VendorDetail" component={VendorDetailScreen} options={slide} />
       <ProfileStack.Screen name="CancelBooking" component={CancelBookingScreen} options={slide} />
       <ProfileStack.Screen name="ModifyBooking" component={ModifyBookingScreen} options={slide} />
@@ -469,16 +475,84 @@ export default function App() {
   const [user, setUser] = useState<any>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isVendorMode, setIsVendorMode] = useState(false);
+  const [authLoaded, setAuthLoaded] = useState(false);
   const savedVendors = useSavedVendorsProvider();
   const recentlyViewed = useRecentlyViewedProvider();
   const savedSearches = useSavedSearchesProvider();
+
+  const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+
+  // Fetch full user profile from API using token
+  async function fetchUserProfile(authToken: string): Promise<any | null> {
+    try {
+      const res = await fetch(`${API_URL}/auth/me`, {
+        headers: apiHeaders(authToken),
+      });
+      const data = await res.json();
+      if (data.success && data.data?.user) {
+        return data.data.user;
+      }
+    } catch {}
+    return null;
+  }
+
+  // Restore persisted session on app launch
+  useEffect(() => {
+    (async () => {
+      try {
+        const savedToken = await SecureStore.getItemAsync('connectme_token');
+        if (savedToken) {
+          // Try to fetch fresh profile from API
+          const freshUser = await fetchUserProfile(savedToken);
+          if (freshUser) {
+            setUser(freshUser);
+            setToken(savedToken);
+            await SecureStore.setItemAsync('connectme_user', JSON.stringify(freshUser));
+          } else {
+            // Token might be expired — fall back to cached user
+            const savedUser = await SecureStore.getItemAsync('connectme_user');
+            if (savedUser) {
+              setUser(JSON.parse(savedUser));
+              setToken(savedToken);
+            }
+          }
+        }
+      } catch {}
+      setAuthLoaded(true);
+    })();
+  }, []);
+
+  const login = useCallback(async (u: any, t: string) => {
+    setUser(u);
+    setToken(t);
+    try {
+      await SecureStore.setItemAsync('connectme_user', JSON.stringify(u));
+      await SecureStore.setItemAsync('connectme_token', t);
+      // Also update biometric credentials so Face ID uses the same token
+      await SecureStore.setItemAsync('connectme_bio_email', u.email ?? '');
+      await SecureStore.setItemAsync('connectme_bio_token', t);
+    } catch {}
+  }, []);
+
+  const logout = useCallback(async () => {
+    setUser(null);
+    setToken(null);
+    setIsVendorMode(false);
+    try {
+      await SecureStore.deleteItemAsync('connectme_user');
+      await SecureStore.deleteItemAsync('connectme_token');
+      await SecureStore.deleteItemAsync('connectme_bio_email');
+      await SecureStore.deleteItemAsync('connectme_bio_token');
+      await SecureStore.deleteItemAsync('connectme_biometric_enabled');
+    } catch {}
+  }, []);
 
   const authValue: AuthState = {
     user,
     token,
     isVendorMode,
-    login: (u, t) => { setUser(u); setToken(t); },
-    logout: () => { setUser(null); setToken(null); setIsVendorMode(false); },
+    login,
+    logout,
     toggleVendorMode: () => setIsVendorMode((v) => !v),
   };
 

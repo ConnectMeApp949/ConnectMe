@@ -1,4 +1,5 @@
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY || '';
 
 interface ApiResponse<T> {
   success: boolean;
@@ -13,7 +14,11 @@ interface ApiResponse<T> {
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
   const res = await fetch(`${API_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options.headers },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(API_KEY ? { 'x-api-key': API_KEY } : {}),
+      ...options.headers,
+    },
     ...options,
   });
   return res.json();

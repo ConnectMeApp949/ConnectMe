@@ -16,7 +16,7 @@ import { useSavedVendors } from '../../hooks/useSavedVendors';
 
 const CATEGORIES = [
   { id: '', label: 'All' },
-  { id: 'FOOD_TRUCK', label: 'Food Trucks' },
+  { id: 'FOOD_TRUCK', label: 'Mobile Eats' },
   { id: 'DJ', label: 'Music' },
   { id: 'CATERING', label: 'Catering' },
   { id: 'WEDDING_SERVICES', label: 'Weddings' },
@@ -24,6 +24,7 @@ const CATEGORIES = [
   { id: 'ENTERTAINMENT', label: 'Entertainment' },
   { id: 'EXPERIENCES', label: 'Experiences' },
   { id: 'WELLNESS', label: 'Wellness' },
+  { id: 'BEVERAGES', label: 'Beverages' },
 ];
 
 const RATINGS = [0, 3, 3.5, 4, 4.5];
@@ -56,7 +57,7 @@ function buildMapUrl(vendors: any[]): string {
 
 const TRENDING_SEARCHES = [
   'Wedding DJ',
-  'Food Trucks',
+  'Mobile Eats',
   'Photography',
   'Catering near me',
   'Party Entertainment',
@@ -64,7 +65,7 @@ const TRENDING_SEARCHES = [
 
 const POPULAR_TERMS = [
   'Wedding DJ',
-  'Food Trucks',
+  'Mobile Eats',
   'Photography',
   'Catering near me',
   'Party Entertainment',

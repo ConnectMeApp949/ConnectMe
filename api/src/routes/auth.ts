@@ -6,6 +6,7 @@ import { generateAccessToken, generateRefreshToken, generateResetToken, hashRese
 import { sendError, sendSuccess } from '../lib/errors';
 import { sendPasswordResetEmail } from '../lib/mail';
 import { handleValidation } from '../middleware/validate';
+import { authenticate } from '../middleware/auth';
 
 const router = Router();
 
@@ -89,12 +90,114 @@ router.post(
       });
 
       sendSuccess(res, {
-        user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, userType: user.userType },
+        user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, profilePhoto: user.profilePhoto, phone: user.phone, userType: user.userType, isVerified: user.isVerified },
         accessToken,
         refreshToken,
       });
     } catch (err) {
       sendError(res, { status: 500, code: 'INTERNAL_ERROR', message: 'Login failed' });
+    }
+  }
+);
+
+// ─── GET /auth/me ────────────────────────────────────────
+
+router.get(
+  '/me',
+  authenticate,
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.user!.userId;
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        return sendError(res, { status: 404, code: 'NOT_FOUND', message: 'User not found' });
+      }
+      sendSuccess(res, {
+        user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, profilePhoto: user.profilePhoto, phone: user.phone, userType: user.userType, isVerified: user.isVerified },
+      });
+    } catch (err) {
+      sendError(res, { status: 500, code: 'INTERNAL_ERROR', message: 'Failed to fetch profile' });
+    }
+  }
+);
+
+// ─── POST /auth/social-login ─────────────────────────────
+
+router.post(
+  '/social-login',
+  [
+    body('provider').isIn(['facebook', 'google', 'apple']).withMessage('Valid provider is required'),
+    body('accessToken').notEmpty().withMessage('Access token is required'),
+  ],
+  handleValidation,
+  async (req: Request, res: Response) => {
+    try {
+      const { provider, accessToken } = req.body;
+      let email: string | null = null;
+      let firstName = '';
+      let lastName = '';
+      let profilePhoto: string | null = null;
+
+      if (provider === 'facebook') {
+        const fbRes = await fetch(`https://graph.facebook.com/me?fields=id,email,first_name,last_name,picture.type(large)&access_token=${accessToken}`);
+        const fbData: any = await fbRes.json();
+        if (fbData.error) {
+          return sendError(res, { status: 401, code: 'SOCIAL_AUTH_FAILED', message: 'Invalid Facebook token' });
+        }
+        email = fbData.email;
+        firstName = fbData.first_name ?? '';
+        lastName = fbData.last_name ?? '';
+        profilePhoto = fbData.picture?.data?.url ?? null;
+      } else if (provider === 'google') {
+        const gRes = await fetch(`https://www.googleapis.com/oauth2/v2/userinfo`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        const gData: any = await gRes.json();
+        if (gData.error) {
+          return sendError(res, { status: 401, code: 'SOCIAL_AUTH_FAILED', message: 'Invalid Google token' });
+        }
+        email = gData.email;
+        firstName = gData.given_name ?? '';
+        lastName = gData.family_name ?? '';
+        profilePhoto = gData.picture ?? null;
+      } else {
+        return sendError(res, { status: 400, code: 'UNSUPPORTED', message: 'Provider not supported for token exchange' });
+      }
+
+      if (!email) {
+        return sendError(res, { status: 400, code: 'NO_EMAIL', message: 'Unable to retrieve email from provider' });
+      }
+
+      // Find or create user
+      let user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            email,
+            passwordHash: '', // social-only account, no password
+            firstName,
+            lastName,
+            profilePhoto,
+            userType: 'CLIENT',
+          },
+        });
+      }
+
+      const jwtToken = generateAccessToken({ userId: user.id, email: user.email, userType: user.userType });
+      const { token: refreshToken, expiresAt } = generateRefreshToken();
+
+      await prisma.refreshToken.create({
+        data: { token: refreshToken, userId: user.id, expiresAt },
+      });
+
+      sendSuccess(res, {
+        user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, profilePhoto: user.profilePhoto, userType: user.userType },
+        accessToken: jwtToken,
+        refreshToken,
+      });
+    } catch (err) {
+      console.error('Social login error:', err);
+      sendError(res, { status: 500, code: 'INTERNAL_ERROR', message: 'Social login failed' });
     }
   }
 );
@@ -248,6 +351,48 @@ router.post(
       sendSuccess(res, { message: 'Password has been reset successfully' });
     } catch (err) {
       sendError(res, { status: 500, code: 'INTERNAL_ERROR', message: 'Password reset failed' });
+    }
+  }
+);
+
+// ─── DELETE /auth/delete-account ────────────────────────
+
+router.delete(
+  '/delete-account',
+  authenticate,
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.user!.userId;
+
+      // Find vendor profile if user is a vendor
+      const vendorProfile = await prisma.vendorProfile.findUnique({ where: { userId } });
+      const vendorId = vendorProfile?.id;
+
+      // Collect all booking IDs for this user (as client or vendor)
+      const bookingFilter = vendorId
+        ? { OR: [{ clientId: userId }, { vendorId }] }
+        : { clientId: userId };
+
+      // Delete all user data in correct order (respecting FK constraints)
+      await prisma.$transaction([
+        prisma.review.deleteMany({ where: { booking: bookingFilter } }),
+        prisma.payment.deleteMany({ where: { booking: bookingFilter } }),
+        prisma.message.deleteMany({ where: { OR: [{ senderId: userId }, { booking: bookingFilter }] } }),
+        prisma.booking.deleteMany({ where: bookingFilter }),
+        ...(vendorId ? [
+          prisma.vendorVerification.deleteMany({ where: { vendorId } }),
+          prisma.subscription.deleteMany({ where: { vendorId } }),
+          prisma.vendorProfile.delete({ where: { userId } }),
+        ] : []),
+        prisma.refreshToken.deleteMany({ where: { userId } }),
+        prisma.passwordResetToken.deleteMany({ where: { userId } }),
+        prisma.user.delete({ where: { id: userId } }),
+      ]);
+
+      sendSuccess(res, { message: 'Account deleted successfully' });
+    } catch (err) {
+      console.error('Account deletion error:', err);
+      sendError(res, { status: 500, code: 'INTERNAL_ERROR', message: 'Failed to delete account. Please contact support.' });
     }
   }
 );

@@ -15,10 +15,23 @@ const UNIT_SHORT: Record<string, string> = {
   CUSTOM: '',
 };
 
+// Curated cover photos for vendors with generic/placeholder images
+const CURATED_COVERS: Record<string, string> = {
+  'SA Rolling Kitchen': 'https://images.unsplash.com/photo-1567129937968-cdad8f07e2f8?w=800&h=600&fit=crop',
+  'SA Matcha Bar': 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=800&h=600&fit=crop',
+  'Puro Coffee Cart': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&h=600&fit=crop',
+  'Alamo Mobile Bartenders': 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&h=600&fit=crop',
+  'River City Juice Co.': 'https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=800&h=600&fit=crop',
+  'Fiesta Cocktail Catering': 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=800&h=600&fit=crop',
+  'The Boba Truck SA': 'https://images.unsplash.com/photo-1558857563-b371033873b8?w=800&h=600&fit=crop',
+  'Hill Country Spirits': 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800&h=600&fit=crop',
+  'SA Smoothie Station': 'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=800&h=600&fit=crop',
+};
+
 const CATEGORY_LABELS: Record<string, string> = {
-  FOOD_TRUCK: 'Food Truck', DJ: 'Music', CATERING: 'Catering',
+  FOOD_TRUCK: 'Mobile Eats', DJ: 'Music', CATERING: 'Catering',
   WEDDING_SERVICES: 'Weddings', PHOTOGRAPHY: 'Photography',
-  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', OTHER: 'Other',
+  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', BEVERAGES: 'Beverages', OTHER: 'Other',
 };
 
 function VendorBadgesInline({ vendor }: { vendor: any }) {
@@ -50,6 +63,7 @@ export default function VendorCard({ vendor, onPress, variant = 'grid' }: Vendor
   const cardWidth = isFeatured ? 260 : CARD_WIDTH;
   const imageHeight = isFeatured ? 180 : cardWidth * 0.75;
   const [imgError, setImgError] = useState(false);
+  const coverUri = CURATED_COVERS[vendor.businessName] || vendor.coverPhoto || vendor.portfolioPhotos?.[0];
 
   return (
     <TouchableOpacity
@@ -62,9 +76,9 @@ export default function VendorCard({ vendor, onPress, variant = 'grid' }: Vendor
     >
       {/* Image */}
       <View style={[styles.imageWrapper, { height: imageHeight }]}>
-        {!imgError && (vendor.coverPhoto || vendor.portfolioPhotos?.[0]) ? (
+        {!imgError && coverUri ? (
           <Image
-            source={{ uri: vendor.coverPhoto || vendor.portfolioPhotos?.[0] }}
+            source={{ uri: coverUri }}
             style={styles.image}
             resizeMode="cover"
             onError={() => setImgError(true)}

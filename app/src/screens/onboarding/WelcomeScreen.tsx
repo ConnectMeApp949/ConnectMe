@@ -5,7 +5,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as WebBrowser from 'expo-web-browser';
+import * as AuthSession from 'expo-auth-session';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import * as SecureStore from 'expo-secure-store';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { OnboardingStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
@@ -18,6 +20,7 @@ import {
   authenticateWithBiometrics,
   getSavedCredentials,
 } from '../../util/biometrics';
+import { apiHeaders } from '../../services/headers';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'Welcome'>;
 
@@ -57,8 +60,26 @@ export default function WelcomeScreen({ navigation }: Props) {
         `Log in to ConnectMe with ${type}`,
       );
       if (success) {
-        // Restore session with saved credentials
-        auth.login({ email: credentials.email }, credentials.token);
+        // Restore session — fetch fresh profile from API
+        try {
+          const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+          const res = await fetch(`${API_URL}/auth/me`, {
+            headers: apiHeaders(credentials.token),
+          });
+          const data = await res.json();
+          if (data.success && data.data?.user) {
+            auth.login(data.data.user, credentials.token);
+          } else {
+            // Token expired — need fresh login
+            Alert.alert('Session Expired', 'Please sign in again.');
+          }
+        } catch {
+          // Offline fallback — use cached user data
+          const savedUser = await SecureStore.getItemAsync('connectme_user');
+          if (savedUser) {
+            auth.login(JSON.parse(savedUser), credentials.token);
+          }
+        }
       }
     }
     tryBiometricLogin();
@@ -82,14 +103,30 @@ export default function WelcomeScreen({ navigation }: Props) {
       `Log in to ConnectMe with ${biometricType}`,
     );
     if (success) {
-      auth.login({ email: credentials.email }, credentials.token);
+      try {
+        const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+        const res = await fetch(`${API_URL}/auth/me`, {
+          headers: apiHeaders(credentials.token),
+        });
+        const data = await res.json();
+        if (data.success && data.data?.user) {
+          auth.login(data.data.user, credentials.token);
+        } else {
+          Alert.alert('Session Expired', 'Your session has expired. Please sign in again.');
+        }
+      } catch {
+        const savedUser = await SecureStore.getItemAsync('connectme_user');
+        if (savedUser) {
+          auth.login(JSON.parse(savedUser), credentials.token);
+        }
+      }
     }
   }
 
   async function handleFacebookLogin() {
     const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
     const fbAppId = '951097110641665';
-    const redirectUri = 'https://auth.expo.io/@connectme/connectme';
+    const redirectUri = AuthSession.makeRedirectUri({ scheme: 'connectme' });
 
     let result;
     try {
@@ -104,13 +141,12 @@ export default function WelcomeScreen({ navigation }: Props) {
     } catch (err: any) {
       Alert.alert(
         'Unable to Connect',
-        'Unable to connect to Facebook. Please try again or use email to sign in.',
+        'Could not open Facebook login. Please try again or use email to sign in.',
       );
       return;
     }
 
-    if (result.type === 'cancel' || result.type === 'dismiss') {
-      // User closed the browser — do nothing
+    if (!result || result.type === 'cancel' || result.type === 'dismiss') {
       return;
     }
 
@@ -145,7 +181,7 @@ export default function WelcomeScreen({ navigation }: Props) {
     try {
       const res = await fetch(`${API_URL}/auth/social-login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: apiHeaders(),
         body: JSON.stringify({ provider: 'facebook', accessToken }),
       });
       const data = await res.json();
@@ -169,7 +205,7 @@ export default function WelcomeScreen({ navigation }: Props) {
     try {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       const clientId = '528402499661-nktq259d8g6h6trep8nkj37ii6046681.apps.googleusercontent.com';
-      const redirectUri = 'https://auth.expo.io/@connectme/connectme';
+      const redirectUri = AuthSession.makeRedirectUri({ scheme: 'connectme' });
       const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' + clientId + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&scope=email%20profile&response_type=token';
 
       const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
@@ -180,7 +216,7 @@ export default function WelcomeScreen({ navigation }: Props) {
         if (accessToken) {
           const res = await fetch(API_URL + '/auth/social-login', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: apiHeaders(),
             body: JSON.stringify({ provider: 'google', accessToken }),
           });
           const data = await res.json();
@@ -217,7 +253,7 @@ export default function WelcomeScreen({ navigation }: Props) {
         try {
           const res = await fetch(`${API_URL}/auth/social-login`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: apiHeaders(),
             body: JSON.stringify({ provider: 'apple', identityToken: credential.identityToken }),
           });
           const data = await res.json();

@@ -26,7 +26,7 @@ export interface PriceUnitOption {
 }
 
 export const CATEGORIES = [
-  { id: 'FOOD_TRUCK', label: 'Food Truck', icon: 'truck' },
+  { id: 'FOOD_TRUCK', label: 'Mobile Eats', icon: 'truck' },
   { id: 'DJ', label: 'Music', icon: 'music' },
   { id: 'CATERING', label: 'Catering', icon: 'utensils' },
   { id: 'WEDDING_SERVICES', label: 'Wedding Services', icon: 'rings' },
@@ -34,5 +34,6 @@ export const CATEGORIES = [
   { id: 'ENTERTAINMENT', label: 'Entertainment', icon: 'sparkles' },
   { id: 'EXPERIENCES', label: 'Experiences', icon: 'compass' },
   { id: 'WELLNESS', label: 'Wellness', icon: 'wellness' },
+  { id: 'BEVERAGES', label: 'Beverages', icon: 'coffee' },
   { id: 'OTHER', label: 'Other', icon: 'sparkles' },
 ] as const;

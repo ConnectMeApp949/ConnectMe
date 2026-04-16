@@ -9,6 +9,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { ChevronLeftIcon, SparklesIcon } from '../../components/Icons';
+import { apiHeaders } from '../../services/headers';
 
 type Props = NativeStackScreenProps<any, 'Tip'>;
 
@@ -83,10 +84,7 @@ export default function TipScreen({ navigation, route }: Props) {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       const res = await fetch(`${API_URL}/bookings/${booking?.id}/tip`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        headers: apiHeaders(token),
         body: JSON.stringify({
           amount: tipAmount,
           message: message.trim() || undefined,

@@ -18,6 +18,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useAlert } from '../../context/AlertContext';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 const MAX_COMMENT_LENGTH = 500;
@@ -117,10 +118,7 @@ export default function LeaveReviewScreen({ navigation, route }: Props) {
 
       const res = await fetch(`${API_URL}/reviews`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
         body: JSON.stringify(body),
       });
 

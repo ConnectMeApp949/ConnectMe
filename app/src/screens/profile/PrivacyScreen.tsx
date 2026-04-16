@@ -61,20 +61,29 @@ export default function PrivacyScreen({ navigation }: Props) {
   const handleDeleteFinal = async () => {
     try {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
-      await fetch(API_URL + '/auth/delete-account', {
+      const res = await fetch(API_URL + '/auth/delete-account', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
         },
       });
-    } catch {}
-    setDeleteStep(0);
-    Alert.alert(
-      'Account Deleted',
-      'Your account has been scheduled for deletion. All your data will be permanently removed within 30 days.\n\nIf you change your mind, contact support within 14 days to recover your account.',
-      [{ text: 'OK', onPress: () => logout() }],
-    );
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setDeleteStep(0);
+        Alert.alert('Error', data?.error?.message || 'Failed to delete account. Please try again or contact support.');
+        return;
+      }
+      setDeleteStep(0);
+      Alert.alert(
+        'Account Deleted',
+        'Your account has been permanently deleted.\n\nIf you change your mind within 14 days, contact support@connectmeapp.services to recover your account.',
+        [{ text: 'OK', onPress: () => logout() }],
+      );
+    } catch {
+      setDeleteStep(0);
+      Alert.alert('Error', 'Network error. Please check your connection and try again.');
+    }
   };
 
   return (

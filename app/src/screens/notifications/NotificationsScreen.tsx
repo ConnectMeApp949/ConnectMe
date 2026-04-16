@@ -6,6 +6,7 @@ import { CalendarIcon, StarOutlineIcon, MessageIcon, SparklesIcon, BellIcon, Che
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -50,10 +51,7 @@ export default function NotificationsScreen({ navigation }: Props) {
     async function fetchNotifications() {
       try {
         const res = await fetch(`${API_URL}/notifications`, {
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-          },
+          headers: apiHeaders(token),
         });
         const data = await res.json();
         if (data.success) {

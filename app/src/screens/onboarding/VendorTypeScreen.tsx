@@ -4,14 +4,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
-import { CheckIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon, CompassIcon, WellnessIcon } from '../../components/Icons';
+import { CheckIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon, CompassIcon, WellnessIcon, CoffeeIcon } from '../../components/Icons';
 import { OnboardingStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
+import { apiHeaders } from '../../services/headers';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'VendorType'>;
 
 const CATEGORIES = [
-  { id: 'FOOD_TRUCK', label: 'Food Truck', icon: 'truck' },
+  { id: 'FOOD_TRUCK', label: 'Mobile Eats', icon: 'truck' },
   { id: 'DJ', label: 'Music', icon: 'music' },
   { id: 'CATERING', label: 'Catering', icon: 'utensils' },
   { id: 'WEDDING_SERVICES', label: 'Wedding Services', icon: 'rings' },
@@ -19,6 +20,7 @@ const CATEGORIES = [
   { id: 'ENTERTAINMENT', label: 'Entertainment', icon: 'sparkles' },
   { id: 'EXPERIENCES', label: 'Experiences', icon: 'compass' },
   { id: 'WELLNESS', label: 'Wellness', icon: 'wellness' },
+  { id: 'BEVERAGES', label: 'Beverages', icon: 'coffee' },
   { id: 'OTHER', label: 'Other', icon: 'sparkles' },
 ] as const;
 
@@ -31,6 +33,7 @@ const ICON_MAP: Record<string, React.FC<{ size?: number; color?: string; strokeW
   sparkles: SparklesIcon,
   compass: CompassIcon,
   wellness: WellnessIcon,
+  coffee: CoffeeIcon,
 };
 
 export default function VendorTypeScreen({ navigation }: Props) {
@@ -55,10 +58,7 @@ export default function VendorTypeScreen({ navigation }: Props) {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       await fetch(`${API_URL}/vendors/categories`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
         body: JSON.stringify({ categories: Array.from(selected) }),
       });
     } catch {

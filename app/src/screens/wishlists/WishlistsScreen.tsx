@@ -15,9 +15,9 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 
 const CATEGORY_LABELS: Record<string, string> = {
-  FOOD_TRUCK: 'Food Trucks', DJ: 'Music', CATERING: 'Catering',
+  FOOD_TRUCK: 'Mobile Eats', DJ: 'Music', CATERING: 'Catering',
   WEDDING_SERVICES: 'Weddings', PHOTOGRAPHY: 'Photography',
-  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', OTHER: 'Other',
+  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', BEVERAGES: 'Beverages', OTHER: 'Other',
 };
 
 type Props = NativeStackScreenProps<any, 'Wishlists'>;

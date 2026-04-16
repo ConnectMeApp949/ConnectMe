@@ -4,7 +4,7 @@
     "slug": "connectme",
     "owner": "connectme",
     "description": "ConnectMe is the premier marketplace for booking event vendors — DJs, caterers, photographers, food trucks, and more — in San Antonio and beyond.",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "buildNumber": "1",
+      "buildNumber": "3",
       "bundleIdentifier": "com.connectmeapp.services",
       "usesAppleSignIn": true,
       "infoPlist": {
@@ -34,7 +34,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.connectmeapp.services",
-      "versionCode": 1,
+      "versionCode": 3,
       "permissions": [
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE",

@@ -8,6 +8,7 @@ import Button from '../../components/Button';
 import { useAuth } from '../../context/AuthContext';
 import { CalendarIcon, DollarIcon, UserIcon, SparklesIcon, AlertCircleIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -95,13 +96,10 @@ export default function DashboardScreen({ navigation }: Props) {
 
   async function loadDashboard() {
     try {
-      const authHeaders = {
-        'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-      };
+      const hdrs = apiHeaders(token);
       const [bookingsRes, profileRes] = await Promise.all([
-        fetch(`${API_URL}/bookings?status=PENDING`, { headers: authHeaders }),
-        fetch(`${API_URL}/vendors/me`, { headers: authHeaders }),
+        fetch(`${API_URL}/bookings?status=PENDING`, { headers: hdrs }),
+        fetch(`${API_URL}/vendors/me`, { headers: hdrs }),
       ]);
 
       const bookingsData = await bookingsRes.json();

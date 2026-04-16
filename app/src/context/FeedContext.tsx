@@ -2,6 +2,19 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 
 // ─── Types ──────────────────────────────────────────────
 
+export interface FeedStory {
+  id: string;
+  userId: string;
+  userName: string;
+  userAvatar: string | null;
+  image: string;
+  caption: string;
+  taggedVendors: string[];
+  taggedFriends: string[];
+  location: string;
+  createdAt: string;
+}
+
 export interface FeedComment {
   id: string;
   userId: string;
@@ -31,7 +44,9 @@ export interface FeedPost {
 
 interface FeedContextValue {
   posts: FeedPost[];
+  stories: FeedStory[];
   addPost: (post: Omit<FeedPost, 'id' | 'likes' | 'liked' | 'bookmarked' | 'comments' | 'createdAt'> & { comments?: FeedComment[] }) => void;
+  addStory: (story: Omit<FeedStory, 'id' | 'createdAt'>) => void;
   editPost: (id: string, updates: { caption?: string; location?: string; taggedVendors?: string[]; taggedFriends?: string[] }) => void;
   likePost: (id: string) => void;
   bookmarkPost: (id: string) => void;
@@ -41,7 +56,9 @@ interface FeedContextValue {
 
 const FeedContext = createContext<FeedContextValue>({
   posts: [],
+  stories: [],
   addPost: () => {},
+  addStory: () => {},
   editPost: () => {},
   likePost: () => {},
   bookmarkPost: () => {},
@@ -176,8 +193,27 @@ const DEMO_POSTS: FeedPost[] = [
 
 // ─── Provider ───────────────────────────────────────────
 
+const DEMO_STORIES: FeedStory[] = [
+  { id: 'ds1', userId: 'u1', userName: 'Sarah M.', userAvatar: null, image: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&h=1200&fit=crop', caption: 'Wedding prep day!', taggedVendors: ['AlamoCityCatering'], taggedFriends: [], location: 'The Pearl, San Antonio', createdAt: '2026-04-15T08:00:00Z' },
+  { id: 'ds2', userId: 'u5', userName: 'David C.', userAvatar: null, image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=1200&fit=crop', caption: 'Event night vibes', taggedVendors: ['DJAlamoBeats'], taggedFriends: [], location: 'Grand Hyatt, San Antonio', createdAt: '2026-04-15T06:00:00Z' },
+  { id: 'ds3', userId: 'u9', userName: 'Maria G.', userAvatar: null, image: 'https://images.unsplash.com/photo-1565123409695-7b5ef63a2efb?w=800&h=1200&fit=crop', caption: 'Taco Tuesday!', taggedVendors: ['TacoLibreSA'], taggedFriends: ['Carlos Ruiz'], location: 'Brackenridge Park', createdAt: '2026-04-15T04:00:00Z' },
+  { id: 'ds4', userId: 'u13', userName: 'James C.', userAvatar: null, image: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=1200&fit=crop', caption: 'Flowers everywhere', taggedVendors: ['BloomSA'], taggedFriends: ['Emily Cooper'], location: 'River Walk', createdAt: '2026-04-15T02:00:00Z' },
+  { id: 'ds5', userId: 'u17', userName: 'Ashley T.', userAvatar: null, image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=1200&fit=crop', caption: 'Best day ever', taggedVendors: [], taggedFriends: ['Nicole Brown'], location: 'Botanical Garden', createdAt: '2026-04-14T22:00:00Z' },
+  { id: 'ds6', userId: 'u21', userName: 'Marcus R.', userAvatar: null, image: 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=800&h=1200&fit=crop', caption: 'Surprise party setup', taggedVendors: ['EventVibesSA'], taggedFriends: ['Derek Hall'], location: 'La Villita', createdAt: '2026-04-14T20:00:00Z' },
+];
+
 export function FeedProvider({ children }: { children: React.ReactNode }) {
   const [posts, setPosts] = useState<FeedPost[]>(DEMO_POSTS);
+  const [stories, setStories] = useState<FeedStory[]>(DEMO_STORIES);
+
+  const addStory = useCallback((data: Omit<FeedStory, 'id' | 'createdAt'>) => {
+    const newStory: FeedStory = {
+      ...data,
+      id: `story_${Date.now()}`,
+      createdAt: new Date().toISOString(),
+    };
+    setStories((prev) => [newStory, ...prev]);
+  }, []);
 
   const addPost = useCallback((data: Omit<FeedPost, 'id' | 'likes' | 'liked' | 'bookmarked' | 'comments' | 'createdAt'> & { comments?: FeedComment[] }) => {
     const newPost: FeedPost = {
@@ -248,7 +284,7 @@ export function FeedProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <FeedContext.Provider value={{ posts, addPost, editPost, likePost, bookmarkPost, addComment, likeComment }}>
+    <FeedContext.Provider value={{ posts, stories, addPost, addStory, editPost, likePost, bookmarkPost, addComment, likeComment }}>
       {children}
     </FeedContext.Provider>
   );

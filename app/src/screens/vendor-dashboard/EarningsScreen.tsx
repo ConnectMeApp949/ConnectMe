@@ -8,6 +8,7 @@ import { BarChart } from 'react-native-chart-kit';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon } from '../../components/Icons';
 import { useAuth } from '../../context/AuthContext';
+import { apiHeaders } from '../../services/headers';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
@@ -33,10 +34,7 @@ export default function EarningsScreen({ navigation }: Props) {
   async function loadEarnings() {
     try {
       const res = await fetch(`${API_URL}/vendors/me`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
       });
       const data = await res.json();
       if (data.success) {

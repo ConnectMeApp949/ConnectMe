@@ -7,6 +7,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon } from '../../components/Icons';
 import { useAuth } from '../../context/AuthContext';
+import { apiHeaders } from '../../services/headers';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
@@ -46,10 +47,7 @@ export default function AvailabilityScreen({ navigation }: Props) {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/bookings`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
       });
       const data = await res.json();
       if (data.success) {
@@ -87,10 +85,7 @@ export default function AvailabilityScreen({ navigation }: Props) {
     try {
       await fetch(`${API_URL}/vendors/availability`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
         body: JSON.stringify({ date: key, blocked: isBlocking }),
       });
     } catch {

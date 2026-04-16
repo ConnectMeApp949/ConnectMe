@@ -632,6 +632,59 @@ export const MoreHorizontalIcon: React.FC<IconProps> = ({
   </Svg>
 );
 
+// Sun icon (brightness)
+export const SunIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Circle cx="12" cy="12" r="5" />
+    <Line x1="12" y1="1" x2="12" y2="3" />
+    <Line x1="12" y1="21" x2="12" y2="23" />
+    <Line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+    <Line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+    <Line x1="1" y1="12" x2="3" y2="12" />
+    <Line x1="21" y1="12" x2="23" y2="12" />
+    <Line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+    <Line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+  </Svg>
+);
+
+// Contrast icon
+export const ContrastIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Circle cx="12" cy="12" r="10" />
+    <Path d="M12 2a10 10 0 0 1 0 20z" fill={color} />
+  </Svg>
+);
+
+// Thermometer icon (warmth)
+export const ThermometerIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z" />
+  </Svg>
+);
+
+// Droplet icon (saturation)
+export const DropletIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+  </Svg>
+);
+
 // Image/photo icon
 export const ImageIcon: React.FC<IconProps> = ({
   size = defaultProps.size,
@@ -642,5 +695,69 @@ export const ImageIcon: React.FC<IconProps> = ({
     <Rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
     <Circle cx="8.5" cy="8.5" r="1.5" />
     <Polyline points="21 15 16 10 5 21" />
+  </Svg>
+);
+
+// Rotate icon
+export const RotateIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Path d="M21.5 2v6h-6" />
+    <Path d="M21.34 15.57a10 10 0 1 1-.57-8.38L21.5 8" />
+  </Svg>
+);
+
+// Crop icon
+export const CropIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Path d="M6.13 1L6 16a2 2 0 0 0 2 2h15" />
+    <Path d="M1 6.13L16 6a2 2 0 0 1 2 2v15" />
+  </Svg>
+);
+
+// Flip horizontal icon
+export const FlipIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3" />
+    <Path d="M16 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3" />
+    <Line x1="12" y1="20" x2="12" y2="4" />
+    <Polyline points="8 12 4 12" />
+    <Polyline points="20 12 16 12" />
+  </Svg>
+);
+
+// Beverage icon (wine/cocktail glass — universal for all beverages)
+export const CoffeeIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Line x1="8" y1="22" x2="16" y2="22" />
+    <Line x1="12" y1="11" x2="12" y2="22" />
+    <Path d="M17.5 2H6.5l.5 9a5 5 0 0 0 10 0l.5-9z" />
+  </Svg>
+);
+
+// Link icon (copy link)
+export const LinkIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+    <Path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
   </Svg>
 );

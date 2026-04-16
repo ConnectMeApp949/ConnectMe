@@ -63,7 +63,19 @@ export default function GetHelpScreen({ navigation }: Props) {
             <Text style={[s.contactTitle, { color: themeColors.text }]}>Live Chat</Text>
             <Text style={[s.contactSub, { color: themeColors.textMuted }]}>Available 9am – 6pm</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[s.contactCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => Linking.openURL('mailto:support@connectmeapp.services?subject=Help Request')} accessibilityLabel="Email Us" accessibilityRole="button" accessibilityHint="Send an email to support">
+          <TouchableOpacity style={[s.contactCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={async () => {
+              const mailto = 'mailto:support@connectmeapp.services?subject=Help Request';
+              const supported = await Linking.canOpenURL(mailto);
+              if (supported) {
+                Linking.openURL(mailto);
+              } else {
+                Alert.alert(
+                  'Email Us',
+                  'support@connectmeapp.services\n\nNo mail app is configured on this device. Copy the address above and send us an email from your preferred mail app.',
+                  [{ text: 'OK' }],
+                );
+              }
+            }} accessibilityLabel="Email Us" accessibilityRole="button" accessibilityHint="Send an email to support">
             <View style={[s.contactIconWrap, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <MailIcon size={24} color={themeColors.primary} strokeWidth={1.5} />
             </View>

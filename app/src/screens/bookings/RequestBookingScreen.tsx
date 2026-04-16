@@ -101,9 +101,26 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
 
   const minDate = useMemo(() => {
     const d = new Date(today);
-    d.setDate(d.getDate() + 14);
+    d.setDate(d.getDate() + 1); // Can book starting tomorrow
     return d;
   }, [today]);
+
+  // Generate vendor blocked dates (same algorithm as AvailabilityCalendar)
+  const blockedDates = useMemo(() => {
+    const { year, month } = calendarMonth;
+    const vId = vendor?.id ?? '';
+    const blocked = new Set<number>();
+    const daysInMonth = getDaysInMonth(year, month);
+    let seed = 0;
+    for (let i = 0; i < vId.length; i++) seed += vId.charCodeAt(i);
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const dow = date.getDay();
+      if (dow === 3) blocked.add(day); // Wednesdays blocked
+      if ((dow === 0 || dow === 6) && ((seed + day) % 3 === 0)) blocked.add(day); // Some weekends
+    }
+    return blocked;
+  }, [calendarMonth, vendor?.id]);
 
   const [promoExpanded, setPromoExpanded] = useState(false);
   const [promoInput, setPromoInput] = useState('');
@@ -273,16 +290,16 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
             <View style={[s.calendarCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <View style={s.calendarHeader}>
                 <TouchableOpacity onPress={() => { const prev = month === 0 ? { year: year - 1, month: 11 } : { year, month: month - 1 }; if (canGoPrev) setCalendarMonth(prev); }} disabled={!canGoPrev} activeOpacity={0.6} accessibilityLabel="Previous month" accessibilityRole="button">
-                  <ChevronLeftIcon size={20} color={canGoPrev ? colors.text : colors.border} strokeWidth={2} />
+                  <ChevronLeftIcon size={20} color={canGoPrev ? themeColors.text : themeColors.border} strokeWidth={2} />
                 </TouchableOpacity>
-                <Text style={s.calendarMonthLabel}>{monthLabel}</Text>
+                <Text style={[s.calendarMonthLabel, { color: themeColors.text }]}>{monthLabel}</Text>
                 <TouchableOpacity onPress={() => { const next = month === 11 ? { year: year + 1, month: 0 } : { year, month: month + 1 }; setCalendarMonth(next); }} activeOpacity={0.6} accessibilityLabel="Next month" accessibilityRole="button">
-                  <ChevronRightIcon size={20} color={colors.text} strokeWidth={2} />
+                  <ChevronRightIcon size={20} color={themeColors.text} strokeWidth={2} />
                 </TouchableOpacity>
               </View>
               <View style={s.calendarWeekRow}>
                 {WEEKDAY_LABELS.map((w) => (
-                  <Text key={w} style={s.calendarWeekDay}>{w}</Text>
+                  <Text key={w} style={[s.calendarWeekDay, { color: themeColors.textMuted }]}>{w}</Text>
                 ))}
               </View>
               <View style={s.calendarGrid}>
@@ -291,29 +308,52 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
                   const cellDate = new Date(year, month, day);
                   cellDate.setHours(0, 0, 0, 0);
                   const isPast = cellDate < minDate;
+                  const isBlocked = blockedDates.has(day);
+                  const isDisabled = isPast || isBlocked;
                   const isSelected = eventDate ? isSameDay(cellDate, eventDate) : false;
                   return (
                     <TouchableOpacity
                       key={day}
-                      style={[s.calendarCell, isSelected && s.calendarCellSelected]}
-                      disabled={isPast}
+                      style={[
+                        s.calendarCell,
+                        isSelected && [s.calendarCellSelected, { backgroundColor: themeColors.primary }],
+                        isBlocked && !isPast && s.calendarCellBlocked,
+                      ]}
+                      disabled={isDisabled}
                       onPress={() => setEventDate(cellDate)}
                       activeOpacity={0.6}
-                      accessibilityLabel={`${monthLabel} ${day}${isPast ? ', unavailable' : ''}${isSelected ? ', selected' : ''}`}
+                      accessibilityLabel={`${monthLabel} ${day}${isPast ? ', past date' : isBlocked ? ', vendor unavailable' : ''}${isSelected ? ', selected' : ''}`}
                       accessibilityRole="button"
-                      accessibilityState={{ disabled: isPast, selected: isSelected }}
+                      accessibilityState={{ disabled: isDisabled, selected: isSelected }}
                     >
-                      <Text style={[s.calendarDayText, isPast && s.calendarDayDisabled, isSelected && s.calendarDaySelected]}>{day}</Text>
+                      <Text style={[
+                        s.calendarDayText,
+                        { color: themeColors.text },
+                        isPast && { color: themeColors.border },
+                        isBlocked && !isPast && s.calendarDayBlocked,
+                        isSelected && s.calendarDaySelected,
+                      ]}>{day}</Text>
                     </TouchableOpacity>
                   );
                 })}
+              </View>
+              {/* Legend */}
+              <View style={s.calendarLegend}>
+                <View style={s.legendItem}>
+                  <View style={[s.legendDot, { backgroundColor: themeColors.success }]} />
+                  <Text style={[s.legendText, { color: themeColors.textMuted }]}>Available</Text>
+                </View>
+                <View style={s.legendItem}>
+                  <View style={[s.legendDot, { backgroundColor: colors.error }]} />
+                  <Text style={[s.legendText, { color: themeColors.textMuted }]}>Unavailable</Text>
+                </View>
               </View>
             </View>
           );
         })()}
         {eventDate && (
-          <Text style={s.selectedDateText}>
-            <CalendarIcon size={14} color={colors.text} /> {formatDate(eventDate)}
+          <Text style={[s.selectedDateText, { color: themeColors.text }]}>
+            <CalendarIcon size={14} color={themeColors.text} /> {formatDate(eventDate)}
           </Text>
         )}
 
@@ -323,7 +363,7 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
           {TIME_SLOTS.map((slot) => (
             <TouchableOpacity
               key={`start-${slot}`}
-              style={[s.timeSlotChip, startTime === slot && s.timeSlotChipActive]}
+              style={[s.timeSlotChip, { borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }, startTime === slot && { backgroundColor: themeColors.text, borderColor: themeColors.text }]}
               onPress={() => {
                 setStartTime(slot);
                 if (endTime) {
@@ -337,7 +377,7 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
               accessibilityRole="button"
               accessibilityState={{ selected: startTime === slot }}
             >
-              <Text style={[s.timeSlotText, startTime === slot && s.timeSlotTextActive]}>{slot}</Text>
+              <Text style={[s.timeSlotText, { color: themeColors.text }, startTime === slot && s.timeSlotTextActive]}>{slot}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -353,14 +393,14 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
           }).map((slot) => (
             <TouchableOpacity
               key={`end-${slot}`}
-              style={[s.timeSlotChip, endTime === slot && s.timeSlotChipActive]}
+              style={[s.timeSlotChip, { borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }, endTime === slot && { backgroundColor: themeColors.text, borderColor: themeColors.text }]}
               onPress={() => setEndTime(slot)}
               activeOpacity={0.7}
               accessibilityLabel={`End time ${slot}`}
               accessibilityRole="button"
               accessibilityState={{ selected: endTime === slot }}
             >
-              <Text style={[s.timeSlotText, endTime === slot && s.timeSlotTextActive]}>{slot}</Text>
+              <Text style={[s.timeSlotText, { color: themeColors.text }, endTime === slot && s.timeSlotTextActive]}>{slot}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -368,7 +408,7 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
         {/* Duration display */}
         {startTime && endTime && (
           <View style={s.durationRow}>
-            <ClockIcon size={16} color={colors.primary} strokeWidth={1.5} />
+            <ClockIcon size={16} color={themeColors.primary} strokeWidth={1.5} />
             <Text style={s.durationText}>Duration: {formatDuration(startTime, endTime)}</Text>
           </View>
         )}
@@ -416,14 +456,14 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
         <View style={[s.priceCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           <Text style={[s.priceTitle, { color: themeColors.text }]}>Price details</Text>
           <View style={s.priceRow}>
-            <Text style={s.priceLabel}>
+            <Text style={[s.priceLabel, { color: themeColors.textMuted }]}>
               {vendorName}{priceUnit === 'PER_HOUR' && startTime && endTime ? ' ($' + basePrice.toFixed(0) + '/hr x ' + durationHours.toFixed(durationHours % 1 === 0 ? 0 : 1) + ' hrs)' : ''}
             </Text>
-            <Text style={s.priceValue}>${vendorFee.toFixed(2)}</Text>
+            <Text style={[s.priceValue, { color: themeColors.text }]}>${vendorFee.toFixed(2)}</Text>
           </View>
           <View style={s.priceRow}>
-            <Text style={s.priceLabel}>ConnectMe service fee</Text>
-            <Text style={s.priceValue}>${serviceFee.toFixed(2)}</Text>
+            <Text style={[s.priceLabel, { color: themeColors.textMuted }]}>ConnectMe service fee</Text>
+            <Text style={[s.priceValue, { color: themeColors.text }]}>${serviceFee.toFixed(2)}</Text>
           </View>
 
           {/* Promo code section */}
@@ -444,11 +484,11 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
           {promoExpanded && !promoCode && (
             <View style={s.promoRow}>
               <TextInput
-                style={s.promoInput}
+                style={[s.promoInput, { color: themeColors.text, borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }]}
                 value={promoInput}
                 onChangeText={setPromoInput}
                 placeholder="Enter code"
-                placeholderTextColor={colors.textMuted}
+                placeholderTextColor={themeColors.textMuted}
                 autoCapitalize="characters"
                 accessibilityLabel="Promo code input"
                 accessibilityHint="Enter your promo code"
@@ -497,7 +537,7 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
 
           {/* Booking Protection Upsell */}
           <TouchableOpacity
-            style={[s.protectionCard, protectionEnabled && s.protectionCardActive]}
+            style={[s.protectionCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }, protectionEnabled && { borderColor: colors.success, backgroundColor: themeColors.background }]}
             onPress={() => setProtectionEnabled(!protectionEnabled)}
             activeOpacity={0.7}
             accessibilityLabel={`ConnectMe Protection, ${PROTECTION_FLAT_FEE} dollars. ${protectionEnabled ? 'Enabled' : 'Disabled'}`}
@@ -513,8 +553,8 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
             <View style={s.protectionHeader}>
               <ShieldIcon size={22} color={protectionEnabled ? colors.success : colors.primary} strokeWidth={2} />
               <View style={{ flex: 1, marginLeft: 10 }}>
-                <Text style={s.protectionTitle}>ConnectMe Protection</Text>
-                <Text style={s.protectionDesc}>
+                <Text style={[s.protectionTitle, { color: themeColors.text }]}>ConnectMe Protection</Text>
+                <Text style={[s.protectionDesc, { color: themeColors.textSecondary }]}>
                   Get a full refund for any reason up to 24 hours before your event, plus coverage for vendor no-shows and service quality issues.
                 </Text>
               </View>
@@ -533,7 +573,7 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
                 ].map((item) => (
                   <View key={item} style={s.protectionBulletRow}>
                     <CheckIcon size={14} color={colors.success} strokeWidth={2.5} />
-                    <Text style={s.protectionBulletText}>{item}</Text>
+                    <Text style={[s.protectionBulletText, { color: themeColors.textSecondary }]}>{item}</Text>
                   </View>
                 ))}
               </View>
@@ -542,15 +582,15 @@ export default function RequestBookingScreen({ navigation, route }: Props) {
 
           {protectionEnabled && (
             <View style={[s.priceRow, { marginTop: 8 }]}>
-              <Text style={s.priceLabel}>ConnectMe Protection</Text>
-              <Text style={s.priceValue}>${protectionFee.toFixed(2)}</Text>
+              <Text style={[s.priceLabel, { color: themeColors.textMuted }]}>ConnectMe Protection</Text>
+              <Text style={[s.priceValue, { color: themeColors.text }]}>${protectionFee.toFixed(2)}</Text>
             </View>
           )}
 
-          <View style={s.priceDivider} />
+          <View style={[s.priceDivider, { backgroundColor: themeColors.border }]} />
           <View style={s.priceRow}>
-            <Text style={s.priceTotalLabel}>Total</Text>
-            <Text style={s.priceTotalValue}>${total.toFixed(2)}</Text>
+            <Text style={[s.priceTotalLabel, { color: themeColors.text }]}>Total</Text>
+            <Text style={[s.priceTotalValue, { color: themeColors.text }]}>${total.toFixed(2)}</Text>
           </View>
         </View>
 
@@ -614,17 +654,23 @@ const s = StyleSheet.create({
   inputMulti: { height: 100, paddingVertical: 12, textAlignVertical: 'top' },
 
   // Mini calendar
-  calendarCard: { borderWidth: 1.5, borderColor: colors.border, borderRadius: borderRadius.md, padding: 12, backgroundColor: colors.cardBackground },
+  calendarCard: { borderWidth: 1, borderColor: colors.border, borderRadius: borderRadius.lg, padding: 16, backgroundColor: colors.cardBackground },
   calendarHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  calendarMonthLabel: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.text },
-  calendarWeekRow: { flexDirection: 'row', marginBottom: 4 },
-  calendarWeekDay: { flex: 1, textAlign: 'center', fontFamily: fonts.medium, fontSize: 12, color: colors.textMuted },
+  calendarMonthLabel: { fontFamily: fonts.semiBold, fontSize: 16, color: colors.text },
+  calendarWeekRow: { flexDirection: 'row', marginBottom: 6 },
+  calendarWeekDay: { width: '14.28%', textAlign: 'center', fontFamily: fonts.medium, fontSize: 12, color: colors.textMuted },
   calendarGrid: { flexDirection: 'row', flexWrap: 'wrap' },
-  calendarCell: { width: '14.28%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center' },
+  calendarCell: { width: '14.28%', height: 40, alignItems: 'center', justifyContent: 'center', borderRadius: 8 },
   calendarCellSelected: { backgroundColor: colors.text, borderRadius: 20 },
   calendarDayText: { fontFamily: fonts.medium, fontSize: 14, color: colors.text },
   calendarDayDisabled: { color: colors.border },
   calendarDaySelected: { color: colors.white, fontFamily: fonts.bold },
+  calendarCellBlocked: { backgroundColor: '#FEE2E2', borderRadius: 6 },
+  calendarDayBlocked: { color: colors.error, textDecorationLine: 'line-through' as const },
+  calendarLegend: { flexDirection: 'row', gap: 16, marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: colors.border },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  legendDot: { width: 8, height: 8, borderRadius: 4 },
+  legendText: { fontFamily: fonts.regular, fontSize: 11 },
   selectedDateText: { fontFamily: fonts.medium, fontSize: 13, color: colors.text, marginTop: 8 },
 
   // Time slot pickers

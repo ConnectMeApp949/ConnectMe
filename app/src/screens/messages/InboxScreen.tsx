@@ -8,8 +8,37 @@ import { MessageIcon } from '../../components/Icons';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+
+const DEMO_CONVERSATIONS = [
+  {
+    id: 'conv1', bookingId: 'b1', unreadCount: 2,
+    otherParty: { name: 'DJ Alamo Beats', avatar: null, vendorId: 'v1' },
+    lastMessage: { content: 'Hey! I can definitely do your wedding reception. Let me send over my availability.', createdAt: '2026-04-15T10:30:00Z' },
+  },
+  {
+    id: 'conv2', bookingId: 'b2', unreadCount: 0,
+    otherParty: { name: 'Taco Libre SA', avatar: null, vendorId: 'v2' },
+    lastMessage: { content: 'Perfect, we\'ll bring the full taco bar setup. See you Saturday!', createdAt: '2026-04-14T16:45:00Z' },
+  },
+  {
+    id: 'conv3', bookingId: 'b3', unreadCount: 1,
+    otherParty: { name: 'SA Forever Photos', avatar: null, vendorId: 'v3' },
+    lastMessage: { content: 'Your gallery is ready! Check your email for the link.', createdAt: '2026-04-13T09:15:00Z' },
+  },
+  {
+    id: 'conv4', bookingId: 'b4', unreadCount: 0,
+    otherParty: { name: 'Alamo City Catering', avatar: null, vendorId: 'v4' },
+    lastMessage: { content: 'Thanks for the booking confirmation. We\'ll follow up next week with the menu options.', createdAt: '2026-04-12T14:00:00Z' },
+  },
+  {
+    id: 'conv5', bookingId: 'b5', unreadCount: 0,
+    otherParty: { name: 'SA Matcha Bar', avatar: null, vendorId: 'v5' },
+    lastMessage: { content: 'We can customize the drink menu for your event. Would you like to include a matcha flight?', createdAt: '2026-04-11T11:20:00Z' },
+  },
+];
 
 type Props = NativeStackScreenProps<any, 'Inbox'>;
 
@@ -38,14 +67,17 @@ export default function InboxScreen({ navigation }: Props) {
   async function fetchConversations() {
     try {
       const res = await fetch(`${API_URL}/messages`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
       });
       const data = await res.json();
-      if (data.success) setConversations(data.data ?? []);
-    } catch {} finally { setLoading(false); }
+      if (data.success && data.data && data.data.length > 0) {
+        setConversations(data.data);
+      } else {
+        setConversations(DEMO_CONVERSATIONS);
+      }
+    } catch {
+      setConversations(DEMO_CONVERSATIONS);
+    } finally { setLoading(false); }
   }
 
   function renderConversation({ item }: { item: any }) {

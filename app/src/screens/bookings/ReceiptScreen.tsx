@@ -14,6 +14,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { ChevronLeftIcon } from '../../components/Icons';
+import { apiHeaders } from '../../services/headers';
 
 type Props = NativeStackScreenProps<any, 'Receipt'>;
 
@@ -71,9 +72,7 @@ export default function ReceiptScreen({ navigation, route }: Props) {
     try {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       const res = await fetch(`${API_URL}/bookings/${bookingId}/receipt-pdf`, {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        headers: apiHeaders(token),
       });
       if (!res.ok) {
         throw new Error(`Server error (${res.status})`);
@@ -91,10 +90,7 @@ export default function ReceiptScreen({ navigation, route }: Props) {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       const res = await fetch(`${API_URL}/bookings/${bookingId}/email-receipt`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        headers: apiHeaders(token),
       });
       if (!res.ok) {
         throw new Error(`Server error (${res.status})`);

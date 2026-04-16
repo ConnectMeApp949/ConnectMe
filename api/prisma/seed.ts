@@ -108,10 +108,23 @@ const VENDOR_TEMPLATES: Record<string, VendorTemplate> = {
     priceRange: [300, 2000],
     priceUnit: 'PER_EVENT',
   },
+  BEVERAGES: {
+    names: [
+      'SA Matcha Bar', 'Puro Coffee Cart', 'Alamo Mobile Bartenders', 'River City Juice Co.',
+      'Fiesta Cocktail Catering', 'The Boba Truck SA', 'Hill Country Spirits', 'SA Smoothie Station',
+    ],
+    bioGen: () => {
+      const years = faker.number.int({ min: 2, max: 10 });
+      const neighborhood = faker.helpers.arrayElement(SA_NEIGHBORHOODS);
+      return `Mobile beverage service based in ${neighborhood}, San Antonio, with ${years} years of crafting memorable drink experiences. From artisan matcha and specialty coffee to handcrafted cocktails and fresh-pressed juices — we bring the bar to you. Perfect for weddings at ${faker.helpers.arrayElement(SA_VENUES)}, corporate events, festivals, and private parties. We offer customizable menus, branded cups, and both alcoholic and non-alcoholic options. TABC certified, fully insured, and passionate about every pour.`;
+    },
+    priceRange: [350, 1500],
+    priceUnit: 'PER_EVENT',
+  },
 };
 
 const CATEGORY_COUNTS: Record<string, number> = {
-  FOOD_TRUCK: 12, DJ: 10, CATERING: 10, WEDDING_SERVICES: 8, PHOTOGRAPHY: 6, ENTERTAINMENT: 4,
+  FOOD_TRUCK: 12, DJ: 10, CATERING: 10, WEDDING_SERVICES: 8, PHOTOGRAPHY: 6, ENTERTAINMENT: 4, BEVERAGES: 8,
 };
 
 // ─── Helpers ─────────────────────────────────────────────

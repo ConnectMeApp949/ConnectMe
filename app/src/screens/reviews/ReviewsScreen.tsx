@@ -7,6 +7,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon } from '../../components/Icons';
 import { useTheme } from '../../context/ThemeContext';
+import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
 
@@ -77,7 +78,9 @@ export default function ReviewsScreen({ navigation, route }: Props) {
     try {
       const params = new URLSearchParams({ page: String(p), sort: 'newest' });
       if (ratingFilter) params.set('rating', String(ratingFilter));
-      const res = await fetch(`${API_URL}/reviews/vendor/${vendorId}?${params}`);
+      const res = await fetch(`${API_URL}/reviews/vendor/${vendorId}?${params}`, {
+        headers: apiHeaders(),
+      });
       const data = await res.json();
 
       if (data.success) {

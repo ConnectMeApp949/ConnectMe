@@ -16,9 +16,9 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const MAX_VENDORS = 3;
 
 const CATEGORY_LABELS: Record<string, string> = {
-  FOOD_TRUCK: 'Food Truck', DJ: 'DJ', CATERING: 'Catering',
+  FOOD_TRUCK: 'Mobile Eats', DJ: 'DJ', CATERING: 'Catering',
   WEDDING_SERVICES: 'Weddings', PHOTOGRAPHY: 'Photography',
-  ENTERTAINMENT: 'Entertainment', OTHER: 'Other',
+  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', BEVERAGES: 'Beverages', OTHER: 'Other',
 };
 
 type Props = NativeStackScreenProps<any, 'CompareVendors'>;

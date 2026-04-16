@@ -10,6 +10,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { ChevronLeftIcon } from '../../components/Icons';
+import { apiHeaders } from '../../services/headers';
 
 type Props = NativeStackScreenProps<any, 'ModifyBooking'>;
 
@@ -74,10 +75,7 @@ export default function ModifyBookingScreen({ navigation, route }: Props) {
       const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
       const res = await fetch(`${API_URL}/bookings/${booking?.id}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        headers: apiHeaders(token),
         body: JSON.stringify({
           eventDate: eventDate.toISOString(),
           guestCount: parseInt(guestCount, 10) || undefined,

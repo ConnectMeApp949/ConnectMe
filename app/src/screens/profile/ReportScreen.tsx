@@ -19,6 +19,7 @@ import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { apiHeaders } from '../../services/headers';
 
 // ─── Constants ──────────────────────────────────────────
 
@@ -94,10 +95,7 @@ export default function ReportScreen({ navigation, route }: Props) {
     try {
       const res = await fetch(`${API_URL}/reports`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-        },
+        headers: apiHeaders(token),
         body: JSON.stringify({
           vendorId,
           reason: selectedReason,

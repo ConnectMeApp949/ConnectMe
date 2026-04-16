@@ -19,6 +19,7 @@ import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { PlusIcon } from '../../components/Icons';
+import { apiHeaders } from '../../services/headers';
 
 // ─── Quick reply defaults ──────────────────────────────
 
@@ -45,6 +46,21 @@ interface Message {
 // ─── API URL ──────────────────────────────────────────────
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
+
+function generateDemoMessages(contactName: string): Message[] {
+  const now = new Date();
+  const msgs: Message[] = [
+    { id: 'd1', content: `Hi! I saw your profile on ConnectMe and I'm interested in booking you for an upcoming event.`, senderId: 'me', createdAt: new Date(now.getTime() - 86400000 * 2).toISOString() },
+    { id: 'd2', content: `Hey! Thanks for reaching out. I'd love to help. What kind of event are you planning?`, senderId: 'them', createdAt: new Date(now.getTime() - 86400000 * 2 + 1800000).toISOString() },
+    { id: 'd3', content: `It's a birthday party in the Pearl District area. Around 60 guests, looking at a Saturday in May.`, senderId: 'me', createdAt: new Date(now.getTime() - 86400000 + 3600000).toISOString() },
+    { id: 'd4', content: `That sounds great! I have a few Saturdays open in May. Let me check my calendar and get back to you with exact dates.`, senderId: 'them', createdAt: new Date(now.getTime() - 86400000 + 5400000).toISOString() },
+    { id: 'd5', content: `Also, do you have any specific requests or a theme for the party?`, senderId: 'them', createdAt: new Date(now.getTime() - 86400000 + 5500000).toISOString() },
+    { id: 'd6', content: `We're going with a tropical theme! Would love something that matches the vibe.`, senderId: 'me', createdAt: new Date(now.getTime() - 3600000 * 5).toISOString() },
+    { id: 'd7', content: `Love it! I've done a few tropical-themed events before. I'll put together a custom package for you and send it over.`, senderId: 'them', createdAt: new Date(now.getTime() - 3600000 * 4).toISOString() },
+    { id: 'd8', content: `That would be amazing, thank you! 🎉`, senderId: 'me', createdAt: new Date(now.getTime() - 3600000 * 3).toISOString() },
+  ];
+  return msgs;
+}
 
 // ─── Date / time helpers ────────────────────────────────
 
@@ -171,24 +187,26 @@ export default function ChatScreen({ navigation, route }: Props) {
   const flatListRef = useRef<FlatList>(null);
   const inputRef = useRef<TextInput>(null);
 
-  // Fetch real messages from API
+  // Fetch real messages from API, fall back to demo
   useEffect(() => {
     async function fetchMessages() {
       try {
         const conversationId = conversation?.id;
-        if (!conversationId) return;
+        if (!conversationId) {
+          setMessages(generateDemoMessages(contactName));
+          return;
+        }
         const res = await fetch(`${API_URL}/messages/${conversationId}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-          },
+          headers: apiHeaders(token),
         });
         const data = await res.json();
-        if (data.success && data.data) {
+        if (data.success && data.data && data.data.length > 0) {
           setMessages(data.data);
+        } else {
+          setMessages(generateDemoMessages(contactName));
         }
       } catch {
-        // Network error — messages will remain empty
+        setMessages(generateDemoMessages(contactName));
       }
     }
     fetchMessages();
@@ -256,10 +274,7 @@ export default function ChatScreen({ navigation, route }: Props) {
       if (conversationId) {
         await fetch(`${API_URL}/messages/${conversationId}`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
-          },
+          headers: apiHeaders(token),
           body: JSON.stringify({ content: text }),
         });
       }
