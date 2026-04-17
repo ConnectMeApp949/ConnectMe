@@ -17,8 +17,8 @@ const MAX_VENDORS = 3;
 
 const CATEGORY_LABELS: Record<string, string> = {
   FOOD_TRUCK: 'Mobile Eats', DJ: 'DJ', CATERING: 'Catering',
-  WEDDING_SERVICES: 'Weddings', PHOTOGRAPHY: 'Photography',
-  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', BEVERAGES: 'Beverages', OTHER: 'Other',
+  WEDDING_SERVICES: 'Venues', PHOTOGRAPHY: 'Photography',
+  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', BEVERAGES: 'Beverages', ARTISTRY: 'Artistry', OTHER: 'Other',
 };
 
 type Props = NativeStackScreenProps<any, 'CompareVendors'>;

@@ -69,12 +69,12 @@ export default function ProfileScreen({ navigation }: Props) {
     Alert.alert('Go Live', 'Live streaming will be available in a future update. Stay tuned!');
   }
 
-  // Show user's posts, or all demo posts as sample content
+  // Real user's own posts only — no demo fallback
   const myPosts = posts.filter((p) => p.userId === user?.id);
-  const userPosts = myPosts.length > 0 ? myPosts : posts.slice(0, 6);
+  const userPosts = myPosts;
 
-  // Posts where user is tagged (demo: show other posts)
-  const taggedPosts = posts.filter((p) => p.taggedFriends.some(f => f.toLowerCase().includes(firstName.toLowerCase())) || p.userId !== user?.id).slice(0, 4);
+  // Posts where user is actually tagged
+  const taggedPosts = posts.filter((p) => p.taggedFriends.some(f => f.toLowerCase().includes(firstName.toLowerCase())));
 
   const displayPosts = activeTab === 'posts' ? userPosts : taggedPosts;
 
@@ -150,11 +150,11 @@ export default function ProfileScreen({ navigation }: Props) {
               <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Posts</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.statCol} activeOpacity={0.7} onPress={() => navigation.navigate('Connections', { tab: 'followers' })}>
-              <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.followersCount ?? 24}</Text>
+              <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.followersCount ?? 0}</Text>
               <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Followers</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.statCol} activeOpacity={0.7} onPress={() => navigation.navigate('Connections', { tab: 'following' })}>
-              <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.followingCount ?? 38}</Text>
+              <Text style={[styles.statNumber, { color: themeColors.text }]}>{user?.followingCount ?? 0}</Text>
               <Text style={[styles.statLabel, { color: themeColors.textSecondary }]}>Following</Text>
             </TouchableOpacity>
           </View>
@@ -197,23 +197,9 @@ export default function ProfileScreen({ navigation }: Props) {
               <Text style={[styles.reviewsSeeAll, { color: themeColors.primary }]}>See all</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
-            {[
-              { vendor: 'DJ Alamo Beats', rating: 5, text: 'Amazing DJ! Made our event unforgettable.' },
-              { vendor: 'Taco Libre SA', rating: 5, text: 'Best food truck in San Antonio. Guests loved it!' },
-              { vendor: 'SA Forever Photos', rating: 4, text: 'Great photos, very professional.' },
-            ].map((review, i) => (
-              <TouchableOpacity key={i} style={[styles.reviewCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('MyReviews')}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 4 }}>
-                  {[1,2,3,4,5].map(s => (
-                    <StarIcon key={s} size={12} color={s <= review.rating ? colors.star : themeColors.border} />
-                  ))}
-                </View>
-                <Text style={[styles.reviewVendor, { color: themeColors.text }]}>{review.vendor}</Text>
-                <Text style={[styles.reviewText, { color: themeColors.textSecondary }]} numberOfLines={2}>{review.text}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          <TouchableOpacity style={[styles.reviewCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]} activeOpacity={0.7} onPress={() => navigation.navigate('MyReviews')}>
+            <Text style={[styles.reviewText, { color: themeColors.textSecondary }]}>Reviews you leave for vendors will appear here</Text>
+          </TouchableOpacity>
         </View>
 
         {/* ─── Posts tab bar ─── */}

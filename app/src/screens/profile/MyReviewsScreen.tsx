@@ -76,12 +76,12 @@ export default function MyReviewsScreen({ navigation }: Props) {
               },
             },
           }));
-        setReviews(reviewList.length > 0 ? reviewList : DEMO_REVIEWS);
+        setReviews(reviewList);
       } else {
-        setReviews(DEMO_REVIEWS);
+        setReviews([]);
       }
     } catch {
-      setReviews(DEMO_REVIEWS);
+      setReviews([]);
     } finally {
       setLoading(false);
     }

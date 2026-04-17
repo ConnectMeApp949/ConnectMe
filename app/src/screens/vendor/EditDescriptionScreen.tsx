@@ -18,14 +18,14 @@ export default function EditDescriptionScreen({ navigation }: Props) {
       <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} /></TouchableOpacity>
         <Text style={[s.headerTitle, { color: themeColors.text }]}>Edit Description</Text>
-        <TouchableOpacity onPress={() => { Alert.alert('Saved', 'Description updated!'); navigation.goBack(); }} activeOpacity={0.6} accessibilityLabel="Save changes" accessibilityRole="button"><Text style={s.saveText}>Save</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => { Alert.alert('Saved', 'Description updated!'); navigation.goBack(); }} activeOpacity={0.6} accessibilityLabel="Save changes" accessibilityRole="button"><Text style={[s.saveText, { color: themeColors.primary }]}>Save</Text></TouchableOpacity>
       </View>
       <View style={s.content}>
-        <Text style={s.label}>Describe your business</Text>
-        <View style={s.inputWrap}>
-          <TextInput style={s.input} value={bio} onChangeText={(t) => t.length <= MAX && setBio(t)} placeholder="Tell clients what makes your business special..." placeholderTextColor={colors.textMuted} multiline textAlignVertical="top" maxLength={MAX} autoFocus accessibilityLabel="Business description" accessibilityRole="text" accessibilityHint="Enter a description of your business, up to 500 characters" />
+        <Text style={[s.label, { color: themeColors.text }]}>Describe your business</Text>
+        <View style={[s.inputWrap, { borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }]}>
+          <TextInput style={[s.input, { color: themeColors.text }]} value={bio} onChangeText={(t) => t.length <= MAX && setBio(t)} placeholder="Tell clients what makes your business special..." placeholderTextColor={themeColors.textMuted} multiline textAlignVertical="top" maxLength={MAX} autoFocus accessibilityLabel="Business description" accessibilityRole="text" accessibilityHint="Enter a description of your business, up to 500 characters" />
         </View>
-        <Text style={[s.counter, bio.length >= MAX && s.counterMax]}>{bio.length}/{MAX}</Text>
+        <Text style={[s.counter, { color: themeColors.textMuted }, bio.length >= MAX && s.counterMax]}>{bio.length}/{MAX}</Text>
       </View>
     </SafeAreaView>
   );

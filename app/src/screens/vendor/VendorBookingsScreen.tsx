@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
-import { CalendarIcon, CheckIcon, ClockIcon } from '../../components/Icons';
+import { CalendarIcon, CheckIcon, ClockIcon, ChevronLeftIcon } from '../../components/Icons';
 import { useTheme } from '../../context/ThemeContext';
 
 type Props = NativeStackScreenProps<any, 'VendorBookings'>;
@@ -63,11 +63,29 @@ export default function VendorBookingsScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
-      <Text style={[s.header, { color: themeColors.text }]}>Bookings</Text>
-      <View style={s.tabRow}>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
+        </TouchableOpacity>
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Manage Bookings</Text>
+        <View style={s.backBtn} />
+      </View>
+      <View style={[s.tabRow, { borderBottomColor: themeColors.border }]}>
         {TABS.map((tab) => (
-          <TouchableOpacity key={tab} style={[s.tab, activeTab === tab && s.tabActive, activeTab !== tab && { borderColor: themeColors.border }]} onPress={() => setActiveTab(tab)} activeOpacity={0.7} accessibilityLabel={`${tab} bookings`} accessibilityRole="button" accessibilityState={{ selected: activeTab === tab }}>
-            <Text style={[s.tabText, { color: themeColors.text }, activeTab === tab && s.tabTextActive]}>{tab}</Text>
+          <TouchableOpacity
+            key={tab}
+            style={[
+              s.tab,
+              { borderBottomColor: 'transparent' },
+              activeTab === tab && { borderBottomColor: themeColors.primary },
+            ]}
+            onPress={() => setActiveTab(tab)}
+            activeOpacity={0.7}
+            accessibilityLabel={`${tab} bookings`}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: activeTab === tab }}
+          >
+            <Text style={[s.tabText, { color: themeColors.textMuted }, activeTab === tab && { color: themeColors.text, fontFamily: fonts.semiBold }]}>{tab}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -94,12 +112,12 @@ export default function VendorBookingsScreen({ navigation }: Props) {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.white },
-  header: { fontFamily: fonts.bold, fontSize: 28, color: colors.text, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 },
-  tabRow: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 8, gap: 8 },
-  tab: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: colors.border },
-  tabActive: { backgroundColor: colors.text, borderColor: colors.text },
-  tabText: { fontFamily: fonts.medium, fontSize: 13, color: colors.text },
-  tabTextActive: { color: colors.white },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: colors.border },
+  backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontFamily: fonts.semiBold, fontSize: 17, color: colors.text },
+  tabRow: { flexDirection: 'row', paddingHorizontal: 20, borderBottomWidth: 1, borderBottomColor: colors.border },
+  tab: { flex: 1, alignItems: 'center', paddingVertical: 12, borderBottomWidth: 2 },
+  tabText: { fontFamily: fonts.medium, fontSize: 14, color: colors.textMuted },
   listContent: { paddingHorizontal: 20, paddingBottom: spacing.xl },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 },
   emptyIconWrap: { width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center', marginBottom: 16, borderWidth: 1, borderColor: colors.border },

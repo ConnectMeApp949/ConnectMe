@@ -30,8 +30,8 @@ const UNIT_LABELS: Record<string, string> = {
 
 const CATEGORY_LABELS: Record<string, string> = {
   FOOD_TRUCK: 'Mobile Eats', DJ: 'DJ', CATERING: 'Catering',
-  WEDDING_SERVICES: 'Wedding Services', PHOTOGRAPHY: 'Photography',
-  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', BEVERAGES: 'Beverages', OTHER: 'Other',
+  WEDDING_SERVICES: 'Venues', PHOTOGRAPHY: 'Photography',
+  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', BEVERAGES: 'Beverages', ARTISTRY: 'Artistry', OTHER: 'Other',
 };
 
 const CANCELLATION_POLICY = `Free cancellation up to 48 hours before the event. Cancellations within 48 hours are subject to a 50% charge. No-shows are charged the full amount. Vendors may cancel with 72 hours notice for a full refund.`;

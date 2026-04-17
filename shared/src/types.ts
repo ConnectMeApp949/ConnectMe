@@ -15,6 +15,7 @@ export enum VendorCategory {
   EXPERIENCES = 'EXPERIENCES',
   WELLNESS = 'WELLNESS',
   BEVERAGES = 'BEVERAGES',
+  ARTISTRY = 'ARTISTRY',
   OTHER = 'OTHER',
 }
 

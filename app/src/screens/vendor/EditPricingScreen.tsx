@@ -172,22 +172,22 @@ export default function EditPricingScreen({ navigation }: Props) {
           accessibilityLabel="Save changes"
           accessibilityRole="button"
         >
-          <Text style={s.saveText}>Save</Text>
+          <Text style={[s.saveText, { color: themeColors.primary }]}>Save</Text>
         </TouchableOpacity>
       </View>
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
           {/* Base price */}
-          <Text style={s.sectionTitle}>Base Price</Text>
+          <Text style={[s.sectionTitle, { color: themeColors.text }]}>Base Price</Text>
           <View style={s.priceRow}>
-            <Text style={s.dollar}>$</Text>
+            <Text style={[s.dollar, { color: themeColors.text }]}>$</Text>
             <TextInput
-              style={s.priceInput}
+              style={[s.priceInput, { color: themeColors.text, borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }]}
               value={price}
               onChangeText={setPrice}
               placeholder="0"
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor={themeColors.textMuted}
               keyboardType="decimal-pad"
               maxLength={8}
               accessibilityLabel="Price amount"
@@ -196,37 +196,44 @@ export default function EditPricingScreen({ navigation }: Props) {
             />
           </View>
           <View style={s.unitRow}>
-            {UNITS.map((u) => (
-              <TouchableOpacity
-                key={u.id}
-                style={[s.unitBtn, unit === u.id && s.unitBtnActive]}
-                onPress={() => setUnit(u.id)}
-                activeOpacity={0.7}
-                accessibilityLabel={`${u.label} pricing`}
-                accessibilityRole="button"
-                accessibilityState={{ selected: unit === u.id }}
-              >
-                <Text style={[s.unitText, unit === u.id && s.unitTextActive]}>{u.label}</Text>
-              </TouchableOpacity>
-            ))}
+            {UNITS.map((u) => {
+              const isActive = unit === u.id;
+              return (
+                <TouchableOpacity
+                  key={u.id}
+                  style={[
+                    s.unitBtn,
+                    { borderColor: themeColors.border, backgroundColor: themeColors.cardBackground },
+                    isActive && { borderColor: themeColors.primary, backgroundColor: themeColors.primary },
+                  ]}
+                  onPress={() => setUnit(u.id)}
+                  activeOpacity={0.7}
+                  accessibilityLabel={`${u.label} pricing`}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: isActive }}
+                >
+                  <Text style={[s.unitText, { color: themeColors.textMuted }, isActive && { color: '#fff', fontFamily: fonts.semiBold }]}>{u.label}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           {/* Packages section */}
-          <View style={s.sectionDivider} />
+          <View style={[s.sectionDivider, { backgroundColor: themeColors.border }]} />
           <View style={s.sectionHeader}>
-            <Text style={s.sectionTitle}>Packages</Text>
-            <Text style={s.sectionCount}>{packages.length}/{MAX_PACKAGES}</Text>
+            <Text style={[s.sectionTitle, { color: themeColors.text }]}>Packages</Text>
+            <Text style={[s.sectionCount, { color: themeColors.textMuted }]}>{packages.length}/{MAX_PACKAGES}</Text>
           </View>
 
           {packages.map((pkg) => (
-            <View key={pkg.id} style={s.packageCard}>
+            <View key={pkg.id} style={[s.packageCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <View style={s.packageHeader}>
-                <Text style={s.packageName}>{pkg.name}</Text>
-                <Text style={s.packagePrice}>${pkg.price}</Text>
+                <Text style={[s.packageName, { color: themeColors.text }]}>{pkg.name}</Text>
+                <Text style={[s.packagePrice, { color: themeColors.primary }]}>${pkg.price}</Text>
               </View>
-              <Text style={s.packageDesc}>{pkg.description}</Text>
-              <Text style={s.packageDuration}>{pkg.duration} hour{parseFloat(pkg.duration) !== 1 ? 's' : ''}</Text>
-              <View style={s.packageActions}>
+              <Text style={[s.packageDesc, { color: themeColors.textMuted }]}>{pkg.description}</Text>
+              <Text style={[s.packageDuration, { color: themeColors.textMuted }]}>{pkg.duration} hour{parseFloat(pkg.duration) !== 1 ? 's' : ''}</Text>
+              <View style={[s.packageActions, { borderTopColor: themeColors.border }]}>
                 <TouchableOpacity
                   onPress={() => openEditPackage(pkg)}
                   style={s.packageActionBtn}
@@ -234,8 +241,8 @@ export default function EditPricingScreen({ navigation }: Props) {
                   accessibilityLabel={`Edit ${pkg.name} package`}
                   accessibilityRole="button"
                 >
-                  <EditPencilIcon size={16} color={colors.text} />
-                  <Text style={s.packageActionText}>Edit</Text>
+                  <EditPencilIcon size={16} color={themeColors.text} />
+                  <Text style={[s.packageActionText, { color: themeColors.text }]}>Edit</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => deletePackage(pkg.id)}
@@ -253,9 +260,9 @@ export default function EditPricingScreen({ navigation }: Props) {
 
           {/* Package inline form */}
           {showPackageForm ? (
-            <View style={s.formCard}>
+            <View style={[s.formCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <View style={s.formHeader}>
-                <Text style={s.formTitle}>
+                <Text style={[s.formTitle, { color: themeColors.text }]}>
                   {editingPackageId ? 'Edit Package' : 'New Package'}
                 </Text>
                 <TouchableOpacity
@@ -264,56 +271,56 @@ export default function EditPricingScreen({ navigation }: Props) {
                   accessibilityLabel="Cancel package form"
                   accessibilityRole="button"
                 >
-                  <XIcon size={20} color={colors.textMuted} />
+                  <XIcon size={20} color={themeColors.textMuted} />
                 </TouchableOpacity>
               </View>
 
-              <Text style={s.fieldLabel}>Package Name</Text>
+              <Text style={[s.fieldLabel, { color: themeColors.textMuted }]}>Package Name</Text>
               <TextInput
-                style={s.fieldInput}
+                style={[s.fieldInput, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
                 value={pkgName}
                 onChangeText={setPkgName}
                 placeholder="e.g., Basic, Premium, VIP"
-                placeholderTextColor={colors.textMuted}
+                placeholderTextColor={themeColors.textMuted}
                 maxLength={40}
                 accessibilityLabel="Package name"
               />
 
-              <Text style={s.fieldLabel}>Price ($)</Text>
+              <Text style={[s.fieldLabel, { color: themeColors.textMuted }]}>Price ($)</Text>
               <TextInput
-                style={s.fieldInput}
+                style={[s.fieldInput, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
                 value={pkgPrice}
                 onChangeText={setPkgPrice}
                 placeholder="0"
-                placeholderTextColor={colors.textMuted}
+                placeholderTextColor={themeColors.textMuted}
                 keyboardType="decimal-pad"
                 maxLength={8}
                 accessibilityLabel="Package price"
               />
 
               <View style={s.fieldLabelRow}>
-                <Text style={s.fieldLabel}>Description</Text>
-                <Text style={s.charCount}>{pkgDesc.length}/{DESC_MAX_LENGTH}</Text>
+                <Text style={[s.fieldLabel, { color: themeColors.textMuted }]}>Description</Text>
+                <Text style={[s.charCount, { color: themeColors.textMuted }]}>{pkgDesc.length}/{DESC_MAX_LENGTH}</Text>
               </View>
               <TextInput
-                style={[s.fieldInput, s.fieldTextArea]}
+                style={[s.fieldInput, s.fieldTextArea, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
                 value={pkgDesc}
                 onChangeText={(text) => { if (text.length <= DESC_MAX_LENGTH) setPkgDesc(text); }}
                 placeholder="What's included in this package"
-                placeholderTextColor={colors.textMuted}
+                placeholderTextColor={themeColors.textMuted}
                 multiline
                 numberOfLines={3}
                 textAlignVertical="top"
                 accessibilityLabel="Package description"
               />
 
-              <Text style={s.fieldLabel}>Duration (hours)</Text>
+              <Text style={[s.fieldLabel, { color: themeColors.textMuted }]}>Duration (hours)</Text>
               <TextInput
-                style={s.fieldInput}
+                style={[s.fieldInput, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
                 value={pkgDuration}
                 onChangeText={setPkgDuration}
                 placeholder="e.g., 2"
-                placeholderTextColor={colors.textMuted}
+                placeholderTextColor={themeColors.textMuted}
                 keyboardType="decimal-pad"
                 maxLength={4}
                 accessibilityLabel="Package duration in hours"
@@ -345,17 +352,17 @@ export default function EditPricingScreen({ navigation }: Props) {
           ) : null}
 
           {/* Add-ons section */}
-          <View style={s.sectionDivider} />
+          <View style={[s.sectionDivider, { backgroundColor: themeColors.border }]} />
           <View style={s.sectionHeader}>
-            <Text style={s.sectionTitle}>Add-ons</Text>
-            <Text style={s.sectionCount}>{addOns.length}/{MAX_ADDONS}</Text>
+            <Text style={[s.sectionTitle, { color: themeColors.text }]}>Add-ons</Text>
+            <Text style={[s.sectionCount, { color: themeColors.textMuted }]}>{addOns.length}/{MAX_ADDONS}</Text>
           </View>
 
           {addOns.map((addon) => (
-            <View key={addon.id} style={s.addonRow}>
+            <View key={addon.id} style={[s.addonRow, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <View style={s.addonInfo}>
-                <Text style={s.addonName}>{addon.name}</Text>
-                <Text style={s.addonPrice}>+${addon.price}</Text>
+                <Text style={[s.addonName, { color: themeColors.text }]}>{addon.name}</Text>
+                <Text style={[s.addonPrice, { color: themeColors.primary }]}>+${addon.price}</Text>
               </View>
               <TouchableOpacity
                 onPress={() => deleteAddOn(addon.id)}
@@ -371,37 +378,37 @@ export default function EditPricingScreen({ navigation }: Props) {
 
           {/* Add-on inline form */}
           {showAddOnForm ? (
-            <View style={s.formCard}>
+            <View style={[s.formCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
               <View style={s.formHeader}>
-                <Text style={s.formTitle}>New Add-on</Text>
+                <Text style={[s.formTitle, { color: themeColors.text }]}>New Add-on</Text>
                 <TouchableOpacity
                   onPress={resetAddOnForm}
                   activeOpacity={0.6}
                   accessibilityLabel="Cancel add-on form"
                   accessibilityRole="button"
                 >
-                  <XIcon size={20} color={colors.textMuted} />
+                  <XIcon size={20} color={themeColors.textMuted} />
                 </TouchableOpacity>
               </View>
 
-              <Text style={s.fieldLabel}>Name</Text>
+              <Text style={[s.fieldLabel, { color: themeColors.textMuted }]}>Name</Text>
               <TextInput
-                style={s.fieldInput}
+                style={[s.fieldInput, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
                 value={addonName}
                 onChangeText={setAddonName}
                 placeholder="e.g., Extra hour, Setup fee"
-                placeholderTextColor={colors.textMuted}
+                placeholderTextColor={themeColors.textMuted}
                 maxLength={40}
                 accessibilityLabel="Add-on name"
               />
 
-              <Text style={s.fieldLabel}>Price ($)</Text>
+              <Text style={[s.fieldLabel, { color: themeColors.textMuted }]}>Price ($)</Text>
               <TextInput
-                style={s.fieldInput}
+                style={[s.fieldInput, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
                 value={addonPrice}
                 onChangeText={setAddonPrice}
                 placeholder="0"
-                placeholderTextColor={colors.textMuted}
+                placeholderTextColor={themeColors.textMuted}
                 keyboardType="decimal-pad"
                 maxLength={8}
                 accessibilityLabel="Add-on price"
@@ -458,20 +465,19 @@ const s = StyleSheet.create({
   sectionDivider: { height: 1, backgroundColor: colors.border, marginVertical: 24 },
 
   // Base price
-  priceRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 28, marginTop: 12 },
-  dollar: { fontFamily: fonts.bold, fontSize: 44, color: colors.text, marginRight: 4 },
+  priceRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 24, marginTop: 16 },
+  dollar: { fontFamily: fonts.bold, fontSize: 20, color: colors.text, marginRight: 8 },
   priceInput: {
-    fontFamily: fonts.bold, fontSize: 44, color: colors.text, flex: 1,
-    borderBottomWidth: 2, borderBottomColor: colors.text, paddingVertical: 4,
+    fontFamily: fonts.semiBold, fontSize: 18, color: colors.text, flex: 1,
+    borderWidth: 1, borderColor: colors.border, borderRadius: 10,
+    paddingHorizontal: 16, paddingVertical: 0, height: 52,
   },
   unitRow: { flexDirection: 'row', gap: 10 },
   unitBtn: {
-    flex: 1, paddingVertical: 14, borderRadius: 10,
+    flex: 1, paddingVertical: 12, borderRadius: 10,
     borderWidth: 1.5, borderColor: colors.border, alignItems: 'center',
   },
-  unitBtnActive: { borderColor: colors.text, backgroundColor: colors.lightBlue },
   unitText: { fontFamily: fonts.medium, fontSize: 14, color: colors.textMuted },
-  unitTextActive: { color: colors.text, fontFamily: fonts.semiBold },
 
   // Package cards
   packageCard: {

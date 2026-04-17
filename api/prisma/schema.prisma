@@ -24,6 +24,7 @@ enum VendorCategory {
   EXPERIENCES
   WELLNESS
   BEVERAGES
+  ARTISTRY
   OTHER
 }
 

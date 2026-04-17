@@ -20,13 +20,15 @@ type Props = NativeStackScreenProps<any, 'ViewProfile'>;
 
 const MAX_BIO = 500;
 
-export default function ViewProfileScreen({ navigation }: Props) {
+export default function ViewProfileScreen({ navigation, route }: Props) {
   const { colors: themeColors } = useTheme();
   const auth = useAuth();
   const { posts } = useFeed();
-  const user = auth.user;
-  const firstName = user?.firstName ?? 'User';
-  const lastName = user?.lastName ?? '';
+  const profileUser = (route.params as any)?.user ?? null;
+  const isOtherUser = !!profileUser;
+  const user = isOtherUser ? profileUser : auth.user;
+  const firstName = user?.firstName ?? user?.userName?.split(' ')[0] ?? 'User';
+  const lastName = user?.lastName ?? user?.userName?.split(' ').slice(1).join(' ') ?? '';
 
   // Get posts by current user (for demo, show first 6 demo posts as "user's posts")
   const userPosts = posts.slice(0, 6);

@@ -19,18 +19,18 @@ export default function EditRadiusScreen({ navigation }: Props) {
       <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} /></TouchableOpacity>
         <Text style={[s.headerTitle, { color: themeColors.text }]}>Service Radius</Text>
-        <TouchableOpacity onPress={() => { Alert.alert('Saved', `Service radius set to ${radius} miles!`); navigation.goBack(); }} activeOpacity={0.6} accessibilityLabel="Save changes" accessibilityRole="button"><Text style={s.saveText}>Save</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => { Alert.alert('Saved', `Service radius set to ${radius} miles!`); navigation.goBack(); }} activeOpacity={0.6} accessibilityLabel="Save changes" accessibilityRole="button"><Text style={[s.saveText, { color: themeColors.primary }]}>Save</Text></TouchableOpacity>
       </View>
       <View style={s.content}>
-        <Text style={s.label}>How far are you willing to travel?</Text>
+        <Text style={[s.label, { color: themeColors.text }]}>How far are you willing to travel?</Text>
         <View style={s.options}>
           {RADIUS_OPTIONS.map((r) => (
-            <TouchableOpacity key={r} style={[s.option, radius === r && s.optionActive]} onPress={() => setRadius(r)} activeOpacity={0.7} accessibilityLabel={`${r} miles radius`} accessibilityRole="button" accessibilityState={{ selected: radius === r }}>
-              <Text style={[s.optionText, radius === r && s.optionTextActive]}>{r} miles</Text>
+            <TouchableOpacity key={r} style={[s.option, { borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }, radius === r && { borderColor: themeColors.primary, backgroundColor: themeColors.primary }]} onPress={() => setRadius(r)} activeOpacity={0.7} accessibilityLabel={`${r} miles radius`} accessibilityRole="button" accessibilityState={{ selected: radius === r }}>
+              <Text style={[s.optionText, { color: themeColors.textMuted }, radius === r && { color: '#fff', fontFamily: fonts.semiBold }]}>{r} miles</Text>
             </TouchableOpacity>
           ))}
         </View>
-        <Text style={s.preview}>Clients within {radius} miles of your location will see your listing</Text>
+        <Text style={[s.preview, { color: themeColors.textMuted }]}>Clients within {radius} miles of your location will see your listing</Text>
       </View>
     </SafeAreaView>
   );

@@ -258,13 +258,13 @@ export default function VendorAnalyticsScreen({ navigation }: Props) {
 
         {/* Performance tips */}
         <Text style={[s.sectionTitle, { color: themeColors.text }]}>Performance Tips</Text>
-        <View style={s.tipsCard}>
+        <View style={[s.tipsCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
           {TIPS.map((tip, idx) => (
-            <View key={idx} style={[s.tipRow, idx < TIPS.length - 1 && s.tipRowBorder]}>
-              <View style={[s.tipIconBox, { backgroundColor: themeColors.cardBackground }]}>
-                <SparklesIcon size={14} color={themeColors.text} />
+            <View key={idx} style={[s.tipRow, idx < TIPS.length - 1 && { borderBottomWidth: 1, borderBottomColor: themeColors.border }]}>
+              <View style={[s.tipIconBox, { backgroundColor: `${themeColors.primary}15` }]}>
+                <SparklesIcon size={14} color={themeColors.primary} />
               </View>
-              <Text style={[s.tipText, { color: themeColors.textSecondary }]}>{tip}</Text>
+              <Text style={[s.tipText, { color: themeColors.text }]}>{tip}</Text>
             </View>
           ))}
         </View>

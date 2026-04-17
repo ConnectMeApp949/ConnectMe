@@ -111,7 +111,11 @@ export default function InboxScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
-      <Text style={[s.header, { color: themeColors.text }]}>Messages</Text>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
+        <View style={s.headerSpacer} />
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Messages</Text>
+        <View style={s.headerSpacer} />
+      </View>
 
       {!auth.user ? (
         <View style={s.empty}>
@@ -154,7 +158,9 @@ export default function InboxScreen({ navigation }: Props) {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.white },
-  header: { fontFamily: fonts.bold, fontSize: 28, color: colors.text, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 16 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.border },
+  headerTitle: { fontFamily: fonts.semiBold, fontSize: 17, color: colors.text },
+  headerSpacer: { width: 44 },
   item: {
     flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 14,
     borderBottomWidth: 1, borderBottomColor: colors.border,

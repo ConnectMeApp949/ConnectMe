@@ -71,10 +71,10 @@ export default function ConnectionsScreen({ navigation, route }: Props) {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
 
-  // Followers / Following state
-  const [followers, setFollowers] = useState(DEMO_FOLLOWERS);
-  const [following, setFollowing] = useState(DEMO_FOLLOWING);
-  const [friendRequests, setFriendRequests] = useState(DEMO_REQUESTS);
+  // Followers / Following state — start empty for real users
+  const [followers, setFollowers] = useState<typeof DEMO_FOLLOWERS>([]);
+  const [following, setFollowing] = useState<typeof DEMO_FOLLOWING>([]);
+  const [friendRequests, setFriendRequests] = useState<typeof DEMO_REQUESTS>([]);
   const [searchText, setSearchText] = useState('');
   const [inviteModalVisible, setInviteModalVisible] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');

@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
-import { CheckIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon, CompassIcon, WellnessIcon, CoffeeIcon } from '../../components/Icons';
+import { CheckIcon, TruckIcon, MusicIcon, UtensilsIcon, PartyIcon, CameraIcon, SparklesIcon, CompassIcon, WellnessIcon, CoffeeIcon, PaletteIcon } from '../../components/Icons';
 import { OnboardingStackParamList } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
 import { apiHeaders } from '../../services/headers';
@@ -15,12 +15,13 @@ const CATEGORIES = [
   { id: 'FOOD_TRUCK', label: 'Mobile Eats', icon: 'truck' },
   { id: 'DJ', label: 'Music', icon: 'music' },
   { id: 'CATERING', label: 'Catering', icon: 'utensils' },
-  { id: 'WEDDING_SERVICES', label: 'Wedding Services', icon: 'rings' },
+  { id: 'WEDDING_SERVICES', label: 'Venues', icon: 'party' },
   { id: 'PHOTOGRAPHY', label: 'Photography', icon: 'aperture' },
   { id: 'ENTERTAINMENT', label: 'Entertainment', icon: 'sparkles' },
   { id: 'EXPERIENCES', label: 'Experiences', icon: 'compass' },
   { id: 'WELLNESS', label: 'Wellness', icon: 'wellness' },
   { id: 'BEVERAGES', label: 'Beverages', icon: 'coffee' },
+  { id: 'ARTISTRY', label: 'Artistry', icon: 'palette' },
   { id: 'OTHER', label: 'Other', icon: 'sparkles' },
 ] as const;
 
@@ -28,12 +29,13 @@ const ICON_MAP: Record<string, React.FC<{ size?: number; color?: string; strokeW
   truck: TruckIcon,
   music: MusicIcon,
   utensils: UtensilsIcon,
-  rings: RingsIcon,
+  party: PartyIcon,
   aperture: CameraIcon,
   sparkles: SparklesIcon,
   compass: CompassIcon,
   wellness: WellnessIcon,
   coffee: CoffeeIcon,
+  palette: PaletteIcon,
 };
 
 export default function VendorTypeScreen({ navigation }: Props) {

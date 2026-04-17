@@ -98,21 +98,25 @@ export default function BookingsScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
-      <Text style={[s.header, { color: themeColors.text }]}>{t('bookings')}</Text>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
+        <View style={s.headerSpacer} />
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Bookings</Text>
+        <View style={s.headerSpacer} />
+      </View>
 
       {/* Tabs */}
-      <View style={s.tabRow}>
+      <View style={[s.tabRow, { borderBottomColor: themeColors.border }]}>
         {TAB_KEYS.map((tabKey) => (
           <TouchableOpacity
             key={tabKey}
-            style={[s.tab, { borderColor: themeColors.border }, activeTab === tabKey && s.tabActive, activeTab === tabKey && { backgroundColor: themeColors.text, borderColor: themeColors.text }]}
+            style={[s.tab, { borderBottomColor: 'transparent' }, activeTab === tabKey && { borderBottomColor: themeColors.primary }]}
             onPress={() => setActiveTab(tabKey)}
             activeOpacity={0.7}
             accessibilityLabel={`${t(tabKey)} ${t('bookings')}`}
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === tabKey }}
           >
-            <Text style={[s.tabText, { color: themeColors.text }, activeTab === tabKey && { color: themeColors.background }]}>{t(tabKey)}</Text>
+            <Text style={[s.tabText, { color: themeColors.textMuted }, activeTab === tabKey && { color: themeColors.text, fontFamily: fonts.semiBold }]}>{t(tabKey)}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -177,12 +181,12 @@ export default function BookingsScreen({ navigation }: Props) {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.white },
-  header: { fontFamily: fonts.bold, fontSize: 28, color: colors.text, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 },
-  tabRow: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 8, gap: 8 },
-  tab: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: colors.border },
-  tabActive: { backgroundColor: colors.text, borderColor: colors.text },
-  tabText: { fontFamily: fonts.medium, fontSize: 13, color: colors.text },
-  tabTextActive: { color: colors.white },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.border },
+  headerTitle: { fontFamily: fonts.semiBold, fontSize: 17, color: colors.text },
+  headerSpacer: { width: 44 },
+  tabRow: { flexDirection: 'row', paddingHorizontal: 20, borderBottomWidth: 1, borderBottomColor: colors.border },
+  tab: { flex: 1, alignItems: 'center', paddingVertical: 12, borderBottomWidth: 2 },
+  tabText: { fontFamily: fonts.medium, fontSize: 14, color: colors.textMuted },
   list: { padding: 20 },
   card: {
     flexDirection: 'row', alignItems: 'center', backgroundColor: colors.white, borderRadius: 12,

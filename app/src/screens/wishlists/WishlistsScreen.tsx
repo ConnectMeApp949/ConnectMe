@@ -16,8 +16,8 @@ import { useAuth } from '../../context/AuthContext';
 
 const CATEGORY_LABELS: Record<string, string> = {
   FOOD_TRUCK: 'Mobile Eats', DJ: 'Music', CATERING: 'Catering',
-  WEDDING_SERVICES: 'Weddings', PHOTOGRAPHY: 'Photography',
-  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', BEVERAGES: 'Beverages', OTHER: 'Other',
+  WEDDING_SERVICES: 'Venues', PHOTOGRAPHY: 'Photography',
+  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', BEVERAGES: 'Beverages', ARTISTRY: 'Artistry', OTHER: 'Other',
 };
 
 type Props = NativeStackScreenProps<any, 'Wishlists'>;
@@ -224,38 +224,37 @@ export default function WishlistsScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={[s.container, { backgroundColor: themeColors.background }]} edges={['top']}>
-      <Text style={[s.header, { color: themeColors.text }]}>Favorites</Text>
+      <View style={[s.header, { borderBottomColor: themeColors.border }]}>
+        <View style={s.headerSpacer} />
+        <Text style={[s.headerTitle, { color: themeColors.text }]}>Favorites</Text>
+        <View style={s.headerSpacer} />
+      </View>
 
       {/* Tab toggle */}
-      <View style={[s.tabToggle, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+      <View style={[s.tabRow, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity
-          style={[s.tabBtn, activeTab === 'vendors' && s.tabBtnActive, activeTab === 'vendors' && { backgroundColor: themeColors.background }]}
+          style={[s.tab, { borderBottomColor: 'transparent' }, activeTab === 'vendors' && { borderBottomColor: themeColors.primary }]}
           onPress={() => setActiveTab('vendors')}
           activeOpacity={0.7}
           accessibilityLabel="Vendors tab"
           accessibilityRole="tab"
           accessibilityState={{ selected: activeTab === 'vendors' }}
         >
-          <Text style={[s.tabBtnText, { color: themeColors.textSecondary }, activeTab === 'vendors' && s.tabBtnTextActive, activeTab === 'vendors' && { color: themeColors.text }]}>
+          <Text style={[s.tabText, { color: themeColors.textMuted }, activeTab === 'vendors' && { color: themeColors.text, fontFamily: fonts.semiBold }]}>
             Vendors
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[s.tabBtn, activeTab === 'searches' && s.tabBtnActive, activeTab === 'searches' && { backgroundColor: themeColors.background }]}
+          style={[s.tab, { borderBottomColor: 'transparent' }, activeTab === 'searches' && { borderBottomColor: themeColors.primary }]}
           onPress={() => setActiveTab('searches')}
           activeOpacity={0.7}
           accessibilityLabel="Searches tab"
           accessibilityRole="tab"
           accessibilityState={{ selected: activeTab === 'searches' }}
         >
-          <Text style={[s.tabBtnText, { color: themeColors.textSecondary }, activeTab === 'searches' && s.tabBtnTextActive, activeTab === 'searches' && { color: themeColors.text }]}>
-            Searches
+          <Text style={[s.tabText, { color: themeColors.textMuted }, activeTab === 'searches' && { color: themeColors.text, fontFamily: fonts.semiBold }]}>
+            Searches{searches.length > 0 ? ` (${searches.length})` : ''}
           </Text>
-          {searches.length > 0 && (
-            <View style={s.tabBadge}>
-              <Text style={s.tabBadgeText}>{searches.length}</Text>
-            </View>
-          )}
         </TouchableOpacity>
       </View>
 
@@ -295,43 +294,26 @@ export default function WishlistsScreen({ navigation }: Props) {
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.white },
   header: {
-    fontFamily: fonts.bold,
-    fontSize: 28,
-    color: colors.text,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 8,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
+  headerTitle: {
+    fontFamily: fonts.semiBold,
+    fontSize: 17,
+    color: colors.text,
+  },
+  headerSpacer: { width: 44 },
 
   // Tab toggle
-  tabToggle: {
-    flexDirection: 'row',
-    marginHorizontal: 20,
-    marginBottom: spacing.md,
-    backgroundColor: colors.cardBackground,
-    borderRadius: 12,
-    padding: 3,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  tabBtn: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: 'center',
-    borderRadius: 9,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 6,
-  },
-  tabBtnActive: {
-    backgroundColor: colors.white,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  tabBtnText: {
+  tabRow: { flexDirection: 'row', paddingHorizontal: 20, borderBottomWidth: 1, borderBottomColor: colors.border },
+  tab: { flex: 1, alignItems: 'center', paddingVertical: 12, borderBottomWidth: 2 },
+  tabText: { fontFamily: fonts.medium, fontSize: 14, color: colors.textMuted },
+  _tabBtnText: {
     fontFamily: fonts.medium,
     fontSize: 14,
     color: colors.textMuted,

@@ -19,12 +19,13 @@ const CATEGORIES = [
   { id: 'FOOD_TRUCK', label: 'Mobile Eats' },
   { id: 'DJ', label: 'Music' },
   { id: 'CATERING', label: 'Catering' },
-  { id: 'WEDDING_SERVICES', label: 'Weddings' },
+  { id: 'WEDDING_SERVICES', label: 'Venues' },
   { id: 'PHOTOGRAPHY', label: 'Photography' },
   { id: 'ENTERTAINMENT', label: 'Entertainment' },
   { id: 'EXPERIENCES', label: 'Experiences' },
   { id: 'WELLNESS', label: 'Wellness' },
   { id: 'BEVERAGES', label: 'Beverages' },
+  { id: 'ARTISTRY', label: 'Artistry' },
 ];
 
 const RATINGS = [0, 3, 3.5, 4, 4.5];

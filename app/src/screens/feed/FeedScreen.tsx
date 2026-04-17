@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -412,6 +412,7 @@ export default function FeedScreen({ navigation }: any) {
   const [viewingStory, setViewingStory] = useState<FeedStory | null>(null);
   const [menuPost, setMenuPost] = useState<FeedPost | null>(null);
   const [feedSearch, setFeedSearch] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);
 
   const filteredPosts = feedSearch.trim()
     ? posts.filter(p =>
@@ -422,6 +423,32 @@ export default function FeedScreen({ navigation }: any) {
         p.location.toLowerCase().includes(feedSearch.toLowerCase())
       )
     : posts;
+
+  // Build unique user/vendor suggestions from feed data
+  const searchSuggestions = useMemo(() => {
+    if (!feedSearch.trim() || feedSearch.trim().length < 1) return [];
+    const query = feedSearch.toLowerCase();
+    const seen = new Set<string>();
+    const results: { id: string; name: string; avatar: string | null; type: 'user' | 'vendor' }[] = [];
+
+    // From post authors
+    for (const p of posts) {
+      if (!seen.has(p.userId) && p.userName.toLowerCase().includes(query)) {
+        seen.add(p.userId);
+        results.push({ id: p.userId, name: p.userName, avatar: p.userAvatar, type: 'user' });
+      }
+    }
+    // From tagged vendors
+    for (const p of posts) {
+      for (const v of p.taggedVendors) {
+        if (!seen.has(v) && v.toLowerCase().includes(query)) {
+          seen.add(v);
+          results.push({ id: v, name: v, avatar: null, type: 'vendor' });
+        }
+      }
+    }
+    return results.slice(0, 6);
+  }, [feedSearch, posts]);
   const alertShown = useRef(false);
 
   // Show friend request alert when feed loads (demo)
@@ -486,8 +513,15 @@ export default function FeedScreen({ navigation }: any) {
         }
         onMore={() => setMenuPost(item)}
         onUserPress={() => {
-          // Navigate to user's profile posts view
-          Alert.alert(item.userName, `View ${item.userName}'s posts and profile on ConnectMe.`);
+          navigation.navigate('ViewProfile', {
+            user: {
+              id: item.userId,
+              firstName: item.userName.split(' ')[0],
+              lastName: item.userName.split(' ').slice(1).join(' '),
+              profilePhoto: item.userAvatar,
+              userName: item.userName,
+            },
+          });
         }}
       />
     ),
@@ -527,6 +561,8 @@ export default function FeedScreen({ navigation }: any) {
             style={[styles.feedSearchInput, { color: themeColors.text }]}
             value={feedSearch}
             onChangeText={setFeedSearch}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
             placeholder="Search..."
             placeholderTextColor={themeColors.textMuted}
             autoCapitalize="none"
@@ -549,6 +585,44 @@ export default function FeedScreen({ navigation }: any) {
           <BellIcon size={24} color={themeColors.text} />
         </TouchableOpacity>
       </View>
+
+      {/* Search suggestions dropdown */}
+      {searchFocused && searchSuggestions.length > 0 && (
+        <View style={[styles.suggestionsDropdown, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
+          {searchSuggestions.map((s) => (
+            <TouchableOpacity
+              key={s.id}
+              style={[styles.suggestionItem, { borderBottomColor: themeColors.border }]}
+              activeOpacity={0.6}
+              onPress={() => {
+                setFeedSearch('');
+                setSearchFocused(false);
+                navigation.navigate('ViewProfile', {
+                  user: {
+                    id: s.id,
+                    firstName: s.name.split(' ')[0],
+                    lastName: s.name.split(' ').slice(1).join(' '),
+                    profilePhoto: s.avatar,
+                    userName: s.name,
+                  },
+                });
+              }}
+            >
+              {s.avatar ? (
+                <Image source={{ uri: s.avatar }} style={styles.suggestionAvatar} />
+              ) : (
+                <View style={[styles.suggestionAvatarFb, { backgroundColor: themeColors.primary }]}>
+                  <Text style={styles.suggestionAvatarText}>{s.name[0]}</Text>
+                </View>
+              )}
+              <View style={styles.suggestionInfo}>
+                <Text style={[styles.suggestionName, { color: themeColors.text }]}>{s.name}</Text>
+                <Text style={[styles.suggestionType, { color: themeColors.textMuted }]}>{s.type === 'vendor' ? 'Vendor' : 'User'}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
 
       {/* Feed */}
       <FlatList
@@ -741,6 +815,34 @@ const styles = StyleSheet.create({
     fontSize: 13,
     padding: 0,
   },
+
+  // Search suggestions
+  suggestionsDropdown: {
+    marginHorizontal: spacing.md,
+    marginTop: 4,
+    borderRadius: 14,
+    borderWidth: 1,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  suggestionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    borderBottomWidth: 0.5,
+    gap: 12,
+  },
+  suggestionAvatar: { width: 36, height: 36, borderRadius: 18 },
+  suggestionAvatarFb: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  suggestionAvatarText: { fontFamily: fonts.bold, fontSize: 14, color: '#fff' },
+  suggestionInfo: { flex: 1 },
+  suggestionName: { fontFamily: fonts.semiBold, fontSize: 14 },
+  suggestionType: { fontFamily: fonts.regular, fontSize: 11, marginTop: 1 },
 
   // Stories
   storiesContainer: {

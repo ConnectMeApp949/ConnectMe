@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import {
-  ChevronLeftIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon,
-  CompassIcon, WellnessIcon, CoffeeIcon, CheckIcon,
+  ChevronLeftIcon, TruckIcon, MusicIcon, UtensilsIcon, PartyIcon, CameraIcon, SparklesIcon,
+  CompassIcon, WellnessIcon, CoffeeIcon, PaletteIcon, CheckIcon,
 } from '../../components/Icons';
 
 type Props = NativeStackScreenProps<any, 'VendorBusinessType'>;
@@ -14,12 +14,13 @@ const CATEGORIES = [
   { id: 'FOOD_TRUCK', label: 'Mobile Eats', Icon: TruckIcon },
   { id: 'DJ', label: 'Music', Icon: MusicIcon },
   { id: 'CATERING', label: 'Catering', Icon: UtensilsIcon },
-  { id: 'WEDDING_SERVICES', label: 'Wedding Services', Icon: RingsIcon },
+  { id: 'WEDDING_SERVICES', label: 'Venues', Icon: PartyIcon },
   { id: 'PHOTOGRAPHY', label: 'Photography', Icon: CameraIcon },
   { id: 'ENTERTAINMENT', label: 'Entertainment', Icon: SparklesIcon },
   { id: 'EXPERIENCES', label: 'Experiences', Icon: CompassIcon },
   { id: 'WELLNESS', label: 'Wellness', Icon: WellnessIcon },
   { id: 'BEVERAGES', label: 'Beverages', Icon: CoffeeIcon },
+  { id: 'ARTISTRY', label: 'Artistry', Icon: PaletteIcon },
   { id: 'OTHER', label: 'Other', Icon: SparklesIcon },
 ];
 

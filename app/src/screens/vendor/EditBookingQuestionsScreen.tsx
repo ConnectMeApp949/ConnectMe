@@ -185,21 +185,21 @@ export default function EditBookingQuestionsScreen({ navigation }: Props) {
 
       <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
         {/* Explanation */}
-        <Text style={s.explanation}>
+        <Text style={[s.explanation, { color: themeColors.textMuted }]}>
           Customize the questions clients answer when requesting a booking. This helps you get the info you need upfront.
         </Text>
 
         {/* ─── Default questions ──────────────────────── */}
-        <Text style={s.sectionTitle}>Default Questions</Text>
+        <Text style={[s.sectionTitle, { color: themeColors.text }]}>Default Questions</Text>
 
         {defaults.map((q) => (
-          <View key={q.id} style={s.defaultRow}>
+          <View key={q.id} style={[s.defaultRow, { borderBottomColor: themeColors.border }]}>
             <View style={s.defaultTextCol}>
-              <Text style={[s.defaultText, !q.enabled && s.defaultTextDisabled]}>
+              <Text style={[s.defaultText, { color: themeColors.text }, !q.enabled && [s.defaultTextDisabled, { color: themeColors.textMuted }]]}>
                 {q.text}
               </Text>
               {q.locked && (
-                <Text style={s.lockedLabel}>Always on</Text>
+                <Text style={[s.lockedLabel, { color: themeColors.textMuted }]}>Always on</Text>
               )}
             </View>
             <Switch
@@ -215,40 +215,40 @@ export default function EditBookingQuestionsScreen({ navigation }: Props) {
 
         {/* ─── Custom questions ───────────────────────── */}
         <View style={s.customHeader}>
-          <Text style={s.sectionTitle}>Custom Questions</Text>
-          <Text style={s.customCount}>
+          <Text style={[s.sectionTitle, { color: themeColors.text }]}>Custom Questions</Text>
+          <Text style={[s.customCount, { color: themeColors.textMuted }]}>
             {customs.length}/{MAX_CUSTOM_QUESTIONS}
           </Text>
         </View>
 
         {customs.map((q) => (
-          <View key={q.id} style={s.customCard}>
+          <View key={q.id} style={[s.customCard, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }]}>
             {/* Question text input */}
             <TextInput
-              style={s.customInput}
+              style={[s.customInput, { color: themeColors.text, backgroundColor: themeColors.background, borderColor: themeColors.border }]}
               value={q.text}
               onChangeText={(t) => updateCustomText(q.id, t)}
               placeholder="Enter your question..."
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor={themeColors.textMuted}
               maxLength={200}
               accessibilityLabel="Custom question text"
             />
 
             {/* Type selector (segmented control) */}
-            <Text style={s.fieldLabel}>Answer type</Text>
-            <View style={s.segmentedRow}>
+            <Text style={[s.fieldLabel, { color: themeColors.textMuted }]}>Answer type</Text>
+            <View style={[s.segmentedRow, { borderColor: themeColors.border }]}>
               {QUESTION_TYPES.map((type) => {
                 const isActive = q.type === type;
                 return (
                   <TouchableOpacity
                     key={type}
-                    style={[s.segment, isActive && s.segmentActive]}
+                    style={[s.segment, { backgroundColor: themeColors.background }, isActive && s.segmentActive]}
                     onPress={() => updateCustomType(q.id, type)}
                     activeOpacity={0.7}
                     accessibilityLabel={`${QUESTION_TYPE_LABELS[type]} answer type`}
                     accessibilityState={{ selected: isActive }}
                   >
-                    <Text style={[s.segmentText, isActive && s.segmentTextActive]}>
+                    <Text style={[s.segmentText, { color: themeColors.textMuted }, isActive && s.segmentTextActive]}>
                       {QUESTION_TYPE_LABELS[type]}
                     </Text>
                   </TouchableOpacity>
@@ -259,7 +259,7 @@ export default function EditBookingQuestionsScreen({ navigation }: Props) {
             {/* Required toggle + delete */}
             <View style={s.customActions}>
               <View style={s.requiredRow}>
-                <Text style={s.requiredLabel}>Required</Text>
+                <Text style={[s.requiredLabel, { color: themeColors.text }]}>Required</Text>
                 <Switch
                   value={q.required}
                   onValueChange={() => toggleCustomRequired(q.id)}

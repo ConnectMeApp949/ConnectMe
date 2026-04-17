@@ -8,6 +8,7 @@ import Button from '../../components/Button';
 import { colors, fonts, spacing, borderRadius } from '../../theme';
 import { ChevronLeftIcon, CalendarIcon, MapPinIcon } from '../../components/Icons';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { apiHeaders } from '../../services/headers';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.connectmeapp.services';
@@ -23,6 +24,7 @@ const STATUS_COLORS: Record<string, string> = {
 type Props = NativeStackScreenProps<any, 'BookingManagement'>;
 
 export default function BookingManagementScreen({ navigation }: Props) {
+  const { colors: themeColors } = useTheme();
   const { token } = useAuth();
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('PENDING');
   const [bookings, setBookings] = useState<any[]>([]);
@@ -131,13 +133,13 @@ export default function BookingManagementScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <ChevronLeftIcon size={24} color={colors.text} strokeWidth={2} />
+      <View style={[styles.header, { borderBottomColor: themeColors.border }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button">
+          <ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Bookings</Text>
+        <Text style={[styles.headerTitle, { color: themeColors.text }]}>Manage Bookings</Text>
         <View style={styles.backBtn} />
       </View>
 
@@ -184,11 +186,10 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: spacing.md, paddingVertical: spacing.sm,
+    paddingHorizontal: 20, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: colors.border,
   },
-  backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  backText: { fontSize: 24, color: colors.text },
-  headerTitle: { fontFamily: fonts.bold, fontSize: 18, color: colors.text },
+  backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontFamily: fonts.semiBold, fontSize: 17, color: colors.text },
   tabRow: {
     flexDirection: 'row', paddingHorizontal: spacing.md, marginBottom: spacing.sm,
     borderBottomWidth: 1, borderBottomColor: colors.border,

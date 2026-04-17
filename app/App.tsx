@@ -188,6 +188,7 @@ function FeedNavigator() {
       <FeedStack.Screen name="PostCreation" component={PostCreationScreen} options={{ animation: 'slide_from_bottom' }} />
       <FeedStack.Screen name="StoryCreation" component={StoryCreationScreen} options={{ animation: 'slide_from_bottom' }} />
       <FeedStack.Screen name="PostDetail" component={PostDetailScreen} options={slide} />
+      <FeedStack.Screen name="ViewProfile" component={ViewProfileScreen} options={slide} />
       <FeedStack.Screen name="Notifications" component={NotificationsScreen} options={slide} />
     </FeedStack.Navigator>
   );

@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, fonts, borderRadius } from '../../theme';
 import {
-  ChevronLeftIcon, TruckIcon, MusicIcon, UtensilsIcon, RingsIcon, CameraIcon, SparklesIcon,
-  CompassIcon, WellnessIcon, CoffeeIcon,
+  ChevronLeftIcon, TruckIcon, MusicIcon, UtensilsIcon, PartyIcon, CameraIcon, SparklesIcon,
+  CompassIcon, WellnessIcon, CoffeeIcon, PaletteIcon,
 } from '../../components/Icons';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -15,12 +15,13 @@ const CATEGORIES = [
   { id: 'FOOD_TRUCK', label: 'Mobile Eats', Icon: TruckIcon },
   { id: 'DJ', label: 'Music', Icon: MusicIcon },
   { id: 'CATERING', label: 'Catering', Icon: UtensilsIcon },
-  { id: 'WEDDING_SERVICES', label: 'Wedding Services', Icon: RingsIcon },
+  { id: 'WEDDING_SERVICES', label: 'Venues', Icon: PartyIcon },
   { id: 'PHOTOGRAPHY', label: 'Photography', Icon: CameraIcon },
   { id: 'ENTERTAINMENT', label: 'Entertainment', Icon: SparklesIcon },
   { id: 'EXPERIENCES', label: 'Experiences', Icon: CompassIcon },
   { id: 'WELLNESS', label: 'Wellness', Icon: WellnessIcon },
   { id: 'BEVERAGES', label: 'Beverages', Icon: CoffeeIcon },
+  { id: 'ARTISTRY', label: 'Artistry', Icon: PaletteIcon },
   { id: 'OTHER', label: 'Other', Icon: SparklesIcon },
 ];
 
@@ -33,16 +34,16 @@ export default function EditCategoryScreen({ navigation }: Props) {
       <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} /></TouchableOpacity>
         <Text style={[s.headerTitle, { color: themeColors.text }]}>Edit Category</Text>
-        <TouchableOpacity onPress={() => { if (selected) { Alert.alert('Saved', 'Category updated!'); navigation.goBack(); } }} activeOpacity={0.6} accessibilityLabel="Save changes" accessibilityRole="button"><Text style={s.saveText}>Save</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => { if (selected) { Alert.alert('Saved', 'Category updated!'); navigation.goBack(); } }} activeOpacity={0.6} accessibilityLabel="Save changes" accessibilityRole="button"><Text style={[s.saveText, { color: themeColors.primary }]}>Save</Text></TouchableOpacity>
       </View>
       <View style={s.content}>
         <View style={s.grid}>
           {CATEGORIES.map((cat) => {
             const CatIcon = cat.Icon;
             return (
-            <TouchableOpacity key={cat.id} style={[s.card, selected === cat.id && s.cardActive]} onPress={() => setSelected(cat.id)} activeOpacity={0.7} accessibilityLabel={`Select ${cat.label} category`} accessibilityRole="button" accessibilityState={{ selected: selected === cat.id }}>
-              <CatIcon size={28} color={selected === cat.id ? colors.text : colors.textMuted} />
-              <Text style={[s.cardLabel, selected === cat.id && s.cardLabelActive]}>{cat.label}</Text>
+            <TouchableOpacity key={cat.id} style={[s.card, { backgroundColor: themeColors.cardBackground, borderColor: themeColors.border }, selected === cat.id && s.cardActive]} onPress={() => setSelected(cat.id)} activeOpacity={0.7} accessibilityLabel={`Select ${cat.label} category`} accessibilityRole="button" accessibilityState={{ selected: selected === cat.id }}>
+              <CatIcon size={28} color={selected === cat.id ? themeColors.text : themeColors.textMuted} />
+              <Text style={[s.cardLabel, { color: themeColors.text }, selected === cat.id && s.cardLabelActive]}>{cat.label}</Text>
             </TouchableOpacity>
             );
           })}

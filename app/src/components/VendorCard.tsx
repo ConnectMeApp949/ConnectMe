@@ -30,8 +30,8 @@ const CURATED_COVERS: Record<string, string> = {
 
 const CATEGORY_LABELS: Record<string, string> = {
   FOOD_TRUCK: 'Mobile Eats', DJ: 'Music', CATERING: 'Catering',
-  WEDDING_SERVICES: 'Weddings', PHOTOGRAPHY: 'Photography',
-  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', BEVERAGES: 'Beverages', OTHER: 'Other',
+  WEDDING_SERVICES: 'Venues', PHOTOGRAPHY: 'Photography',
+  ENTERTAINMENT: 'Entertainment', EXPERIENCES: 'Experiences', WELLNESS: 'Wellness', BEVERAGES: 'Beverages', ARTISTRY: 'Artistry', OTHER: 'Other',
 };
 
 function VendorBadgesInline({ vendor }: { vendor: any }) {

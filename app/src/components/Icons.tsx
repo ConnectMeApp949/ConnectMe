@@ -698,6 +698,38 @@ export const ImageIcon: React.FC<IconProps> = ({
   </Svg>
 );
 
+// Venues icon (building/landmark)
+export const PartyIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Line x1="3" y1="22" x2="21" y2="22" />
+    <Line x1="6" y1="18" x2="6" y2="11" />
+    <Line x1="10" y1="18" x2="10" y2="11" />
+    <Line x1="14" y1="18" x2="14" y2="11" />
+    <Line x1="18" y1="18" x2="18" y2="11" />
+    <Path d="M2 18h20" />
+    <Path d="M12 2L2 8h20L12 2z" />
+  </Svg>
+);
+
+// Palette/Artistry icon
+export const PaletteIcon: React.FC<IconProps> = ({
+  size = defaultProps.size,
+  color = defaultProps.color,
+  strokeWidth = defaultProps.strokeWidth,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <Path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-1 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-5.17-4.49-9-10-9z" />
+    <Circle cx="7.5" cy="11.5" r="1.5" />
+    <Circle cx="10.5" cy="7.5" r="1.5" />
+    <Circle cx="14.5" cy="7.5" r="1.5" />
+    <Circle cx="17.5" cy="11.5" r="1.5" />
+  </Svg>
+);
+
 // Rotate icon
 export const RotateIcon: React.FC<IconProps> = ({
   size = defaultProps.size,

@@ -8,6 +8,7 @@ import {
   TextInputProps as RNTextInputProps,
 } from 'react-native';
 import { colors, fonts, borderRadius, spacing } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 
 interface TextInputProps extends RNTextInputProps {
   label: string;
@@ -22,22 +23,24 @@ export default function TextInput({
   style,
   ...props
 }: TextInputProps) {
+  const { colors: themeColors } = useTheme();
   const [focused, setFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: themeColors.text }]}>{label}</Text>
       <View
         style={[
           styles.inputWrapper,
-          focused && styles.inputFocused,
+          { borderColor: themeColors.border, backgroundColor: themeColors.cardBackground },
+          focused && { borderColor: themeColors.primary },
           error && styles.inputError,
         ]}
       >
         <RNTextInput
-          style={[styles.input, style]}
-          placeholderTextColor={colors.textMuted}
+          style={[styles.input, { color: themeColors.text }, style]}
+          placeholderTextColor={themeColors.textMuted}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           secureTextEntry={isPassword && !showPassword}
@@ -49,7 +52,7 @@ export default function TextInput({
             onPress={() => setShowPassword(!showPassword)}
             style={styles.eyeButton}
           >
-            <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
+            <Text style={[styles.eyeText, { color: themeColors.accent }]}>{showPassword ? 'Hide' : 'Show'}</Text>
           </TouchableOpacity>
         )}
       </View>

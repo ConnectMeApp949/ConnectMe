@@ -34,7 +34,7 @@ export default function EditPhotosScreen({ navigation }: Props) {
       <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} /></TouchableOpacity>
         <Text style={[s.headerTitle, { color: themeColors.text }]}>Edit Photos</Text>
-        <TouchableOpacity onPress={() => { Alert.alert('Saved', 'Photos updated!'); navigation.goBack(); }} activeOpacity={0.6} accessibilityLabel="Save changes" accessibilityRole="button"><Text style={s.saveText}>Save</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => { Alert.alert('Saved', 'Photos updated!'); navigation.goBack(); }} activeOpacity={0.6} accessibilityLabel="Save changes" accessibilityRole="button"><Text style={[s.saveText, { color: themeColors.primary }]}>Save</Text></TouchableOpacity>
       </View>
       <View style={s.content}>
         <View style={s.grid}>
@@ -50,13 +50,13 @@ export default function EditPhotosScreen({ navigation }: Props) {
               );
             }
             return (
-              <TouchableOpacity key={i} style={[s.slot, s.emptySlot, i === 0 && s.coverSlot]} activeOpacity={0.7} onPress={pickPhoto} accessibilityLabel={`Add photo to slot ${i + 1}${i === 0 ? ', cover photo' : ''}`} accessibilityRole="button" accessibilityHint="Opens photo picker">
-                <Text style={s.plusIcon}>+</Text>
+              <TouchableOpacity key={i} style={[s.slot, s.emptySlot, i === 0 && s.coverSlot, { borderColor: themeColors.border, backgroundColor: themeColors.cardBackground }]} activeOpacity={0.7} onPress={pickPhoto} accessibilityLabel={`Add photo to slot ${i + 1}${i === 0 ? ', cover photo' : ''}`} accessibilityRole="button" accessibilityHint="Opens photo picker">
+                <Text style={[s.plusIcon, { color: themeColors.textMuted }]}>+</Text>
               </TouchableOpacity>
             );
           })}
         </View>
-        <Text style={s.hint}>Tap + to add, tap photo to remove. First photo is your cover.</Text>
+        <Text style={[s.hint, { color: themeColors.textMuted }]}>Tap + to add, tap photo to remove. First photo is your cover.</Text>
       </View>
     </SafeAreaView>
   );

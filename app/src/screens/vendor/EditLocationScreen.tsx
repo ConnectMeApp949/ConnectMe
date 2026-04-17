@@ -20,7 +20,7 @@ export default function EditLocationScreen({ navigation }: Props) {
       <View style={[s.header, { borderBottomColor: themeColors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} activeOpacity={0.6} accessibilityLabel="Go back" accessibilityRole="button"><ChevronLeftIcon size={24} color={themeColors.text} strokeWidth={2} /></TouchableOpacity>
         <Text style={[s.headerTitle, { color: themeColors.text }]}>Edit Location</Text>
-        <TouchableOpacity onPress={() => { if (!address.trim() || !city.trim()) { Alert.alert('Required', 'Please fill in at least the street address and city.'); return; } Alert.alert('Saved', 'Location updated!'); navigation.goBack(); }} activeOpacity={0.6} accessibilityLabel="Save changes" accessibilityRole="button"><Text style={s.saveText}>Save</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => { if (!address.trim() || !city.trim()) { Alert.alert('Required', 'Please fill in at least the street address and city.'); return; } Alert.alert('Saved', 'Location updated!'); navigation.goBack(); }} activeOpacity={0.6} accessibilityLabel="Save changes" accessibilityRole="button"><Text style={[s.saveText, { color: themeColors.primary }]}>Save</Text></TouchableOpacity>
       </View>
       <View style={s.content}>
         <TextInput label="Street address" placeholder="123 Main St" value={address} onChangeText={setAddress} />
